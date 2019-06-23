@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.156
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoadDumpTools", "RoadDumpTools\RoadDumpTools.csproj", "{A653F929-135D-4974-B93C-FDC2066A89E7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A653F929-135D-4974-B93C-FDC2066A89E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A653F929-135D-4974-B93C-FDC2066A89E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A653F929-135D-4974-B93C-FDC2066A89E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A653F929-135D-4974-B93C-FDC2066A89E7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {773D186F-8E32-4ACC-A384-60B34C68F593}
+	EndGlobalSection
+EndGlobal
