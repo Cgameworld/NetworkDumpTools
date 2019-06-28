@@ -56,10 +56,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="NetDumpPanel.cs" />
     <Compile Include="ModThreading.cs" />
-    <Compile Include="RoadDumpTools.cs" />
+    <Compile Include="NetDumpTools.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="lib\TextureUtil.cs" />
+    <Compile Include="ThreadingExt.cs" />
+    <Compile Include="lib\UITitleBar.cs" />
+    <Compile Include="lib\UIUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="lib\ObjUnity3D.dll" />
