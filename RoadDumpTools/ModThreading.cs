@@ -1,4 +1,11 @@
-﻿using ICities;
+﻿using ColossalFramework;
+using ColossalFramework.IO;
+using ColossalFramework.UI;
+using ICities;
+using ModTools.Utils;
+using ObjUnity3D;
+using System;
+using System.IO;
 using UnityEngine;
 
 namespace RoadDumpTools
@@ -6,7 +13,7 @@ namespace RoadDumpTools
     public class ModThreading : ThreadingExtensionBase
     {
         private bool _processed = false;
-       
+        ToolController sim_init = Singleton<ToolController>.instance;
 
         public override void OnUpdate(float realTimeDelta, float simulationTimeDelta)
         {
@@ -17,6 +24,7 @@ namespace RoadDumpTools
                 // _processed = true;
                 Debug.Log("ran!");
                 NetDumpPanel.instance.Show();
+                //NetDumpPanel.instance.UpdateInfo(sim_init.m_editPrefabInfo.name);
             }
 
             else
@@ -26,5 +34,6 @@ namespace RoadDumpTools
             }
 
         }
+
     }
 }

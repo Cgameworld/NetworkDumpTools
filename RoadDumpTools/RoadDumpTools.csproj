@@ -56,6 +56,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DumpProcessing.cs" />
     <Compile Include="NetDumpPanel.cs" />
     <Compile Include="ModThreading.cs" />
     <Compile Include="NetDumpTools.cs" />

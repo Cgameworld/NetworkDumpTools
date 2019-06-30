@@ -14,18 +14,20 @@ namespace RoadDumpTools
     public class NetDumpPanel : UIPanel
     {
 
-        ToolController sim = Singleton<ToolController>.instance;
-        string networkName_init;
-
         private UITitleBar m_title;
-        //private UITexsometot m_name;
-       // private UIButton m_ok;
-
+        private UITextField seginput;
+        private UIDropDown net_type;
+        private UIDropDown netEle;
         private UIButton dumpNet;
-        private UIDropDown netArraySelect;
+        private UIButton dumpedFolderButton;
+        private UILabel dumpedTotal;
+        private UICheckBox dumpMeshOnly;
+        private UICheckBox dumpDiffuseOnly;
 
 
         private static NetDumpPanel _instance;
+
+        private static int downoffset = 20;
 
         public static NetDumpPanel instance
         {
@@ -49,7 +51,7 @@ namespace RoadDumpTools
             isInteractive = true;
             clipChildren = true;
             width = 285;
-            height = 380;
+            height = 350;
             relativePosition = new Vector3(0, 55);
 
             // Title Bar
@@ -57,240 +59,108 @@ namespace RoadDumpTools
             m_title.title = "Network Dump Tools";
             //m_title.isModal = true;
 
-            netArraySelect = UIUtils.CreateDropDown(this);
+            /*
+            label = AddUIComponent<UILabel>();
+            label.text = "Dumping Networks:\n_________________________";
+            label.autoSize = false;
+            label.width = 240;
+            label.height = 40;
+            //label.autoHeight = true;
+            label.relativePosition = new Vector2(20, 55);
+            label.wordWrap = true;
+            label.textAlignment = UIHorizontalAlignment.Center;
+            */
 
+            UILabel net_type_label = AddUIComponent<UILabel>();
+            net_type_label.text = "Mesh Type:";
+            net_type_label.autoSize = false;
+            net_type_label.width = 120f;
+            net_type_label.height = 20f;
+            net_type_label.relativePosition = new Vector2(40, 60);
+
+            net_type = UIUtils.CreateDropDown(this);
+            net_type.width = 105;
+            net_type.AddItem("Segment");
+            net_type.AddItem("Node");
+            net_type.selectedIndex = 0;
+            net_type.relativePosition = new Vector3(140, 55);
+
+            UILabel netEle_label = AddUIComponent<UILabel>();
+            netEle_label.text = "Net Elevation:";
+            netEle_label.autoSize = false;
+            netEle_label.width = 124f;
+            netEle_label.height = 20f;
+            netEle_label.relativePosition = new Vector2(25, 100);
+
+            netEle = UIUtils.CreateDropDown(this);
+            netEle.width = 110;
+            netEle.AddItem("Basic");
+            netEle.AddItem("Elevated");
+            netEle.AddItem("Bridge");
+            netEle.AddItem("Slope");
+            netEle.AddItem("Tunnel");
+            netEle.selectedIndex = 0;
+            netEle.relativePosition = new Vector3(149, 95);
+
+            UILabel seglabel = AddUIComponent<UILabel>();
+            seglabel.text = "Dump Mesh #:";
+            seglabel.autoSize = false;
+            seglabel.width = 125f;
+            seglabel.height = 20f;
+            seglabel.relativePosition = new Vector2(50, 140);
+
+            seginput = UIUtils.CreateTextField(this);
+            seginput.text = "1";
+            seginput.width = 40f;
+            seginput.height = 25f;
+            seginput.padding = new RectOffset(6, 6, 6, 6);
+            seginput.relativePosition = new Vector3(175, 135);
+            seginput.tooltip = "Enter the mesh you want to extract here\nExample: To dump the second mesh for a segment enter '2'";
+
+            //write code to check one at a time;
+            dumpMeshOnly = UIUtils.CreateCheckBox(this);
+            dumpMeshOnly.text = "Dump Mesh Only";
+            dumpMeshOnly.isChecked = false;
+            dumpMeshOnly.relativePosition = new Vector2(50, 175);
+            dumpMeshOnly.tooltip = "Only dump the meshes (files ending in .obj and _lod.obj)";
+
+            dumpDiffuseOnly = UIUtils.CreateCheckBox(this);
+            dumpDiffuseOnly.text = "Dump Diffuse Only";
+            dumpDiffuseOnly.isChecked = false;
+            dumpDiffuseOnly.relativePosition = new Vector2(50, 205);
+            dumpDiffuseOnly.tooltip = "Only dump the diffuse texture (file ending in _d.png)";
 
             dumpNet = UIUtils.CreateButton(this);
             dumpNet.text = "Dump Network";
-            dumpNet.relativePosition = new Vector2(70, height - dumpNet.height - 20);
+            dumpNet.relativePosition = new Vector2(70, height - dumpNet.height - 40);
             dumpNet.width = 150;
-
 
             dumpNet.eventClick += (c, p) =>
             {
                 if (isVisible)
                 {
-                    DumpNetworks();
+                    DumpProcessing dumpProcess = new DumpProcessing();
+                    dumpProcess.DumpNetworks();
                 }
             };
 
+            dumpedTotal = AddUIComponent<UILabel>();
+            dumpedTotal.text = "Total Dumped Items: (0)";
+            dumpedTotal.textScale = 0.8f;
+            dumpedTotal.autoSize = false;
+            dumpedTotal.width = 160f;
+            dumpedTotal.height = 20f;
+            dumpedTotal.relativePosition = new Vector2(20, height - dumpNet.height);
+            //list files dumped and open import folder button!
 
-            
-            UILabel label = AddUIComponent<UILabel>();
-            try
-            {
-                label.text = "Current Asset:\n\n" + sim.m_editPrefabInfo.name;
-            }
-            catch
-            {
-                label.text = "Asset Loading Failed";
-            }
-            label.autoSize = false;
-            label.width = 240;
-            label.height = 80;
-            //label.autoHeight = true;
-            label.relativePosition = new Vector2(20, 55);
-            label.wordWrap = true;
-            label.textAlignment = UIHorizontalAlignment.Center;
+            dumpedFolderButton = UIUtils.CreateButton(this);
+            dumpedFolderButton.text = "Import Folder";
+            dumpedFolderButton.textScale = 0.8f;
+            dumpedFolderButton.relativePosition = new Vector2(200, height - dumpNet.height - 40);
+            dumpedFolderButton.height = 25;
+            dumpedFolderButton.width = 80;
 
-
-        }
-
-
-
-        public void DumpNetworks()
-        {
-
-            try
-            {
-                // cancel if they key input was already processed in a previous frame
-                networkName_init = sim.m_editPrefabInfo.name;
-                string importFolder = Path.Combine(DataLocation.addonsPath, "Import");
-                string networkName;
-                string filename;
-                if (networkName_init.Contains("_Data"))
-                {
-                    networkName = networkName_init.Substring(0, networkName_init.Length - 1);
-                }
-                else { networkName = networkName_init; }
-
-                Debug.Log(networkName);
-
-                var material = PrefabCollection<NetInfo>.FindLoaded(networkName).m_segments[0].m_segmentMaterial;
-                var source = material.GetTexture("_MainTex") as Texture2D;
-                var target = new Texture2D(source.width, source.height, TextureFormat.RGBAFloat, true);
-                target.SetPixels(source.GetPixels());
-                target.anisoLevel = source.anisoLevel; target.filterMode = source.filterMode;
-                target.wrapMode = source.wrapMode; target.Apply();
-                UnityEngine.Object.FindObjectOfType<NetProperties>().m_downwardDiffuse = target;
-
-                if (networkName_init.Contains("_Data"))
-                {
-                    filename = networkName.Substring(0, networkName.Length - 5).Replace("/", string.Empty);
-                }
-                else { filename = networkName.Substring(0, networkName.Length - 1); }
-
-                string diffuseTexturePath = Path.Combine(importFolder, filename + "_d.png");
-                string meshPath = Path.Combine(importFolder, filename + ".obj");
-                string lodMeshPath = Path.Combine(importFolder, filename + "_lod.obj");
-
-                DumpTexture2D(FlipTexture(target, false), diffuseTexturePath);
-
-                //dump meshes
-                Mesh roadMesh = PrefabCollection<NetInfo>.FindLoaded(networkName).m_segments[0].m_mesh;
-                DumpMeshToOBJ(roadMesh, meshPath);
-
-                Mesh roadMeshLod = PrefabCollection<NetInfo>.FindLoaded(networkName).m_segments[0].m_lodMesh;
-                DumpMeshToOBJ(roadMeshLod, lodMeshPath);
-
-                var aprmaterial = PrefabCollection<NetInfo>.FindLoaded(networkName).m_segments[0].m_segmentMaterial;
-                var aprsource = aprmaterial.GetTexture("_APRMap") as Texture2D;
-
-                DumpAPR(filename, FlipTexture(aprsource, false));
-
-                //for workshop roads display disclaimer!
-                // display message
-                ExceptionPanel panel = UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel");
-                panel.SetMessage("Road Dump (Success)", "Network Name: " + networkName + "\n\nDumped Items:\n" + diffuseTexturePath + "\n" + meshPath + "\n"
-                    + lodMeshPath, false);
-
-            }
-            catch (Exception e)
-            {
-
-                ExceptionPanel panel = UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel");
-                panel.SetMessage("Road Dump (Failed)", "" + e, false);
-            }
-
-
-        }
-
-
-        //Texture flipping script from https://stackoverflow.com/questions/35950660/unity-180-rotation-for-a-texture2d-or-maybe-flip-both
-        Texture2D FlipTexture(Texture2D original, bool upSideDown = true)
-        {
-
-            Texture2D flipped = new Texture2D(original.width, original.height);
-
-            int xN = original.width;
-            int yN = original.height;
-
-
-            for (int i = 0; i < xN; i++)
-            {
-                for (int j = 0; j < yN; j++)
-                {
-                    if (upSideDown)
-                    {
-                        flipped.SetPixel(j, xN - i - 1, original.GetPixel(j, i));
-                    }
-                    else
-                    {
-                        flipped.SetPixel(xN - i - 1, j, original.GetPixel(i, j));
-                    }
-                }
-            }
-            flipped.Apply();
-
-            return flipped;
-        }
-
-
-        //Methods below taken from ModTools
-        // https://github.com/bloodypenguin/Skylines-ModTools
-        private static void DumpAPR(string assetName, Texture2D aprMap, bool extract = true)
-        {
-            if (aprMap == null)
-            {
-                return;
-            }
-
-            if (extract)
-            {
-                var length = aprMap.width * aprMap.height;
-                var a1 = new Color32[length].Invert();
-                var p1 = new Color32[length].Invert();
-                var r1 = new Color32[length].Invert();
-                aprMap.ExtractChannels(a1, p1, r1, null, true, true, true, true, true, false, false);
-                TextureUtil.DumpTextureToPNG(a1.ColorsToTexture(aprMap.width, aprMap.height), $"{assetName}_a");
-                TextureUtil.DumpTextureToPNG(p1.ColorsToTexture(aprMap.width, aprMap.height), $"{assetName}_p");
-                TextureUtil.DumpTextureToPNG(r1.ColorsToTexture(aprMap.width, aprMap.height), $"{assetName}_r");
-            }
-            else
-            {
-                TextureUtil.DumpTextureToPNG(aprMap, $"{assetName}_APR");
-            }
-        }
-
-
-
-        public static void DumpTexture2D(Texture2D texture, string filename)
-        {
-            byte[] bytes;
-            try
-            {
-                bytes = texture.EncodeToPNG();
-            }
-            catch
-            {
-                try
-                {
-                    bytes = texture.MakeReadable().EncodeToPNG();
-                }
-                catch (Exception ex)
-                {
-                    Debug.Log("There was an error while dumping the texture - " + ex.Message);
-                    return;
-                }
-            }
-
-            File.WriteAllBytes(filename, bytes);
-            Debug.Log($"Texture dumped to \"{filename}\"");
-        }
-
-
-        public static void DumpMeshToOBJ(Mesh mesh, string fileName)
-        {
-            fileName = Path.Combine(Path.Combine(DataLocation.addonsPath, "Import"), fileName);
-            if (File.Exists(fileName))
-            {
-                File.Delete(fileName);
-            }
-
-            var meshToDump = mesh;
-
-            if (!mesh.isReadable)
-            {
-                try
-                {
-                    // copy the relevant data to the temporary mesh
-                    meshToDump = new Mesh
-                    {
-                        vertices = mesh.vertices,
-                        colors = mesh.colors,
-                        triangles = mesh.triangles,
-                        normals = mesh.normals,
-                        tangents = mesh.tangents,
-                    };
-                    meshToDump.RecalculateBounds();
-                }
-                catch (Exception ex)
-                {
-                    ;
-                    return;
-                }
-            }
-
-            try
-            {
-                using (var stream = new FileStream(fileName, FileMode.Create))
-                {
-                    OBJLoader.ExportOBJ(meshToDump.EncodeOBJ(), stream);
-                }
-            }
-            catch (Exception ex)
-            {
-            }
+           
         }
 
     }

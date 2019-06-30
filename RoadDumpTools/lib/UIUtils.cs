@@ -39,18 +39,18 @@ namespace SamsamTS
             sprite.atlas = GetAtlas("Ingame");
             sprite.spriteName = "ToggleBase";
             sprite.size = new Vector2(16f, 16f);
-            sprite.relativePosition = Vector3.zero;
+            sprite.relativePosition = new Vector3(0f, 0f);
 
             checkBox.checkedBoxObject = sprite.AddUIComponent<UISprite>();
             ((UISprite)checkBox.checkedBoxObject).atlas = GetAtlas("Ingame");
             ((UISprite)checkBox.checkedBoxObject).spriteName = "ToggleBaseFocused";
             checkBox.checkedBoxObject.size = new Vector2(16f, 16f);
-            checkBox.checkedBoxObject.relativePosition = Vector3.zero;
+            checkBox.checkedBoxObject.relativePosition = new Vector3(0f, 1f);
 
             checkBox.label = checkBox.AddUIComponent<UILabel>();
             checkBox.label.text = " ";
-            checkBox.label.textScale = 0.9f;
-            checkBox.label.relativePosition = new Vector3(22f, 2f);
+            checkBox.label.textScale = 1f;
+            checkBox.label.relativePosition = new Vector3(22f, 0f);
 
             return checkBox;
         }
@@ -97,7 +97,7 @@ namespace SamsamTS
             dropDown.popupColor = new Color32(45, 52, 61, 255);
             dropDown.popupTextColor = new Color32(170, 170, 170, 255);
             dropDown.zOrder = 1;
-            dropDown.textScale = 0.8f;
+            dropDown.textScale = 0.9f;
             dropDown.verticalAlignment = UIVerticalAlignment.Middle;
             dropDown.horizontalAlignment = UIHorizontalAlignment.Left;
             dropDown.selectedIndex = 0;
