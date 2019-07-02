@@ -1,29 +1,31 @@
 ﻿using ColossalFramework.UI;
-using ColossalFramework;
 using UnityEngine;
 using UIUtils = SamsamTS.UIUtils;
 using MoreShortcuts.GUI;
 using System.IO;
-using ColossalFramework.IO;
 using System;
-using ModTools.Utils;
-using ObjUnity3D;
+using System.Diagnostics;
 
 namespace RoadDumpTools
 {
     public class NetDumpPanel : UIPanel
     {
+        public int dumpedSessionItems = 0;
+        private UITextureAtlas m_atlas;
 
         private UITitleBar m_title;
         private UITextField seginput;
         private UIDropDown net_type;
         private UIDropDown netEle;
         private UIButton dumpNet;
-        private UIButton dumpedFolderButton;
+
         private UILabel dumpedTotal;
         private UICheckBox dumpMeshOnly;
         private UICheckBox dumpDiffuseOnly;
 
+        private UIButton dumpedFolderButton;
+
+        //public UICheckBox dumpedFolderOpen;
 
         private static NetDumpPanel _instance;
 
@@ -43,6 +45,8 @@ namespace RoadDumpTools
 
         public override void Start()
         {
+            LoadResources();
+
             atlas = UIUtils.GetAtlas("Ingame");
             backgroundSprite = "MenuPanel";
             color = new Color32(255, 255, 255, 255);
@@ -57,19 +61,6 @@ namespace RoadDumpTools
             // Title Bar
             m_title = AddUIComponent<UITitleBar>();
             m_title.title = "Network Dump Tools";
-            //m_title.isModal = true;
-
-            /*
-            label = AddUIComponent<UILabel>();
-            label.text = "Dumping Networks:\n_________________________";
-            label.autoSize = false;
-            label.width = 240;
-            label.height = 40;
-            //label.autoHeight = true;
-            label.relativePosition = new Vector2(20, 55);
-            label.wordWrap = true;
-            label.textAlignment = UIHorizontalAlignment.Center;
-            */
 
             UILabel net_type_label = AddUIComponent<UILabel>();
             net_type_label.text = "Mesh Type:";
@@ -135,33 +126,85 @@ namespace RoadDumpTools
             dumpNet.relativePosition = new Vector2(70, height - dumpNet.height - 40);
             dumpNet.width = 150;
 
+            dumpedTotal = AddUIComponent<UILabel>();
+            dumpedTotal.text = "Total Dumped Items: (0)";
+            dumpedTotal.textScale = 0.8f;
+            dumpedTotal.autoSize = false;
+            dumpedTotal.width = 170f;
+            dumpedTotal.height = 20f;
+            dumpedTotal.relativePosition = new Vector2(20, height - dumpNet.height + 5);
+            dumpedTotal.tooltip = "Total Items Dumped During Session - Includes Duplicate Dumps?";
+
             dumpNet.eventClick += (c, p) =>
             {
                 if (isVisible)
                 {
                     DumpProcessing dumpProcess = new DumpProcessing();
-                    dumpProcess.DumpNetworks();
+                    dumpedSessionItems = dumpProcess.DumpNetworks() + dumpedSessionItems;
+                    dumpedTotal.text = "Total Dumped Items: (" + dumpedSessionItems.ToString() + ")";
                 }
             };
 
-            dumpedTotal = AddUIComponent<UILabel>();
-            dumpedTotal.text = "Total Dumped Items: (0)";
-            dumpedTotal.textScale = 0.8f;
-            dumpedTotal.autoSize = false;
-            dumpedTotal.width = 160f;
-            dumpedTotal.height = 20f;
-            dumpedTotal.relativePosition = new Vector2(20, height - dumpNet.height);
+           
+
             //list files dumped and open import folder button!
 
-            dumpedFolderButton = UIUtils.CreateButton(this);
-            dumpedFolderButton.text = "Import Folder";
-            dumpedFolderButton.textScale = 0.8f;
-            dumpedFolderButton.relativePosition = new Vector2(200, height - dumpNet.height - 40);
+            
+            dumpedFolderButton = UIUtils.CreateButtonSpriteImage(this, m_atlas);
+            dumpedFolderButton.normalBgSprite = "ButtonMenu";
+            dumpedFolderButton.hoveredBgSprite = "ButtonMenuHovered";
+            dumpedFolderButton.pressedBgSprite = "ButtonMenuPressed";
+            dumpedFolderButton.disabledBgSprite = "ButtonMenuDisabled";
+            dumpedFolderButton.normalFgSprite = "Folder";
+            dumpedFolderButton.relativePosition = new Vector2(210, height - dumpNet.height-2);
             dumpedFolderButton.height = 25;
-            dumpedFolderButton.width = 80;
+            dumpedFolderButton.width = 31;
+            dumpedFolderButton.tooltip = "Open Import Folder (file dump location)";
 
-           
+            dumpedFolderButton.eventClick += (c, p) =>
+            {
+                if (isVisible)
+                {
+                    //windows only for now
+                    //not working lookat other code?
+                    string importPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) +  "\\Colossal Order" + "\\Cities_Skylines" + "\\Addons" + "\\Import";
+                    Process.Start("explorer.exe", importPath);
+                }
+            };
+
         }
+
+        public string getNetType()
+        {
+            return net_type.selectedValue;
+        }
+
+            private void LoadResources()
+        {
+            string[] spriteNames = new string[]
+            {
+                "Folder",
+                "FolderDisabled",
+                "FolderFocused",
+                "FolderHovered",
+                "FolderPressed"
+            };
+
+            m_atlas = ResourceLoader.CreateTextureAtlas("RoadDumpTools", spriteNames, "RoadDumpTools.Icons.");
+
+            UITextureAtlas defaultAtlas = ResourceLoader.GetAtlas("Ingame");
+            Texture2D[] textures = new Texture2D[]
+            {
+                defaultAtlas["ButtonMenu"].texture,
+                defaultAtlas["ButtonMenuFocused"].texture,
+                defaultAtlas["ButtonMenuHovered"].texture,
+                defaultAtlas["ButtonMenuPressed"].texture,
+                defaultAtlas["ButtonMenuDisabled"].texture
+            };
+
+            ResourceLoader.AddTexturesInAtlas(m_atlas, textures);
+        }
+
 
     }
 

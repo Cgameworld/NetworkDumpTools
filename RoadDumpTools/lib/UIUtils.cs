@@ -27,6 +27,17 @@ namespace SamsamTS
             return button;
         }
 
+        public static UIButton CreateButtonSpriteImage(UIComponent parent, UITextureAtlas atlas_a)
+        {
+            UIButton button = (UIButton)parent.AddUIComponent<UIButton>();
+
+            button.atlas = atlas_a;
+            button.size = new Vector2(90f, 30f);
+            button.canFocus = false;
+
+            return button;
+        }
+
         public static UICheckBox CreateCheckBox(UIComponent parent)
         {
             UICheckBox checkBox = (UICheckBox)parent.AddUIComponent<UICheckBox>();

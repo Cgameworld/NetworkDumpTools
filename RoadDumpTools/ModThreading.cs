@@ -13,7 +13,6 @@ namespace RoadDumpTools
     public class ModThreading : ThreadingExtensionBase
     {
         private bool _processed = false;
-        ToolController sim_init = Singleton<ToolController>.instance;
 
         public override void OnUpdate(float realTimeDelta, float simulationTimeDelta)
         {

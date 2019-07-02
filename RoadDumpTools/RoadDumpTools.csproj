@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DumpProcessing.cs" />
+    <Compile Include="lib\ResourceLoader.cs" />
     <Compile Include="NetDumpPanel.cs" />
     <Compile Include="ModThreading.cs" />
     <Compile Include="NetDumpTools.cs" />
@@ -67,6 +68,12 @@
     <Compile Include="lib\UIUtils.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Icons\Folder.png" />
+    <EmbeddedResource Include="Icons\FolderDisabled.png" />
+    <EmbeddedResource Include="Icons\FolderFocused.png" />
+    <EmbeddedResource Include="Icons\FolderHovered.png" />
+    <EmbeddedResource Include="Icons\FolderPressed.png" />
+    <Content Include="Icons\license.txt" />
     <Content Include="lib\ObjUnity3D.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

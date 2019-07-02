@@ -13,10 +13,10 @@ namespace RoadDumpTools
     {
         ToolController sim = Singleton<ToolController>.instance;
         string networkName_init;
+        int filesExported;
 
-        public void DumpNetworks()
+        public int DumpNetworks()
         {
-
             try
             {
                 // cancel if they key input was already processed in a previous frame
@@ -24,21 +24,18 @@ namespace RoadDumpTools
                 string importFolder = Path.Combine(DataLocation.addonsPath, "Import");
                 string networkName;
                 string filename;
+                Material material;
+
+                Debug.Log("selectednettype: " + NetDumpPanel.instance.getNetType());
+
                 if (networkName_init.Contains("_Data"))
                 {
                     networkName = networkName_init.Substring(0, networkName_init.Length - 1);
                 }
                 else { networkName = networkName_init; }
 
-                Debug.Log(networkName);
+                //Debug.Log(networkName);
 
-                var material = PrefabCollection<NetInfo>.FindLoaded(networkName).m_segments[0].m_segmentMaterial;
-                var source = material.GetTexture("_MainTex") as Texture2D;
-                var target = new Texture2D(source.width, source.height, TextureFormat.RGBAFloat, true);
-                target.SetPixels(source.GetPixels());
-                target.anisoLevel = source.anisoLevel; target.filterMode = source.filterMode;
-                target.wrapMode = source.wrapMode; target.Apply();
-                UnityEngine.Object.FindObjectOfType<NetProperties>().m_downwardDiffuse = target;
 
                 if (networkName_init.Contains("_Data"))
                 {
@@ -46,19 +43,64 @@ namespace RoadDumpTools
                 }
                 else { filename = networkName.Substring(0, networkName.Length - 1); }
 
-                string diffuseTexturePath = Path.Combine(importFolder, filename + "_d.png");
-                string meshPath = Path.Combine(importFolder, filename + ".obj");
-                string lodMeshPath = Path.Combine(importFolder, filename + "_lod.obj");
+                string diffuseTexturePath = Path.Combine(importFolder, filename);
+                string meshPath = Path.Combine(importFolder, filename);
+                string lodMeshPath = Path.Combine(importFolder, filename);
+                string aFilePath = Path.Combine(importFolder, filename);
+                string pFilePath = Path.Combine(importFolder, filename);
+                string rFilePath = Path.Combine(importFolder, filename);
+
+                if (NetDumpPanel.instance.getNetType() == "Segment")
+                {
+                    material = PrefabCollection<NetInfo>.FindLoaded(networkName).m_segments[0].m_segmentMaterial;
+                    diffuseTexturePath += "_d.png";
+                    meshPath += ".obj";
+                    lodMeshPath += "_lod.obj";
+                    aFilePath += "_a.png";
+                    pFilePath += "_p.png";
+                    rFilePath += "_r.png";
+                }
+                else if (NetDumpPanel.instance.getNetType() == "Node")
+                {
+                    material = PrefabCollection<NetInfo>.FindLoaded(networkName).m_nodes[0].m_nodeMaterial;
+                    diffuseTexturePath += "_node_d.png";
+                    meshPath += "_node.obj";
+                    lodMeshPath += "_node_lod.obj";
+                    aFilePath += "_node_a.png";
+                    pFilePath += "_node_p.png";
+                    rFilePath += "_node_r.png";
+
+                }
+                else
+                {
+                    throw new System.ArgumentException("Invalid network selection type");
+                }
+
+
+
+                var source = material.GetTexture("_MainTex") as Texture2D;
+                var target = new Texture2D(source.width, source.height, TextureFormat.RGBAFloat, true);
+                target.SetPixels(source.GetPixels());
+                target.anisoLevel = source.anisoLevel; target.filterMode = source.filterMode;
+                target.wrapMode = source.wrapMode; target.Apply();
+                UnityEngine.Object.FindObjectOfType<NetProperties>().m_downwardDiffuse = target;
+
+                
 
                 /**features to add
-                 * fix lack of refreshing
-                 * add different segment meshes dropdown
-                 * add different elevations dropdown
-                 * add reset settings button
+                 * 
+                 * 
+                 * 
+                 * add reset settings button (nah)
                  * when texture is default color don't export! (also add to log)
                  * 
                  * add lod generator for exisiting files
+                 * doesn't support specular no nets have it?
+                 * add feature export all maps anyway - etc?
+                 * collapsable menu to hide advanced features?
                  */
+                 
+                 
 
                 DumpTexture2D(FlipTexture(target, false), diffuseTexturePath);
 
@@ -72,7 +114,7 @@ namespace RoadDumpTools
                 var aprmaterial = PrefabCollection<NetInfo>.FindLoaded(networkName).m_segments[0].m_segmentMaterial;
                 var aprsource = aprmaterial.GetTexture("_APRMap") as Texture2D;
 
-                DumpAPR(filename, FlipTexture(aprsource, false));
+                DumpAPR(filename, FlipTexture(aprsource, false), aFilePath, pFilePath, rFilePath, true);
 
                 //for workshop roads display disclaimer!
                 // display message
@@ -80,7 +122,9 @@ namespace RoadDumpTools
 
                 ExceptionPanel panel = UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel");
                 panel.SetMessage("Network Dump Successful", "Network Name: " + networkName + "\n\nDumped Items:\n" + diffuseTexturePath + "\n" + meshPath + "\n"
-                    + lodMeshPath, false);
+                    + lodMeshPath + "\n" + aFilePath + "\n"+ pFilePath + "\n" + rFilePath, false);
+
+                filesExported = 6;
 
             }
             catch (Exception e)
@@ -88,16 +132,18 @@ namespace RoadDumpTools
 
                 ExceptionPanel panel = UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel");
                 panel.SetMessage("Network Dump Failed", "" + e, false);
+
+                filesExported = 0;
             }
 
 
+            return filesExported;
         }
-
 
         //Texture flipping script from https://stackoverflow.com/questions/35950660/unity-180-rotation-for-a-texture2d-or-maybe-flip-both
         Texture2D FlipTexture(Texture2D original, bool upSideDown = true)
         {
-
+            
             Texture2D flipped = new Texture2D(original.width, original.height);
 
             int xN = original.width;
@@ -123,10 +169,9 @@ namespace RoadDumpTools
             return flipped;
         }
 
-
         //Methods below taken from ModTools
         // https://github.com/bloodypenguin/Skylines-ModTools
-        private static void DumpAPR(string assetName, Texture2D aprMap, bool extract = true)
+        private static void DumpAPR(string assetName, Texture2D aprMap, string ap, string pp, string rp, bool extract)
         {
             if (aprMap == null)
             {
@@ -140,9 +185,22 @@ namespace RoadDumpTools
                 var p1 = new Color32[length].Invert();
                 var r1 = new Color32[length].Invert();
                 aprMap.ExtractChannels(a1, p1, r1, null, true, true, true, true, true, false, false);
-                TextureUtil.DumpTextureToPNG(a1.ColorsToTexture(aprMap.width, aprMap.height), $"{assetName}_a");
-                TextureUtil.DumpTextureToPNG(p1.ColorsToTexture(aprMap.width, aprMap.height), $"{assetName}_p");
-                TextureUtil.DumpTextureToPNG(r1.ColorsToTexture(aprMap.width, aprMap.height), $"{assetName}_r");
+                
+                //checks to see if the textures are the default color
+                if (IsAlphaDefault(a1.ColorsToTexture(aprMap.width, aprMap.height)) == false)
+                {
+                    TextureUtil.DumpTextureToPNG(a1.ColorsToTexture(aprMap.width, aprMap.height), ap);
+                }
+
+                if (IsPavementOrRoadDefault(p1.ColorsToTexture(aprMap.width, aprMap.height)) == false)
+                {
+                    TextureUtil.DumpTextureToPNG(p1.ColorsToTexture(aprMap.width, aprMap.height), pp);
+                }
+                if (IsPavementOrRoadDefault(r1.ColorsToTexture(aprMap.width, aprMap.height)) == false)
+                {
+                    TextureUtil.DumpTextureToPNG(r1.ColorsToTexture(aprMap.width, aprMap.height), rp);
+                }
+
             }
             else
             {
@@ -150,6 +208,32 @@ namespace RoadDumpTools
             }
         }
 
+        public static bool IsAlphaDefault(Texture2D tex)
+        {
+
+            for (int x = 0; x < tex.width; x++)
+            {
+                for (int y = 0; y < tex.height; y++)
+                {
+                    if (tex.GetPixel(x, y).Equals(Color.white)){}
+                    else { return false; }
+                }
+            }
+            return true;
+        }
+
+        public static bool IsPavementOrRoadDefault(Texture2D tex)
+        { 
+            for (int x = 0; x < tex.width; x++)
+            {
+                for (int y = 0; y < tex.height; y++)
+                {
+                    if (tex.GetPixel(x, y).Equals(Color.black)){}
+                    else { return false; }
+                }
+            }
+            return true;
+        }
 
 
         public static void DumpTexture2D(Texture2D texture, string filename)
