@@ -25,10 +25,13 @@ namespace RoadDumpTools
                 string importFolder = Path.Combine(DataLocation.addonsPath, "Import");
                 string networkName;
                 string filename;
-                
                 Material material;
+                Material aprmaterial;
+                Mesh roadMesh;
+                Mesh roadMeshLod;
+                
 
-                Debug.Log("selectednettype: " + NetDumpPanel.instance.getNetType());
+                //Debug.Log("selectednettype: " + NetDumpPanel.instance.getNetType());
 
                 if (networkName_init.Contains("_Data"))
                 {
@@ -45,6 +48,25 @@ namespace RoadDumpTools
                 }
                 else { filename = networkName.Substring(0, networkName.Length - 1); }
 
+
+                int meshnum = 0;
+
+                if (int.TryParse(NetDumpPanel.instance.GetMeshNumber(), out meshnum))
+                {
+                    if (meshnum > 1)
+                    {
+                        Debug.Log("mnbefore" + meshnum);
+                        filename = filename + "_mesh" + meshnum;
+                    }
+                    meshnum = meshnum - 1; //adjust for array
+                    Debug.Log("mnafter" + meshnum);
+                }
+                else
+                {
+                    throw new System.ArgumentException("Mesh Number Not Found");
+                }
+
+
                 string diffuseTexturePath = Path.Combine(importFolder, filename);
                 string meshPath = Path.Combine(importFolder, filename);
                 string lodMeshPath = Path.Combine(importFolder, filename);
@@ -52,26 +74,36 @@ namespace RoadDumpTools
                 string pFilePath = Path.Combine(importFolder, filename);
                 string rFilePath = Path.Combine(importFolder, filename);
 
-                if (NetDumpPanel.instance.getNetType() == "Segment")
+                Debug.Log("meshnum" + meshnum);
+
+                
+
+                if (NetDumpPanel.instance.GetNetworkType() == "Segment")
                 {
-                    material = PrefabCollection<NetInfo>.FindLoaded(networkName).m_segments[0].m_segmentMaterial;
+                    material = PrefabCollection<NetInfo>.FindLoaded(networkName).m_segments[meshnum].m_segmentMaterial;
                     diffuseTexturePath += "_d.png";
                     meshPath += ".obj";
                     lodMeshPath += "_lod.obj";
                     aFilePath += "_a.png";
                     pFilePath += "_p.png";
                     rFilePath += "_r.png";
+                    roadMesh = PrefabCollection<NetInfo>.FindLoaded(networkName).m_segments[meshnum].m_mesh;
+                    roadMeshLod = PrefabCollection<NetInfo>.FindLoaded(networkName).m_segments[meshnum].m_lodMesh;
+                    aprmaterial = PrefabCollection<NetInfo>.FindLoaded(networkName).m_segments[meshnum].m_segmentMaterial;
+
                 }
-                else if (NetDumpPanel.instance.getNetType() == "Node")
+                else if (NetDumpPanel.instance.GetNetworkType() == "Node")
                 {
-                    material = PrefabCollection<NetInfo>.FindLoaded(networkName).m_nodes[0].m_nodeMaterial;
+                    material = PrefabCollection<NetInfo>.FindLoaded(networkName).m_nodes[meshnum].m_nodeMaterial;
                     diffuseTexturePath += "_node_d.png";
                     meshPath += "_node.obj";
                     lodMeshPath += "_node_lod.obj";
                     aFilePath += "_node_a.png";
                     pFilePath += "_node_p.png";
                     rFilePath += "_node_r.png";
-
+                    roadMesh = PrefabCollection<NetInfo>.FindLoaded(networkName).m_nodes[meshnum].m_mesh;
+                    roadMeshLod = PrefabCollection<NetInfo>.FindLoaded(networkName).m_nodes[meshnum].m_lodMesh;
+                    aprmaterial = PrefabCollection<NetInfo>.FindLoaded(networkName).m_nodes[meshnum].m_nodeMaterial;
                 }
                 else
                 {
@@ -87,7 +119,7 @@ namespace RoadDumpTools
                 target.wrapMode = source.wrapMode; target.Apply();
                 UnityEngine.Object.FindObjectOfType<NetProperties>().m_downwardDiffuse = target;
 
-                
+
 
                 /**features to add
                  * 
@@ -103,20 +135,33 @@ namespace RoadDumpTools
                  * add log button shows log of all exported roads? - do it by adding file name to string as it
                  * keyboard shortcut reimports road exported (find method in ILSPY?)!
                  */
-                 
-                 
 
-                DumpTexture2D(FlipTexture(target, false), diffuseTexturePath);
+
+                Texture2D aprsource = aprmaterial.GetTexture("_APRMap") as Texture2D;
+
+                //dont need the if else for this texture flipped when reimported?
+                if (meshnum == 0)
+                {
+                    DumpTexture2D(FlipTexture(target, false), diffuseTexturePath);
+                    DumpAPR(filename, FlipTexture(aprsource, false), aFilePath, pFilePath, rFilePath, true);
+                    Debug.Log("Flip Texture On");
+                }
+                else
+                {
+                    DumpTexture2D(target, diffuseTexturePath);
+                    DumpAPR(filename, aprsource, aFilePath, pFilePath, rFilePath, true);
+                    Debug.Log("Flip Texture Off");
+                }
 
                 //dump meshes
-                Mesh roadMesh = PrefabCollection<NetInfo>.FindLoaded(networkName).m_segments[0].m_mesh;
+               // Mesh roadMesh = PrefabCollection<NetInfo>.FindLoaded(networkName).m_segments[meshnum].m_mesh;
                 DumpMeshToOBJ(roadMesh, meshPath);
 
-                Mesh roadMeshLod = PrefabCollection<NetInfo>.FindLoaded(networkName).m_segments[0].m_lodMesh;
+               // Mesh roadMeshLod = PrefabCollection<NetInfo>.FindLoaded(networkName).m_segments[meshnum].m_lodMesh;
                 DumpMeshToOBJ(roadMeshLod, lodMeshPath);
 
-                var aprmaterial = PrefabCollection<NetInfo>.FindLoaded(networkName).m_segments[0].m_segmentMaterial;
-                var aprsource = aprmaterial.GetTexture("_APRMap") as Texture2D;
+                //var aprmaterial = PrefabCollection<NetInfo>.FindLoaded(networkName).m_segments[meshnum].m_segmentMaterial;
+                
 
                 DumpAPR(filename, FlipTexture(aprsource, false), aFilePath, pFilePath, rFilePath, true);
 
@@ -158,7 +203,7 @@ namespace RoadDumpTools
         //Texture flipping script from https://stackoverflow.com/questions/35950660/unity-180-rotation-for-a-texture2d-or-maybe-flip-both
         Texture2D FlipTexture(Texture2D original, bool upSideDown = true)
         {
-            
+
             Texture2D flipped = new Texture2D(original.width, original.height);
 
             int xN = original.width;
@@ -222,6 +267,7 @@ namespace RoadDumpTools
                 TextureUtil.DumpTextureToPNG(aprMap, $"{assetName}_APR");
             }
         }
+        
 
         public static bool IsAlphaDefault(Texture2D tex)
         {
@@ -284,6 +330,45 @@ namespace RoadDumpTools
                 File.Delete(fileName);
             }
 
+            
+            /*
+            Debug.Log("mesh vertices for Mesh: " + fileName);
+            string outputVerts = "";
+
+            Vector3[] vertices;
+            vertices = mesh.vertices;
+
+            for (int i = 0; i < vertices.Length; i++)
+            {
+                if (vertices[i].x == 5.0f)
+                {
+                    Debug.Log("checked x worked!");
+                    outputVerts += vertices[i] + "\n";
+                    vertices[i].x = 6.0f;
+                }
+                if (vertices[i].x == -5.0f)
+                {
+                    Debug.Log("checked x worked!");
+                    outputVerts += vertices[i] + "\n";
+                    vertices[i].x = -6.0f;
+                }
+
+            }
+            Debug.Log(outputVerts);
+
+            mesh.vertices = vertices;
+            mesh.RecalculateBounds();
+            //recalc here less overhead  
+
+            string outputVerts2 = "";
+            for (int i = 0; i < mesh.vertices.Length; i++)
+            {
+                    outputVerts2 += mesh.vertices[i] + "afterappl\n";
+
+            }
+            Debug.Log(outputVerts2);
+            */
+
             var meshToDump = mesh;
 
             if (!mesh.isReadable)
@@ -291,6 +376,7 @@ namespace RoadDumpTools
                 try
                 {
                     // copy the relevant data to the temporary mesh
+                    Debug.Log("mesh not readable");
                     meshToDump = new Mesh
                     {
                         vertices = mesh.vertices,
@@ -310,6 +396,7 @@ namespace RoadDumpTools
 
             try
             {
+                Debug.Log("mesh readable");
                 using (var stream = new FileStream(fileName, FileMode.Create))
                 {
                     OBJLoader.ExportOBJ(meshToDump.EncodeOBJ(), stream);
