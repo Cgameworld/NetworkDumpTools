@@ -69,11 +69,8 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\Folder.png" />
-    <EmbeddedResource Include="Icons\FolderDisabled.png" />
-    <EmbeddedResource Include="Icons\FolderFocused.png" />
-    <EmbeddedResource Include="Icons\FolderHovered.png" />
-    <EmbeddedResource Include="Icons\FolderPressed.png" />
     <Content Include="Icons\license.txt" />
+    <EmbeddedResource Include="Icons\Log.png" />
     <Content Include="lib\ObjUnity3D.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

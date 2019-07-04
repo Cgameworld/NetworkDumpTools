@@ -38,6 +38,14 @@ namespace SamsamTS
             return button;
         }
 
+        public static UILabel CreateLabelSpriteImage(UIComponent parent, UITextureAtlas atlas_a)
+        {
+            UILabel label = (UILabel)parent.AddUIComponent<UILabel>();
+            label.atlas = atlas_a;
+            label.canFocus = false;
+            return label;
+        }
+
         public static UICheckBox CreateCheckBox(UIComponent parent)
         {
             UICheckBox checkBox = (UICheckBox)parent.AddUIComponent<UICheckBox>();

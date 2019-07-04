@@ -14,8 +14,9 @@ namespace RoadDumpTools
         ToolController sim = Singleton<ToolController>.instance;
         string networkName_init;
         int filesExported;
+        string exportedFilePaths;
 
-        public int DumpNetworks()
+        public string [] DumpNetworks()
         {
             try
             {
@@ -24,6 +25,7 @@ namespace RoadDumpTools
                 string importFolder = Path.Combine(DataLocation.addonsPath, "Import");
                 string networkName;
                 string filename;
+                
                 Material material;
 
                 Debug.Log("selectednettype: " + NetDumpPanel.instance.getNetType());
@@ -98,6 +100,8 @@ namespace RoadDumpTools
                  * doesn't support specular no nets have it?
                  * add feature export all maps anyway - etc?
                  * collapsable menu to hide advanced features?
+                 * add log button shows log of all exported roads? - do it by adding file name to string as it
+                 * keyboard shortcut reimports road exported (find method in ILSPY?)!
                  */
                  
                  
@@ -121,10 +125,21 @@ namespace RoadDumpTools
                 //also add log for apr textures!
 
                 ExceptionPanel panel = UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel");
-                panel.SetMessage("Network Dump Successful", "Network Name: " + networkName + "\n\nDumped Items:\n" + diffuseTexturePath + "\n" + meshPath + "\n"
-                    + lodMeshPath + "\n" + aFilePath + "\n"+ pFilePath + "\n" + rFilePath, false);
 
-                filesExported = 6;
+                string [] combinedPaths =   {diffuseTexturePath, meshPath, lodMeshPath, aFilePath, pFilePath, rFilePath };
+
+                exportedFilePaths = "";
+
+                for (int i=0; i<combinedPaths.Length; i++)
+                {
+                    if (File.Exists(combinedPaths[i]))
+                    {
+                        exportedFilePaths += "\n" + combinedPaths[i];
+                        filesExported += 1;
+                    }
+                }
+
+                panel.SetMessage("Network Dump Successful", "Network Name: " + networkName + "\n\nDumped Items:\n" + exportedFilePaths, false);
 
             }
             catch (Exception e)
@@ -136,8 +151,8 @@ namespace RoadDumpTools
                 filesExported = 0;
             }
 
-
-            return filesExported;
+            string[] returnArray = { filesExported.ToString(), exportedFilePaths };
+            return returnArray;
         }
 
         //Texture flipping script from https://stackoverflow.com/questions/35950660/unity-180-rotation-for-a-texture2d-or-maybe-flip-both
