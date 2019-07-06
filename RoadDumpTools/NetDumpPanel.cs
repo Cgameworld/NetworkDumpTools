@@ -27,6 +27,7 @@ namespace RoadDumpTools
         private UILabel dumpedTotal;
         private UICheckBox dumpMeshOnly;
         private UICheckBox dumpDiffuseOnly;
+        private UICheckBox flippedTextures;
         private UITextField customFilePrefix;
 
         private UIButton dumpedFolderButton;
@@ -126,6 +127,7 @@ namespace RoadDumpTools
 
             advancedOptionsButton = UIUtils.CreateButtonSpriteImage(this, m_atlas);
             advancedOptionsButton.normalBgSprite = "SubBarButtonBase";
+            advancedOptionsButton.hoveredBgSprite = "SubBarButtonBaseHovered";
             advancedOptionsButton.text = "Export Customization";
             advancedOptionsButton.textScale = 0.8f;
             advancedOptionsButton.textPadding.top = 5;
@@ -158,20 +160,28 @@ namespace RoadDumpTools
             dumpDiffuseOnly.tooltip = "Only dump the diffuse texture (file ending in _d.png)";
             dumpDiffuseOnly.isVisible = false;
 
+            flippedTextures = UIUtils.CreateCheckBox(this);
+            flippedTextures.text = "Flip Dumped Textures";
+            flippedTextures.isChecked = true;
+            flippedTextures.relativePosition = new Vector2(50, 270);
+            flippedTextures.tooltip = "Flip textures horizontally after exporting\n(default setting is true)\nThe game stores a horizontally flipped version of\n the original texture, this corrects it by flipping it back";
+            flippedTextures.isVisible = false;
+
+
             UILabel customFilePrefixLabel = AddUIComponent<UILabel>();
             customFilePrefixLabel.text = "Custom File Prefix:";
             customFilePrefixLabel.textAlignment = UIHorizontalAlignment.Center;
             customFilePrefixLabel.autoSize = false;
             customFilePrefixLabel.width = 225f;
             customFilePrefixLabel.height = 20f;
-            customFilePrefixLabel.relativePosition = new Vector2(30, 270);
+            customFilePrefixLabel.relativePosition = new Vector2(30, 300);
             customFilePrefixLabel.isVisible = false;
 
             customFilePrefix = UIUtils.CreateTextField(this);
             customFilePrefix.width = 225f;
             customFilePrefix.height = 28f;
             customFilePrefix.padding = new RectOffset(6, 6, 6, 6);
-            customFilePrefix.relativePosition = new Vector3(30, 290);
+            customFilePrefix.relativePosition = new Vector3(30, 320);
             customFilePrefix.tooltip = "Enter a custom file prefix here for the dumped files\nAsset name is the file name if left blank";
             customFilePrefix.isVisible = false;
 
@@ -186,15 +196,17 @@ namespace RoadDumpTools
                         advancedOptionsButtonToggle.backgroundSprite = "PropertyGroupClosed";
                         dumpMeshOnly.isVisible = false;
                         dumpDiffuseOnly.isVisible = false;
+                        flippedTextures.isVisible = false;
                         customFilePrefixLabel.isVisible = false;
                         customFilePrefix.isVisible = false;
                     }
                     else
                     {
-                        exportCustOffset = 120;
+                        exportCustOffset = 150;
                         advancedOptionsButtonToggle.backgroundSprite = "PropertyGroupOpen";
                         dumpMeshOnly.isVisible = true;
                         dumpDiffuseOnly.isVisible = true;
+                        flippedTextures.isVisible = true;
                         customFilePrefixLabel.isVisible = true;
                         customFilePrefix.isVisible = true;
                     }
@@ -209,6 +221,7 @@ namespace RoadDumpTools
 
             meshResizeButton = UIUtils.CreateButtonSpriteImage(this, m_atlas);
             meshResizeButton.normalBgSprite = "SubBarButtonBase";
+            meshResizeButton.hoveredBgSprite = "SubBarButtonBaseHovered";
             meshResizeButton.text = "Mesh Resizing";
             meshResizeButton.textScale = 0.8f;
             meshResizeButton.textPadding.top = 5;
@@ -350,17 +363,14 @@ namespace RoadDumpTools
             meshResizeButtonToggle.relativePosition = meshResizeButtonToggleIntial + new Vector3(0, exportCustOffset);
         }
 
-        public string GetMeshNumber()
-        {
-            return seginput.text;
-        }
-        public string GetNetworkType()
-        {
-            return net_type.selectedValue;
-        }
+        public string MeshNumber => seginput.text;
+        public string NetworkType => net_type.selectedValue;
+        public string GetCustomFilePrefix() => customFilePrefix.text;
+        public bool GetDumpMeshOnly => dumpMeshOnly.isChecked;
+        public bool GetDumpDiffuseOnly => dumpDiffuseOnly.isChecked;
+        public bool GetIfFlippedTextures => flippedTextures.isChecked;
 
-
-            private void LoadResources()
+        private void LoadResources()
         {
             string[] spriteNames = new string[]
             {
@@ -372,7 +382,7 @@ namespace RoadDumpTools
             m_atlas = ResourceLoader.CreateTextureAtlas("RoadDumpTools", spriteNames, "RoadDumpTools.Icons.");
 
             UITextureAtlas defaultAtlas = ResourceLoader.GetAtlas("Ingame");
-            Texture2D[] textures = new Texture2D[8];
+            Texture2D[] textures = new Texture2D[10];
 
             textures[0] = defaultAtlas["ButtonMenu"].texture;
             textures[1] = defaultAtlas["ButtonMenuFocused"].texture;
@@ -382,8 +392,10 @@ namespace RoadDumpTools
 
             UITextureAtlas mapAtlas = ResourceLoader.GetAtlas("InMapEditor");
             textures[5] = mapAtlas["SubBarButtonBase"].texture;
-            textures[6] = mapAtlas["PropertyGroupClosed"].texture;
-            textures[7] = mapAtlas["PropertyGroupOpen"].texture;
+            textures[6] = mapAtlas["SubBarButtonBaseHovered"].texture;
+            textures[7] = mapAtlas["SubBarButtonBaseDisabled"].texture;
+            textures[8] = mapAtlas["PropertyGroupClosed"].texture;
+            textures[9] = mapAtlas["PropertyGroupOpen"].texture;
             
 
             ResourceLoader.AddTexturesInAtlas(m_atlas, textures);

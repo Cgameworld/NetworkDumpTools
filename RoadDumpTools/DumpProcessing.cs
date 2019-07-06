@@ -30,9 +30,6 @@ namespace RoadDumpTools
                 Mesh roadMesh;
                 Mesh roadMeshLod;
                 
-
-                //Debug.Log("selectednettype: " + NetDumpPanel.instance.getNetType());
-
                 if (networkName_init.Contains("_Data"))
                 {
                     networkName = networkName_init.Substring(0, networkName_init.Length - 1);
@@ -41,17 +38,24 @@ namespace RoadDumpTools
 
                 //Debug.Log(networkName);
 
-
-                if (networkName_init.Contains("_Data"))
+                if (NetDumpPanel.instance.GetCustomFilePrefix() == "")
                 {
-                    filename = networkName.Substring(0, networkName.Length - 5).Replace("/", string.Empty);
+                    Debug.Log("no custom prefix");
+                    if (networkName_init.Contains("_Data"))
+                    {
+                        filename = networkName.Substring(0, networkName.Length - 5).Replace("/", string.Empty);
+                    }
+                    else { filename = networkName.Substring(0, networkName.Length - 1); }
                 }
-                else { filename = networkName.Substring(0, networkName.Length - 1); }
-
-
+                else
+                {
+                    Debug.Log("custom prefix");
+                    filename = NetDumpPanel.instance.GetCustomFilePrefix();
+                }
+                Debug.Log("filename: aa : " + filename);
                 int meshnum = 0;
 
-                if (int.TryParse(NetDumpPanel.instance.GetMeshNumber(), out meshnum))
+                if (int.TryParse(NetDumpPanel.instance.MeshNumber, out meshnum))
                 {
                     if (meshnum > 1)
                     {
@@ -78,7 +82,7 @@ namespace RoadDumpTools
 
                 
 
-                if (NetDumpPanel.instance.GetNetworkType() == "Segment")
+                if (NetDumpPanel.instance.NetworkType== "Segment")
                 {
                     material = PrefabCollection<NetInfo>.FindLoaded(networkName).m_segments[meshnum].m_segmentMaterial;
                     diffuseTexturePath += "_d.png";
@@ -92,7 +96,7 @@ namespace RoadDumpTools
                     aprmaterial = PrefabCollection<NetInfo>.FindLoaded(networkName).m_segments[meshnum].m_segmentMaterial;
 
                 }
-                else if (NetDumpPanel.instance.GetNetworkType() == "Node")
+                else if (NetDumpPanel.instance.NetworkType== "Node")
                 {
                     material = PrefabCollection<NetInfo>.FindLoaded(networkName).m_nodes[meshnum].m_nodeMaterial;
                     diffuseTexturePath += "_node_d.png";
@@ -137,26 +141,35 @@ namespace RoadDumpTools
                  * if mesh problems import in blender - check UV - reexport as fbx!
                  */
 
-
+                bool flippingTextures = NetDumpPanel.instance.GetIfFlippedTextures;
                 Texture2D aprsource = aprmaterial.GetTexture("_APRMap") as Texture2D;
 
+                if (NetDumpPanel.instance.GetDumpMeshOnly && NetDumpPanel.instance.GetDumpDiffuseOnly)
+                {
+                    DumpTexture2D(FlipTexture(target, false, flippingTextures), diffuseTexturePath);
+                    DumpMeshToOBJ(roadMesh, meshPath);
+                    DumpMeshToOBJ(roadMeshLod, lodMeshPath);
+                }
+                else if (NetDumpPanel.instance.GetDumpDiffuseOnly)
+                {
+                    DumpTexture2D(FlipTexture(target, false, flippingTextures), diffuseTexturePath);
+                }
+                else if (NetDumpPanel.instance.GetDumpMeshOnly)
+                {
+                    DumpMeshToOBJ(roadMesh, meshPath);
+                    DumpMeshToOBJ(roadMeshLod, lodMeshPath);
+                }
+                else
+                {
+                    DumpTexture2D(FlipTexture(target, false, flippingTextures), diffuseTexturePath);
+                    DumpAPR(filename, FlipTexture(aprsource, false, flippingTextures), aFilePath, pFilePath, rFilePath, true);
+                    Debug.Log("default dump setting!");
 
-                DumpTexture2D(FlipTexture(target, false), diffuseTexturePath);
-                DumpAPR(filename, FlipTexture(aprsource, false), aFilePath, pFilePath, rFilePath, true);
-                Debug.Log("Flip Texture On");
-
-                //dump meshes
-               // Mesh roadMesh = PrefabCollection<NetInfo>.FindLoaded(networkName).m_segments[meshnum].m_mesh;
-                DumpMeshToOBJ(roadMesh, meshPath);
-
-               // Mesh roadMeshLod = PrefabCollection<NetInfo>.FindLoaded(networkName).m_segments[meshnum].m_lodMesh;
-                DumpMeshToOBJ(roadMeshLod, lodMeshPath);
-
-                //var aprmaterial = PrefabCollection<NetInfo>.FindLoaded(networkName).m_segments[meshnum].m_segmentMaterial;
-                
-
-                DumpAPR(filename, FlipTexture(aprsource, false), aFilePath, pFilePath, rFilePath, true);
-
+                    //dump meshes
+                    DumpMeshToOBJ(roadMesh, meshPath);
+                    DumpMeshToOBJ(roadMeshLod, lodMeshPath);
+                    DumpAPR(filename, FlipTexture(aprsource, false, flippingTextures), aFilePath, pFilePath, rFilePath, true);
+                }
                 //for workshop roads display disclaimer!
                 // display message
                 //also add log for apr textures!
@@ -193,9 +206,13 @@ namespace RoadDumpTools
         }
 
         //Texture flipping script from https://stackoverflow.com/questions/35950660/unity-180-rotation-for-a-texture2d-or-maybe-flip-both
-        Texture2D FlipTexture(Texture2D original, bool upSideDown = true)
+        Texture2D FlipTexture(Texture2D original, bool upSideDown = true, bool isflip = true)
         {
-
+            if (isflip == false)
+            {
+                Debug.Log("no flipping!!");
+                return original;
+            }
             Texture2D flipped = new Texture2D(original.width, original.height);
 
             int xN = original.width;
