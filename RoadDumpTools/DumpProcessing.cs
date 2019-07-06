@@ -134,24 +134,16 @@ namespace RoadDumpTools
                  * collapsable menu to hide advanced features?
                  * add log button shows log of all exported roads? - do it by adding file name to string as it
                  * keyboard shortcut reimports road exported (find method in ILSPY?)!
+                 * if mesh problems import in blender - check UV - reexport as fbx!
                  */
 
 
                 Texture2D aprsource = aprmaterial.GetTexture("_APRMap") as Texture2D;
 
-                //dont need the if else for this texture flipped when reimported?
-                if (meshnum == 0)
-                {
-                    DumpTexture2D(FlipTexture(target, false), diffuseTexturePath);
-                    DumpAPR(filename, FlipTexture(aprsource, false), aFilePath, pFilePath, rFilePath, true);
-                    Debug.Log("Flip Texture On");
-                }
-                else
-                {
-                    DumpTexture2D(target, diffuseTexturePath);
-                    DumpAPR(filename, aprsource, aFilePath, pFilePath, rFilePath, true);
-                    Debug.Log("Flip Texture Off");
-                }
+
+                DumpTexture2D(FlipTexture(target, false), diffuseTexturePath);
+                DumpAPR(filename, FlipTexture(aprsource, false), aFilePath, pFilePath, rFilePath, true);
+                Debug.Log("Flip Texture On");
 
                 //dump meshes
                // Mesh roadMesh = PrefabCollection<NetInfo>.FindLoaded(networkName).m_segments[meshnum].m_mesh;
