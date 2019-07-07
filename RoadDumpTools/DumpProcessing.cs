@@ -29,14 +29,12 @@ namespace RoadDumpTools
                 Material aprmaterial;
                 Mesh roadMesh;
                 Mesh roadMeshLod;
-                
+
                 if (networkName_init.Contains("_Data"))
                 {
                     networkName = networkName_init.Substring(0, networkName_init.Length - 1);
                 }
                 else { networkName = networkName_init; }
-
-                //Debug.Log(networkName);
 
                 if (NetDumpPanel.instance.GetCustomFilePrefix() == "")
                 {
@@ -59,16 +57,65 @@ namespace RoadDumpTools
                 {
                     if (meshnum > 1)
                     {
-                        Debug.Log("mnbefore" + meshnum);
+                        //Debug.Log("mnbefore" + meshnum);
                         filename = filename + "_mesh" + meshnum;
                     }
                     meshnum = meshnum - 1; //adjust for array
-                    Debug.Log("mnafter" + meshnum);
+                    //Debug.Log("mnafter" + meshnum);
                 }
                 else
                 {
                     throw new System.ArgumentException("Mesh Number Not Found");
                 }
+
+                //check for elevations
+                NetInfo loadedPrefab = PrefabCollection<NetInfo>.FindLoaded(networkName);
+
+                int netElevationIndex = NetDumpPanel.instance.GetNetEleIndex;
+                switch (netElevationIndex) //if null throw error!
+                {
+                    case 0:
+                        Console.WriteLine("basic ground no change");
+                        break;
+                    case 1:
+                        Console.WriteLine("Elevated");
+                        loadedPrefab = AssetEditorRoadUtils.TryGetElevated(loadedPrefab);
+                        if (loadedPrefab == null)
+                        {
+                            throw new Exception("Elevated Elevation Does Not Exist");
+                        }
+                        filename += " Elevated";
+                        break;
+                    case 2:
+                        Console.WriteLine("Bridge");
+                        loadedPrefab = AssetEditorRoadUtils.TryGetBridge(loadedPrefab);
+                        if (loadedPrefab == null)
+                        {
+                            throw new Exception("Bridge Elevation Does Not Exist");
+                        }
+                        filename += " Bridge";
+                        break;
+                    case 3:
+                        loadedPrefab = AssetEditorRoadUtils.TryGetSlope(loadedPrefab);
+                        if (loadedPrefab == null)
+                        {
+                            throw new Exception("Slope Elevation Does Not Exist");
+                        }
+                        filename += " Slope";
+                        break;
+                    case 4:
+                        loadedPrefab = AssetEditorRoadUtils.TryGetTunnel(loadedPrefab);
+                        if (loadedPrefab == null)
+                        {
+                            throw new Exception("Tunnel Elevation Does Not Exist");
+                        }
+                        filename += " Tunnel";
+                        break;
+                    default:
+                        throw new System.ArgumentOutOfRangeException("No Elevations Found");
+
+                }
+
 
 
                 string diffuseTexturePath = Path.Combine(importFolder, filename);
@@ -84,30 +131,30 @@ namespace RoadDumpTools
 
                 if (NetDumpPanel.instance.NetworkType== "Segment")
                 {
-                    material = PrefabCollection<NetInfo>.FindLoaded(networkName).m_segments[meshnum].m_segmentMaterial;
+                    material = loadedPrefab.m_segments[meshnum].m_segmentMaterial;
                     diffuseTexturePath += "_d.png";
                     meshPath += ".obj";
                     lodMeshPath += "_lod.obj";
                     aFilePath += "_a.png";
                     pFilePath += "_p.png";
                     rFilePath += "_r.png";
-                    roadMesh = PrefabCollection<NetInfo>.FindLoaded(networkName).m_segments[meshnum].m_mesh;
-                    roadMeshLod = PrefabCollection<NetInfo>.FindLoaded(networkName).m_segments[meshnum].m_lodMesh;
-                    aprmaterial = PrefabCollection<NetInfo>.FindLoaded(networkName).m_segments[meshnum].m_segmentMaterial;
+                    roadMesh = loadedPrefab.m_segments[meshnum].m_mesh;
+                    roadMeshLod = loadedPrefab.m_segments[meshnum].m_lodMesh;
+                    aprmaterial = loadedPrefab.m_segments[meshnum].m_segmentMaterial;
 
                 }
                 else if (NetDumpPanel.instance.NetworkType== "Node")
                 {
-                    material = PrefabCollection<NetInfo>.FindLoaded(networkName).m_nodes[meshnum].m_nodeMaterial;
+                    material = loadedPrefab.m_nodes[meshnum].m_nodeMaterial;
                     diffuseTexturePath += "_node_d.png";
                     meshPath += "_node.obj";
                     lodMeshPath += "_node_lod.obj";
                     aFilePath += "_node_a.png";
                     pFilePath += "_node_p.png";
                     rFilePath += "_node_r.png";
-                    roadMesh = PrefabCollection<NetInfo>.FindLoaded(networkName).m_nodes[meshnum].m_mesh;
-                    roadMeshLod = PrefabCollection<NetInfo>.FindLoaded(networkName).m_nodes[meshnum].m_lodMesh;
-                    aprmaterial = PrefabCollection<NetInfo>.FindLoaded(networkName).m_nodes[meshnum].m_nodeMaterial;
+                    roadMesh = loadedPrefab.m_nodes[meshnum].m_mesh;
+                    roadMeshLod = loadedPrefab.m_nodes[meshnum].m_lodMesh;
+                    aprmaterial = loadedPrefab.m_nodes[meshnum].m_nodeMaterial;
                 }
                 else
                 {

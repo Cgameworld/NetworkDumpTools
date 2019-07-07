@@ -164,9 +164,9 @@ namespace RoadDumpTools
             flippedTextures.text = "Flip Dumped Textures";
             flippedTextures.isChecked = true;
             flippedTextures.relativePosition = new Vector2(50, 270);
-            flippedTextures.tooltip = "Flip textures horizontally after exporting\n(default setting is true)\nThe game stores a horizontally flipped version of\n the original texture, this corrects it by flipping it back";
+            flippedTextures.tooltip = "Flip textures horizontally after exporting\n(default setting is true)\nThe game stores a horizontally flipped version of\n the original texture, this corrects it by flipping it back \n Important only for asymmetrical roads for elevated???";
             flippedTextures.isVisible = false;
-
+            ///when dropdown selected to others uncheck this one?
 
             UILabel customFilePrefixLabel = AddUIComponent<UILabel>();
             customFilePrefixLabel.text = "Custom File Prefix:";
@@ -364,6 +364,7 @@ namespace RoadDumpTools
         }
 
         public string MeshNumber => seginput.text;
+        public int GetNetEleIndex => netEle.selectedIndex;
         public string NetworkType => net_type.selectedValue;
         public string GetCustomFilePrefix() => customFilePrefix.text;
         public bool GetDumpMeshOnly => dumpMeshOnly.isChecked;
