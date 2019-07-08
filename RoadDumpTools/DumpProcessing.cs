@@ -16,7 +16,7 @@ namespace RoadDumpTools
         int filesExported;
         string exportedFilePaths;
 
-        public string [] DumpNetworks()
+        public string[] DumpNetworks()
         {
             try
             {
@@ -127,9 +127,9 @@ namespace RoadDumpTools
 
                 Debug.Log("meshnum" + meshnum);
 
-                
 
-                if (NetDumpPanel.instance.NetworkType== "Segment")
+
+                if (NetDumpPanel.instance.NetworkType == "Segment")
                 {
                     material = loadedPrefab.m_segments[meshnum].m_segmentMaterial;
                     diffuseTexturePath += "_d.png";
@@ -143,7 +143,7 @@ namespace RoadDumpTools
                     aprmaterial = loadedPrefab.m_segments[meshnum].m_segmentMaterial;
 
                 }
-                else if (NetDumpPanel.instance.NetworkType== "Node")
+                else if (NetDumpPanel.instance.NetworkType == "Node")
                 {
                     material = loadedPrefab.m_nodes[meshnum].m_nodeMaterial;
                     diffuseTexturePath += "_node_d.png";
@@ -194,8 +194,8 @@ namespace RoadDumpTools
                 if (NetDumpPanel.instance.GetDumpMeshOnly && NetDumpPanel.instance.GetDumpDiffuseOnly)
                 {
                     DumpTexture2D(FlipTexture(target, false, flippingTextures), diffuseTexturePath);
-                    DumpMeshToOBJ(roadMesh, meshPath);
-                    DumpMeshToOBJ(roadMeshLod, lodMeshPath);
+                    DumpMeshToOBJ(roadMesh, meshPath, loadedPrefab);
+                    DumpMeshToOBJ(roadMeshLod, lodMeshPath, loadedPrefab);
                 }
                 else if (NetDumpPanel.instance.GetDumpDiffuseOnly)
                 {
@@ -203,8 +203,8 @@ namespace RoadDumpTools
                 }
                 else if (NetDumpPanel.instance.GetDumpMeshOnly)
                 {
-                    DumpMeshToOBJ(roadMesh, meshPath);
-                    DumpMeshToOBJ(roadMeshLod, lodMeshPath);
+                    DumpMeshToOBJ(roadMesh, meshPath, loadedPrefab);
+                    DumpMeshToOBJ(roadMeshLod, lodMeshPath, loadedPrefab);
                 }
                 else
                 {
@@ -213,8 +213,8 @@ namespace RoadDumpTools
                     Debug.Log("default dump setting!");
 
                     //dump meshes
-                    DumpMeshToOBJ(roadMesh, meshPath);
-                    DumpMeshToOBJ(roadMeshLod, lodMeshPath);
+                    DumpMeshToOBJ(roadMesh, meshPath, loadedPrefab);
+                    DumpMeshToOBJ(roadMeshLod, lodMeshPath, loadedPrefab);
                     DumpAPR(filename, FlipTexture(aprsource, false, flippingTextures), aFilePath, pFilePath, rFilePath, true);
                 }
                 //for workshop roads display disclaimer!
@@ -223,11 +223,11 @@ namespace RoadDumpTools
 
                 ExceptionPanel panel = UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel");
 
-                string [] combinedPaths =   {diffuseTexturePath, meshPath, lodMeshPath, aFilePath, pFilePath, rFilePath };
+                string[] combinedPaths = { diffuseTexturePath, meshPath, lodMeshPath, aFilePath, pFilePath, rFilePath };
 
                 exportedFilePaths = "";
 
-                for (int i=0; i<combinedPaths.Length; i++)
+                for (int i = 0; i < combinedPaths.Length; i++)
                 {
                     if (File.Exists(combinedPaths[i]))
                     {
@@ -301,7 +301,7 @@ namespace RoadDumpTools
                 var p1 = new Color32[length].Invert();
                 var r1 = new Color32[length].Invert();
                 aprMap.ExtractChannels(a1, p1, r1, null, true, true, true, true, true, false, false);
-                
+
                 //checks to see if the textures are the default color
                 if (IsAlphaDefault(a1.ColorsToTexture(aprMap.width, aprMap.height)) == false)
                 {
@@ -323,7 +323,7 @@ namespace RoadDumpTools
                 TextureUtil.DumpTextureToPNG(aprMap, $"{assetName}_APR");
             }
         }
-        
+
 
         public static bool IsAlphaDefault(Texture2D tex)
         {
@@ -332,7 +332,7 @@ namespace RoadDumpTools
             {
                 for (int y = 0; y < tex.height; y++)
                 {
-                    if (tex.GetPixel(x, y).Equals(Color.white)){}
+                    if (tex.GetPixel(x, y).Equals(Color.white)) { }
                     else { return false; }
                 }
             }
@@ -340,12 +340,12 @@ namespace RoadDumpTools
         }
 
         public static bool IsPavementOrRoadDefault(Texture2D tex)
-        { 
+        {
             for (int x = 0; x < tex.width; x++)
             {
                 for (int y = 0; y < tex.height; y++)
                 {
-                    if (tex.GetPixel(x, y).Equals(Color.black)){}
+                    if (tex.GetPixel(x, y).Equals(Color.black)) { }
                     else { return false; }
                 }
             }
@@ -378,7 +378,7 @@ namespace RoadDumpTools
         }
 
 
-        public static void DumpMeshToOBJ(Mesh mesh, string fileName)
+        public static void DumpMeshToOBJ(Mesh mesh, string fileName, NetInfo loadedPb)
         {
             fileName = Path.Combine(Path.Combine(DataLocation.addonsPath, "Import"), fileName);
             if (File.Exists(fileName))
@@ -386,81 +386,58 @@ namespace RoadDumpTools
                 File.Delete(fileName);
             }
 
-            
-            /*
-            Debug.Log("mesh vertices for Mesh: " + fileName);
-            string outputVerts = "";
 
-            Vector3[] vertices;
-            vertices = mesh.vertices;
+            float halfWidthIntial = loadedPb.m_halfWidth;
+            float pavementWidthIntial = loadedPb.m_pavementWidth;
+            float halfWidth;
+            //float pavementWidth;
+            Vector3[] newvertices = mesh.vertices;
 
-            for (int i = 0; i < vertices.Length; i++)
+            if (float.TryParse(NetDumpPanel.instance.GetCustomHalfWidth, out halfWidth))
             {
-                if (vertices[i].x == 5.0f)
+
+                for (int i = 0; i < newvertices.Length; i++)
                 {
-                    Debug.Log("checked x worked!");
-                    outputVerts += vertices[i] + "\n";
-                    vertices[i].x = 6.0f;
-                }
-                if (vertices[i].x == -5.0f)
-                {
-                    Debug.Log("checked x worked!");
-                    outputVerts += vertices[i] + "\n";
-                    vertices[i].x = -6.0f;
-                }
-
-            }
-            Debug.Log(outputVerts);
-
-            mesh.vertices = vertices;
-            mesh.RecalculateBounds();
-            //recalc here less overhead  
-
-            string outputVerts2 = "";
-            for (int i = 0; i < mesh.vertices.Length; i++)
-            {
-                    outputVerts2 += mesh.vertices[i] + "afterappl\n";
-
-            }
-            Debug.Log(outputVerts2);
-            */
-
-            var meshToDump = mesh;
-
-            if (!mesh.isReadable)
-            {
-                try
-                {
-                    // copy the relevant data to the temporary mesh
-                    Debug.Log("mesh not readable");
-                    meshToDump = new Mesh
+                    if (newvertices[i].x == halfWidthIntial)
                     {
-                        vertices = mesh.vertices,
-                        colors = mesh.colors,
-                        triangles = mesh.triangles,
-                        normals = mesh.normals,
-                        tangents = mesh.tangents,
-                    };
-                    meshToDump.RecalculateBounds();
-                }
-                catch (Exception ex)
-                {
-                    ;
-                    return;
+                        newvertices[i].x = halfWidth;
+                    }
+                    if (newvertices[i].x == -halfWidthIntial)
+                    {
+                        newvertices[i].x = -halfWidth;
+                    }
                 }
             }
+
 
             try
             {
-                Debug.Log("mesh readable");
+                // copy the relevant data to the temporary mesh
+                // Debug.Log("mesh not readable");
+                Mesh meshToDump = new Mesh
+                {
+                    vertices = newvertices,
+                    colors = mesh.colors,
+                    triangles = mesh.triangles,
+                    normals = mesh.normals,
+                    tangents = mesh.tangents,
+                    uv = mesh.uv,
+                    uv2 = mesh.uv
+                };
+                meshToDump.RecalculateBounds();
+
+                //Debug.Log("mesh readable");
                 using (var stream = new FileStream(fileName, FileMode.Create))
                 {
                     OBJLoader.ExportOBJ(meshToDump.EncodeOBJ(), stream);
                 }
+
             }
             catch (Exception ex)
             {
+                Debug.Log("Very Bad! doesn't work mesh");
             }
+
         }
 
 

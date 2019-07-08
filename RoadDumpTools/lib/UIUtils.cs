@@ -64,11 +64,11 @@ namespace SamsamTS
             ((UISprite)checkBox.checkedBoxObject).atlas = GetAtlas("Ingame");
             ((UISprite)checkBox.checkedBoxObject).spriteName = "ToggleBaseFocused";
             checkBox.checkedBoxObject.size = new Vector2(16f, 16f);
-            checkBox.checkedBoxObject.relativePosition = new Vector3(0f, 1f);
+            checkBox.checkedBoxObject.relativePosition = new Vector3(0f, 0f);
 
             checkBox.label = checkBox.AddUIComponent<UILabel>();
             checkBox.label.text = " ";
-            checkBox.label.textScale = 1f;
+            checkBox.label.textScale = 0.95f;
             checkBox.label.relativePosition = new Vector3(22f, 0f);
 
             return checkBox;

@@ -46,6 +46,16 @@ namespace RoadDumpTools
         public int exportMeshOffset = 0;
         private Vector3 meshResizeButtonIntial;
         private Vector3 meshResizeButtonToggleIntial;
+        private UICheckBox enableMeshResize;
+        private Vector3 halfWidthLabelIntial;
+        private UITextField halfWidth;
+        private Vector3 enableMeshResizeIntial;
+        private UILabel halfWidthLabel;
+        private Vector3 halfWidthIntial;
+        private UILabel pavementEdgeLabel;
+        private Vector3 pavementEdgeLabelIntial;
+        private UITextField pavementEdge;
+        private Vector3 pavementEdgeIntial;
 
         public static NetDumpPanel instance
         {
@@ -78,27 +88,13 @@ namespace RoadDumpTools
             m_title = AddUIComponent<UITitleBar>();
             m_title.title = "Network Dump Tools";
 
-            UILabel net_type_label = AddUIComponent<UILabel>();
-            net_type_label.text = "Mesh Type:";
-            net_type_label.autoSize = false;
-            net_type_label.width = 120f;
-            net_type_label.height = 20f;
-            net_type_label.relativePosition = new Vector2(40, 60);
-
-            //make this segmented?
-            net_type = UIUtils.CreateDropDown(this);
-            net_type.width = 105;
-            net_type.AddItem("Segment");
-            net_type.AddItem("Node");
-            net_type.selectedIndex = 0;
-            net_type.relativePosition = new Vector3(140, 55);
 
             UILabel netEle_label = AddUIComponent<UILabel>();
             netEle_label.text = "Net Elevation:";
             netEle_label.autoSize = false;
             netEle_label.width = 124f;
             netEle_label.height = 20f;
-            netEle_label.relativePosition = new Vector2(25, 100);
+            netEle_label.relativePosition = new Vector2(25, 60);
 
             netEle = UIUtils.CreateDropDown(this);
             netEle.width = 110;
@@ -108,7 +104,22 @@ namespace RoadDumpTools
             netEle.AddItem("Slope");
             netEle.AddItem("Tunnel");
             netEle.selectedIndex = 0;
-            netEle.relativePosition = new Vector3(149, 95);
+            netEle.relativePosition = new Vector3(149, 55);
+
+            UILabel net_type_label = AddUIComponent<UILabel>();
+            net_type_label.text = "Mesh Type:";
+            net_type_label.autoSize = false;
+            net_type_label.width = 120f;
+            net_type_label.height = 20f;
+            net_type_label.relativePosition = new Vector2(40, 100);
+
+            //make this segmented?
+            net_type = UIUtils.CreateDropDown(this);
+            net_type.width = 105;
+            net_type.AddItem("Segment");
+            net_type.AddItem("Node");
+            net_type.selectedIndex = 0;
+            net_type.relativePosition = new Vector3(140, 95);
 
             UILabel seglabel = AddUIComponent<UILabel>();
             seglabel.text = "Dump Mesh #:";
@@ -202,7 +213,7 @@ namespace RoadDumpTools
                     }
                     else
                     {
-                        exportCustOffset = 150;
+                        exportCustOffset = 155;
                         advancedOptionsButtonToggle.backgroundSprite = "PropertyGroupOpen";
                         dumpMeshOnly.isVisible = true;
                         dumpDiffuseOnly.isVisible = true;
@@ -239,6 +250,54 @@ namespace RoadDumpTools
             meshResizeButtonToggle.relativePosition = new Vector2(70, 212);
             meshResizeButtonToggleIntial = meshResizeButtonToggle.relativePosition;
 
+            enableMeshResize = UIUtils.CreateCheckBox(this);
+            enableMeshResize.width = 150f;
+            enableMeshResize.text = "Enabled";
+            enableMeshResize.isChecked = false;
+            enableMeshResize.relativePosition = new Vector2(90, 242);
+            enableMeshResize.tooltip = "Enable Mesh Resizing (Experimental)\nOnly works for some road networks";
+            enableMeshResize.isVisible = false;
+            enableMeshResizeIntial = enableMeshResize.relativePosition;
+
+            halfWidthLabel = AddUIComponent<UILabel>();
+            halfWidthLabel.text = "Half Width:";
+            halfWidthLabel.autoSize = false;
+            halfWidthLabel.width = 105f;
+            halfWidthLabel.height = 20f;
+            halfWidthLabel.relativePosition = new Vector2(70, 272);
+            halfWidthLabel.isVisible = false;
+            halfWidthLabelIntial = halfWidthLabel.relativePosition;
+
+            halfWidth = UIUtils.CreateTextField(this);
+            halfWidth.text = "";
+            halfWidth.width = 40f;
+            halfWidth.height = 25f;
+            halfWidth.padding = new RectOffset(6, 6, 6, 6);
+            halfWidth.relativePosition = new Vector3(175, 267);
+            halfWidth.tooltip = "Enter the half width you want the mesh to be\n\nCheck the properties panel in road properties to see current\nhalf width and be sure to change after reimporting."; //change move to checkbox
+            halfWidth.isVisible = false;
+            halfWidthIntial = halfWidth.relativePosition;
+
+            pavementEdgeLabel = AddUIComponent<UILabel>();
+            pavementEdgeLabel.text = "Pavement Edge:";
+            pavementEdgeLabel.autoSize = false;
+            pavementEdgeLabel.width = 140f;
+            pavementEdgeLabel.height = 20f;
+            pavementEdgeLabel.relativePosition = new Vector2(52, 307);
+            pavementEdgeLabel.isVisible = false;
+            pavementEdgeLabelIntial = pavementEdgeLabel.relativePosition;
+
+            pavementEdge = UIUtils.CreateTextField(this);
+            pavementEdge.text = "";
+            pavementEdge.width = 40f;
+            pavementEdge.height = 25f;
+            pavementEdge.padding = new RectOffset(6, 6, 6, 6);
+            pavementEdge.relativePosition = new Vector3(192, 302);
+            pavementEdge.tooltip = "Enter the pavement width you for the mesh\n\nCheck the properties panel in road properties to see current\npavement width and be sure to change after reimporting.";
+            pavementEdge.isVisible = false;
+            pavementEdgeIntial = pavementEdge.relativePosition;
+
+
 
             meshResizeButton.eventClick += (c, p) =>
             {
@@ -249,12 +308,23 @@ namespace RoadDumpTools
                     {
                         exportMeshOffset = 0;
                         meshResizeButtonToggle.backgroundSprite = "PropertyGroupClosed";
+                        enableMeshResize.isVisible = false;
+                        halfWidthLabel.isVisible = false;
+                        halfWidth.isVisible = false;
+                        pavementEdgeLabel.isVisible = false;
+                        pavementEdge.isVisible = false;
                     }
                     else
                     {
-                        exportMeshOffset = 130;
+                        exportMeshOffset = 100;
                         meshResizeButtonToggle.backgroundSprite = "PropertyGroupOpen";
-                        
+                        enableMeshResize.isVisible = true;
+                        halfWidthLabel.isVisible = true;
+                        halfWidth.isVisible = true;
+                        pavementEdgeLabel.isVisible = true;
+                        pavementEdge.isVisible = true;
+
+
                     }
                     this.height = INITIAL_HEIGHT + exportCustOffset + exportMeshOffset;
                     RefreshFooterItems();
@@ -361,6 +431,12 @@ namespace RoadDumpTools
 
             meshResizeButton.relativePosition = meshResizeButtonIntial + new Vector3(0, exportCustOffset);
             meshResizeButtonToggle.relativePosition = meshResizeButtonToggleIntial + new Vector3(0, exportCustOffset);
+
+            enableMeshResize.relativePosition = enableMeshResizeIntial + new Vector3(0, exportCustOffset);
+            halfWidthLabel.relativePosition = halfWidthLabelIntial + new Vector3(0, exportCustOffset);
+            halfWidth.relativePosition = halfWidthIntial + new Vector3(0, exportCustOffset);
+            pavementEdgeLabel.relativePosition = pavementEdgeLabelIntial + new Vector3(0, exportCustOffset);
+            pavementEdge.relativePosition = pavementEdgeIntial +new Vector3(0, exportCustOffset);
         }
 
         public string MeshNumber => seginput.text;
@@ -370,7 +446,9 @@ namespace RoadDumpTools
         public bool GetDumpMeshOnly => dumpMeshOnly.isChecked;
         public bool GetDumpDiffuseOnly => dumpDiffuseOnly.isChecked;
         public bool GetIfFlippedTextures => flippedTextures.isChecked;
-
+        public bool GetIfMeshResize => enableMeshResize.isChecked;
+        public string GetCustomHalfWidth => halfWidth.text;
+        public string GetCustomPavementEdge => pavementEdge.text;
         private void LoadResources()
         {
             string[] spriteNames = new string[]
