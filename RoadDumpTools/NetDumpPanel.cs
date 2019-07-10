@@ -14,7 +14,7 @@ namespace RoadDumpTools
         public int dumpedSessionItems = 0;
         public string dumpedFiles = null;
 
-        public const int INITIAL_HEIGHT = 325;
+        public const int INITIAL_HEIGHT = 360;
        
         private UITextureAtlas m_atlas;
 
@@ -56,6 +56,8 @@ namespace RoadDumpTools
         private Vector3 pavementEdgeLabelIntial;
         private UITextField pavementEdge;
         private Vector3 pavementEdgeIntial;
+        private UIButton lodGen;
+        private UICheckBox removeSuffix;
 
         public static NetDumpPanel instance
         {
@@ -196,6 +198,14 @@ namespace RoadDumpTools
             customFilePrefix.tooltip = "Enter a custom file prefix here for the dumped files\nAsset name is the file name if left blank";
             customFilePrefix.isVisible = false;
 
+            removeSuffix = UIUtils.CreateCheckBox(this);
+            removeSuffix.text = "Remove Added Suffixes";
+            removeSuffix.isChecked = false;
+            removeSuffix.relativePosition = new Vector2(30, 360);
+            removeSuffix.tooltip = "NOFUNCTIONALRemoves the added descriptors at the end of dumped file names\n\n" +
+                "Example: An Elevated Node network without this option enabled would\nhave Elevated_node added to the end of each file name";
+            removeSuffix.isVisible = false;
+
             //and or label
             advancedOptionsButton.eventClick += (c, p) =>
             {
@@ -210,16 +220,18 @@ namespace RoadDumpTools
                         flippedTextures.isVisible = false;
                         customFilePrefixLabel.isVisible = false;
                         customFilePrefix.isVisible = false;
+                        removeSuffix.isVisible = false;
                     }
                     else
                     {
-                        exportCustOffset = 155;
+                        exportCustOffset = 185;
                         advancedOptionsButtonToggle.backgroundSprite = "PropertyGroupOpen";
                         dumpMeshOnly.isVisible = true;
                         dumpDiffuseOnly.isVisible = true;
                         flippedTextures.isVisible = true;
                         customFilePrefixLabel.isVisible = true;
                         customFilePrefix.isVisible = true;
+                        removeSuffix.isVisible = true;
                     }
                     this.height = INITIAL_HEIGHT + exportCustOffset + exportMeshOffset;
                     RefreshFooterItems();
@@ -337,9 +349,17 @@ namespace RoadDumpTools
             dumpNet = UIUtils.CreateButton(this);
             dumpNet.text = "Dump Network";
             dumpNet.textScale = 1f;
-            dumpNet.relativePosition = new Vector2(40, height - dumpNet.height - 50);
+            dumpNet.relativePosition = new Vector2(40, height - dumpNet.height - 85);
             dumpNet.width = 200;
             dumpNet.tooltip = "Dumps the network";
+
+            lodGen = UIUtils.CreateButton(this);
+            lodGen.text = "Make _lod.png Files";
+            lodGen.textScale = 1f;
+            lodGen.relativePosition = new Vector2(40, height - lodGen.height - 45);
+            lodGen.width = 200;
+            lodGen.tooltip = "Generates lod .png files\nMust dump network first or have existing matching files in the import folder";
+            lodGen.isEnabled = false;
 
             dumpedTotal = AddUIComponent<UILabel>();
             dumpedTotal.text = "Total Dumped Items: (0)";
@@ -350,6 +370,7 @@ namespace RoadDumpTools
             dumpedTotal.height = 20f;
             dumpedTotal.relativePosition = new Vector2(10, height - dumpNet.height);
             dumpedTotal.tooltip = "Total Items Dumped During Session (Duplicate Dumps Included)";
+           
 
             dumpNet.eventClick += (c, p) =>
             {
@@ -425,7 +446,8 @@ namespace RoadDumpTools
             openFileLog.relativePosition = new Vector2(248, height - dumpNet.height - 2);
             dumpedFolderButton.relativePosition = new Vector2(210, height - dumpNet.height - 2);
             dumpedTotal.relativePosition = new Vector2(10, height - dumpNet.height + 5);
-            dumpNet.relativePosition = new Vector2(40, height - dumpNet.height - 50);
+            dumpNet.relativePosition = new Vector2(40, height - dumpNet.height - 85);
+            lodGen.relativePosition = new Vector2(40, height - lodGen.height - 45);
 
             UnityEngine.Debug.Log("relativepos y" + meshResizeButton.relativePosition.y);
 

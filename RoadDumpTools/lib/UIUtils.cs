@@ -22,6 +22,7 @@ namespace SamsamTS
             button.normalBgSprite = "ButtonMenu";
             button.hoveredBgSprite = "ButtonMenuHovered";
             button.pressedBgSprite = "ButtonMenuPressed";
+            button.disabledBgSprite = "ButtonMenuDisabled";
             button.canFocus = false;
 
             return button;

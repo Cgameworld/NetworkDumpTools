@@ -390,25 +390,8 @@ namespace RoadDumpTools
             float halfWidthIntial = loadedPb.m_halfWidth;
             float pavementWidthIntial = loadedPb.m_pavementWidth;
             float halfWidth;
-            //float pavementWidth;
-            Vector3[] newvertices = mesh.vertices;
-
-            if (float.TryParse(NetDumpPanel.instance.GetCustomHalfWidth, out halfWidth))
-            {
-
-                for (int i = 0; i < newvertices.Length; i++)
-                {
-                    if (newvertices[i].x == halfWidthIntial)
-                    {
-                        newvertices[i].x = halfWidth;
-                    }
-                    if (newvertices[i].x == -halfWidthIntial)
-                    {
-                        newvertices[i].x = -halfWidth;
-                    }
-                }
-            }
-
+            float pavementWidth;
+            
 
             try
             {
@@ -416,15 +399,60 @@ namespace RoadDumpTools
                 // Debug.Log("mesh not readable");
                 Mesh meshToDump = new Mesh
                 {
-                    vertices = newvertices,
+                    vertices = mesh.vertices,
                     colors = mesh.colors,
                     triangles = mesh.triangles,
                     normals = mesh.normals,
                     tangents = mesh.tangents,
                     uv = mesh.uv,
-                    uv2 = mesh.uv
+                    uv2 = mesh.uv,
+                    name = mesh.name //name = mesh.name.Split('_')[0] //removes extra _0 at end of displayed name
                 };
                 meshToDump.RecalculateBounds();
+
+                Vector3[] newvertices = meshToDump.vertices;
+
+                if (float.TryParse(NetDumpPanel.instance.GetCustomHalfWidth, out _) || float.TryParse(NetDumpPanel.instance.GetCustomPavementEdge, out _))
+                {
+                    halfWidth = float.Parse(NetDumpPanel.instance.GetCustomHalfWidth);
+                    pavementWidth = float.Parse(NetDumpPanel.instance.GetCustomPavementEdge);
+                    float pavementVertexIntial = halfWidthIntial - pavementWidthIntial;
+                    Debug.Log("pavementVertexIntial " + pavementVertexIntial);
+
+                    for (int i = 0; i < newvertices.Length; i++)
+                    {
+
+                        Debug.Log("xvaluesbf" + newvertices[i].x);
+
+                        // newvertices[i].x += 5;
+
+                        //one thing to try does this still apply on something you export with this tool and reimport again??
+
+                        // only works sometimes???????
+                        if (Mathf.Approximately(newvertices[i].x,11.2f))
+                        {
+                            Debug.Log("FOUND! 11.2 newer code!!");
+                        }
+
+                        if (Mathf.Approximately(newvertices[i].x, 3.2f))
+                        {
+                            Debug.Log("FOUND! 3.2 with newer code (noice)!!");
+                        }
+
+
+                        if (newvertices[i].x == halfWidthIntial)
+                        {
+                            newvertices[i].x = halfWidth;
+                        }
+                        if (newvertices[i].x == -halfWidthIntial)
+                        {
+                            newvertices[i].x = -halfWidth;
+                        }
+
+                        Debug.Log("xvaluesaf" + newvertices[i].x);
+                    }
+                    meshToDump.RecalculateBounds();
+                }
 
                 //Debug.Log("mesh readable");
                 using (var stream = new FileStream(fileName, FileMode.Create))
@@ -432,15 +460,15 @@ namespace RoadDumpTools
                     OBJLoader.ExportOBJ(meshToDump.EncodeOBJ(), stream);
                 }
 
+
+
             }
             catch (Exception ex)
             {
-                Debug.Log("Very Bad! doesn't work mesh");
+                Debug.Log("Nope! Mesh dumping doesn't work");
             }
 
         }
-
-
 
     }
 }
