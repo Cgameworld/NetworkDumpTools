@@ -52,6 +52,7 @@ namespace RoadDumpTools
         private Vector3 enableMeshResizeIntial;
         private UILabel halfWidthLabel;
         private Vector3 halfWidthIntial;
+        private UIButton openCrossSection;
         private UILabel pavementEdgeLabel;
         private Vector3 pavementEdgeLabelIntial;
         private UITextField pavementEdge;
@@ -290,7 +291,7 @@ namespace RoadDumpTools
             halfWidth.isVisible = false;
             halfWidthIntial = halfWidth.relativePosition;
 
-            pavementEdgeLabel = AddUIComponent<UILabel>();
+           /* pavementEdgeLabel = AddUIComponent<UILabel>();
             pavementEdgeLabel.text = "Pavement Edge:";
             pavementEdgeLabel.autoSize = false;
             pavementEdgeLabel.width = 140f;
@@ -307,11 +308,22 @@ namespace RoadDumpTools
             pavementEdge.relativePosition = new Vector3(192, 302);
             pavementEdge.tooltip = "Enter the pavement width you for the mesh\n\nCheck the properties panel in road properties to see current\npavement width and be sure to change after reimporting.";
             pavementEdge.isVisible = false;
-            pavementEdgeIntial = pavementEdge.relativePosition;
+            pavementEdgeIntial = pavementEdge.relativePosition; */
 
+            openCrossSection = UIUtils.CreateButton(this);
+            openCrossSection.text = "Open Cross Section";
+            openCrossSection.textScale = 0.95f;
+            openCrossSection.relativePosition = new Vector3(40, 302);
+            openCrossSection.width = 200;
+            openCrossSection.tooltip = "Dumps the network";
+            openCrossSection.isVisible = false;
 
+            openCrossSection.eventClick += (c, p) =>
+            {
+                MeshView.instance.Show();
+            };
 
-            meshResizeButton.eventClick += (c, p) =>
+           meshResizeButton.eventClick += (c, p) =>
             {
                 if (isVisible)
                 {
@@ -323,8 +335,9 @@ namespace RoadDumpTools
                         enableMeshResize.isVisible = false;
                         halfWidthLabel.isVisible = false;
                         halfWidth.isVisible = false;
-                        pavementEdgeLabel.isVisible = false;
-                        pavementEdge.isVisible = false;
+                        //pavementEdgeLabel.isVisible = false;
+                        //pavementEdge.isVisible = false;
+                        openCrossSection.isVisible = false;
                     }
                     else
                     {
@@ -333,9 +346,9 @@ namespace RoadDumpTools
                         enableMeshResize.isVisible = true;
                         halfWidthLabel.isVisible = true;
                         halfWidth.isVisible = true;
-                        pavementEdgeLabel.isVisible = true;
-                        pavementEdge.isVisible = true;
-
+                        // pavementEdgeLabel.isVisible = true;
+                        //pavementEdge.isVisible = true;
+                        openCrossSection.isVisible = true;
 
                     }
                     this.height = INITIAL_HEIGHT + exportCustOffset + exportMeshOffset;
@@ -457,8 +470,8 @@ namespace RoadDumpTools
             enableMeshResize.relativePosition = enableMeshResizeIntial + new Vector3(0, exportCustOffset);
             halfWidthLabel.relativePosition = halfWidthLabelIntial + new Vector3(0, exportCustOffset);
             halfWidth.relativePosition = halfWidthIntial + new Vector3(0, exportCustOffset);
-            pavementEdgeLabel.relativePosition = pavementEdgeLabelIntial + new Vector3(0, exportCustOffset);
-            pavementEdge.relativePosition = pavementEdgeIntial +new Vector3(0, exportCustOffset);
+            //pavementEdgeLabel.relativePosition = pavementEdgeLabelIntial + new Vector3(0, exportCustOffset);
+            //pavementEdge.relativePosition = pavementEdgeIntial +new Vector3(0, exportCustOffset);
         }
 
         public string MeshNumber => seginput.text;

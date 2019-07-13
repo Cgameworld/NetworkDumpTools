@@ -412,8 +412,8 @@ namespace RoadDumpTools
 
                 Vector3[] newvertices = meshToDump.vertices;
 
-                if (float.TryParse(NetDumpPanel.instance.GetCustomHalfWidth, out _) || float.TryParse(NetDumpPanel.instance.GetCustomPavementEdge, out _))
-                {
+               // if (float.TryParse(NetDumpPanel.instance.GetCustomHalfWidth, out _) || float.TryParse(NetDumpPanel.instance.GetCustomPavementEdge, out _))
+               // {
                     halfWidth = float.Parse(NetDumpPanel.instance.GetCustomHalfWidth);
                     pavementWidth = float.Parse(NetDumpPanel.instance.GetCustomPavementEdge);
                     float pavementVertexIntial = halfWidthIntial - pavementWidthIntial;
@@ -452,7 +452,7 @@ namespace RoadDumpTools
                         Debug.Log("xvaluesaf" + newvertices[i].x);
                     }
                     meshToDump.RecalculateBounds();
-                }
+              //  }
 
                 //Debug.Log("mesh readable");
                 using (var stream = new FileStream(fileName, FileMode.Create))

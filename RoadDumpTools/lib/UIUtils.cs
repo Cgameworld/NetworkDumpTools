@@ -47,6 +47,16 @@ namespace SamsamTS
             return label;
         }
 
+        public static UIPanel CreatePanelSpriteImage(UIComponent parent, UITextureAtlas atlas_a)
+        {
+            UIPanel panel1 = (UIPanel)parent.AddUIComponent<UIPanel>();
+            panel1.atlas = atlas_a;
+            panel1.atlas.texture.filterMode = FilterMode.Point;
+            Debug.Log("filtermode for line" + panel1.atlas.texture.filterMode);
+            panel1.canFocus = false;
+            return panel1;
+        }
+
         public static UICheckBox CreateCheckBox(UIComponent parent)
         {
             UICheckBox checkBox = (UICheckBox)parent.AddUIComponent<UICheckBox>();
