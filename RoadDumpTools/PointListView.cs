@@ -22,7 +22,8 @@ namespace RoadDumpTools
 
         private UITitleBar m_title;
         private UILabel TestLine;
-        private UITextField[] coordBox;
+        private int textboxNum = 2;
+        private List<UITextField> coordBox;
         private UIScrollablePanel gridscroll;
 
         public static PointListView instance
@@ -70,14 +71,20 @@ namespace RoadDumpTools
             titleLabel.width = 120f;
             titleLabel.height = 30f;
             titleLabel.relativePosition = new Vector2(0, 0);
-            titleLabel.isVisible = true;
+            titleLabel.isVisible = true; //[textboxNum]
+            coordBox = new List<UITextField>();
+            GetMeshPoints(true);
+            GenerateGrid();
+            //GetMeshPoints();
+        }
 
-            coordBox = new UITextField[36];
+        public void GenerateGrid()
+        {
             int row = 0;
-            for (int i = 0; i < coordBox.Length; i++)
+            for (int i = 0; i < textboxNum; i++)
             {
-                coordBox[i] = new UITextField();
-                coordBox[i] = UIUtils.CreateTextFieldCell(gridscroll, m_atlas);   
+                coordBox.Add(new UITextField());
+                coordBox[i] = UIUtils.CreateTextFieldCell(gridscroll, m_atlas);
                 coordBox[i].isInteractive = false;
                 coordBox[i].normalBgSprite = "OptionsCellDisabled";
                 coordBox[i].textColor = new Color32(255, 255, 255, 255);
@@ -95,16 +102,20 @@ namespace RoadDumpTools
                 }
 
             }
-
-            //GetMeshPoints();
         }
-
-        public void GetMeshPoints()
+        public void GetMeshPoints(bool getLengthOnly = false)
         {
 
-            for (int a = 0; a<coordBox.Length; a++)
+            if (!getLengthOnly)
             {
-                coordBox[a].text = "";
+                for (int i = 0; i < coordBox.Count; i++)
+                {
+                    coordBox[i].enabled = false;
+                }
+                coordBox.Clear();
+                    GetMeshPoints(true);
+                    Debug.Log("textboxNum:  " + textboxNum);
+                    GenerateGrid();
             }
             DumpProcessing dumpProcess = new DumpProcessing();
             Vector3[] meshVertices = dumpProcess.VerticesFromMesh();
@@ -152,13 +163,17 @@ namespace RoadDumpTools
                 else
                 {
                     //unsorts self?
-                    coordBox[cell].text = Math.Round(xyvertices[i][0], 1).ToString();
-                    coordBox[cell + 1].text = Math.Round(xyvertices[i][1], 1).ToString();
+                    if (!getLengthOnly)
+                    {
+                        coordBox[cell].text = Math.Round(xyvertices[i][0], 1).ToString();
+                        coordBox[cell + 1].text = Math.Round(xyvertices[i][1], 1).ToString();
+                    }
                     cell = cell + 2;
-                }
 
+                }
                 //Debug.Log("x: " + xyvertices[i][0] + "\ny: " + xyvertices[i][1] + "\ny+1: " + xyvertices[i + 1][1] + ">");
             }
+            textboxNum = cell;
         }
 
 
