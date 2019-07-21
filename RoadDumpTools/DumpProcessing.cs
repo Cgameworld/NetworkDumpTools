@@ -6,163 +6,41 @@ using ObjUnity3D;
 using ColossalFramework;
 using UnityEngine;
 using ColossalFramework.UI;
+using System.Linq;
 
 namespace RoadDumpTools
 {
     public class DumpProcessing
     {
         ToolController sim = Singleton<ToolController>.instance;
-        string networkName_init;
         int filesExported;
         string exportedFilePaths;
+        string importFolder = Path.Combine(DataLocation.addonsPath, "Import");
+        string networkName;
+        string filename;
+        Material material;
+        Material aprmaterial;
+        Mesh roadMesh;
+        Mesh roadMeshLod;
+        int meshnum;
+        NetInfo loadedPrefab;
+
+
+        string diffuseTexturePath;
+        string meshPath;
+        string lodMeshPath;
+        string aFilePath;
+        string pFilePath;
+        string rFilePath;
+
+        Vector3[] newvertices;
 
         public string[] DumpNetworks()
         {
             try
             {
-                // cancel if they key input was already processed in a previous frame
-                networkName_init = sim.m_editPrefabInfo.name;
-                string importFolder = Path.Combine(DataLocation.addonsPath, "Import");
-                string networkName;
-                string filename;
-                Material material;
-                Material aprmaterial;
-                Mesh roadMesh;
-                Mesh roadMeshLod;
-
-                if (networkName_init.Contains("_Data"))
-                {
-                    networkName = networkName_init.Substring(0, networkName_init.Length - 1);
-                }
-                else { networkName = networkName_init; }
-
-                if (NetDumpPanel.instance.GetCustomFilePrefix() == "")
-                {
-                    Debug.Log("no custom prefix");
-                    if (networkName_init.Contains("_Data"))
-                    {
-                        filename = networkName.Substring(0, networkName.Length - 5).Replace("/", string.Empty);
-                    }
-                    else { filename = networkName.Substring(0, networkName.Length - 1); }
-                }
-                else
-                {
-                    Debug.Log("custom prefix");
-                    filename = NetDumpPanel.instance.GetCustomFilePrefix();
-                }
-                Debug.Log("filename: aa : " + filename);
-                int meshnum = 0;
-
-                if (int.TryParse(NetDumpPanel.instance.MeshNumber, out meshnum))
-                {
-                    if (meshnum > 1)
-                    {
-                        //Debug.Log("mnbefore" + meshnum);
-                        filename = filename + "_mesh" + meshnum;
-                    }
-                    meshnum = meshnum - 1; //adjust for array
-                    //Debug.Log("mnafter" + meshnum);
-                }
-                else
-                {
-                    throw new System.ArgumentException("Mesh Number Not Found");
-                }
-
-                //check for elevations
-                NetInfo loadedPrefab = PrefabCollection<NetInfo>.FindLoaded(networkName);
-
-                int netElevationIndex = NetDumpPanel.instance.GetNetEleIndex;
-                switch (netElevationIndex) //if null throw error!
-                {
-                    case 0:
-                        Console.WriteLine("basic ground no change");
-                        break;
-                    case 1:
-                        Console.WriteLine("Elevated");
-                        loadedPrefab = AssetEditorRoadUtils.TryGetElevated(loadedPrefab);
-                        if (loadedPrefab == null)
-                        {
-                            throw new Exception("Elevated Elevation Does Not Exist");
-                        }
-                        filename += " Elevated";
-                        break;
-                    case 2:
-                        Console.WriteLine("Bridge");
-                        loadedPrefab = AssetEditorRoadUtils.TryGetBridge(loadedPrefab);
-                        if (loadedPrefab == null)
-                        {
-                            throw new Exception("Bridge Elevation Does Not Exist");
-                        }
-                        filename += " Bridge";
-                        break;
-                    case 3:
-                        loadedPrefab = AssetEditorRoadUtils.TryGetSlope(loadedPrefab);
-                        if (loadedPrefab == null)
-                        {
-                            throw new Exception("Slope Elevation Does Not Exist");
-                        }
-                        filename += " Slope";
-                        break;
-                    case 4:
-                        loadedPrefab = AssetEditorRoadUtils.TryGetTunnel(loadedPrefab);
-                        if (loadedPrefab == null)
-                        {
-                            throw new Exception("Tunnel Elevation Does Not Exist");
-                        }
-                        filename += " Tunnel";
-                        break;
-                    default:
-                        throw new System.ArgumentOutOfRangeException("No Elevations Found");
-
-                }
-
-
-
-                string diffuseTexturePath = Path.Combine(importFolder, filename);
-                string meshPath = Path.Combine(importFolder, filename);
-                string lodMeshPath = Path.Combine(importFolder, filename);
-                string aFilePath = Path.Combine(importFolder, filename);
-                string pFilePath = Path.Combine(importFolder, filename);
-                string rFilePath = Path.Combine(importFolder, filename);
-
-                Debug.Log("meshnum" + meshnum);
-
-
-
-                if (NetDumpPanel.instance.NetworkType == "Segment")
-                {
-                    material = loadedPrefab.m_segments[meshnum].m_segmentMaterial;
-                    diffuseTexturePath += "_d.png";
-                    meshPath += ".obj";
-                    lodMeshPath += "_lod.obj";
-                    aFilePath += "_a.png";
-                    pFilePath += "_p.png";
-                    rFilePath += "_r.png";
-                    roadMesh = loadedPrefab.m_segments[meshnum].m_mesh;
-                    roadMeshLod = loadedPrefab.m_segments[meshnum].m_lodMesh;
-                    aprmaterial = loadedPrefab.m_segments[meshnum].m_segmentMaterial;
-
-                }
-                else if (NetDumpPanel.instance.NetworkType == "Node")
-                {
-                    material = loadedPrefab.m_nodes[meshnum].m_nodeMaterial;
-                    diffuseTexturePath += "_node_d.png";
-                    meshPath += "_node.obj";
-                    lodMeshPath += "_node_lod.obj";
-                    aFilePath += "_node_a.png";
-                    pFilePath += "_node_p.png";
-                    rFilePath += "_node_r.png";
-                    roadMesh = loadedPrefab.m_nodes[meshnum].m_mesh;
-                    roadMeshLod = loadedPrefab.m_nodes[meshnum].m_lodMesh;
-                    aprmaterial = loadedPrefab.m_nodes[meshnum].m_nodeMaterial;
-                }
-                else
-                {
-                    throw new System.ArgumentException("Invalid network selection type");
-                }
-
-
-
+                string networkName_init = sim.m_editPrefabInfo.name;
+                FindMesh(networkName_init);
                 var source = material.GetTexture("_MainTex") as Texture2D;
                 var target = new Texture2D(source.width, source.height, TextureFormat.RGBAFloat, true);
                 target.SetPixels(source.GetPixels());
@@ -250,6 +128,148 @@ namespace RoadDumpTools
 
             string[] returnArray = { filesExported.ToString(), exportedFilePaths };
             return returnArray;
+        }
+
+        public void FindMesh(string networkName_init)
+        {
+            if (networkName_init.Contains("_Data"))
+            {
+                networkName = networkName_init.Substring(0, networkName_init.Length - 1);
+            }
+            else { networkName = networkName_init; }
+
+            if (NetDumpPanel.instance.GetCustomFilePrefix() == "")
+            {
+                Debug.Log("no custom prefix");
+                if (networkName_init.Contains("_Data"))
+                {
+                    filename = networkName.Substring(0, networkName.Length - 5).Replace("/", string.Empty);
+                }
+                else { filename = networkName.Substring(0, networkName.Length - 1); }
+            }
+            else
+            {
+                Debug.Log("custom prefix");
+                filename = NetDumpPanel.instance.GetCustomFilePrefix();
+            }
+            Debug.Log("filename: aa : " + filename);
+            meshnum = 0;
+
+            if (int.TryParse(NetDumpPanel.instance.MeshNumber, out meshnum))
+            {
+                if (meshnum > 1)
+                {
+                    //Debug.Log("mnbefore" + meshnum);
+                    filename = filename + "_mesh" + meshnum;
+                }
+                meshnum = meshnum - 1; //adjust for array
+                                       //Debug.Log("mnafter" + meshnum);
+            }
+            else
+            {
+                throw new System.ArgumentException("Mesh Number Not Found");
+            }
+
+            //check for elevations
+            loadedPrefab = PrefabCollection<NetInfo>.FindLoaded(networkName);
+
+            int netElevationIndex = NetDumpPanel.instance.GetNetEleIndex;
+            switch (netElevationIndex) //if null throw error!
+            {
+                case 0:
+                    Console.WriteLine("basic ground no change");
+                    break;
+                case 1:
+                    Console.WriteLine("Elevated");
+                    loadedPrefab = AssetEditorRoadUtils.TryGetElevated(loadedPrefab);
+                    if (loadedPrefab == null)
+                    {
+                        throw new Exception("Elevated Elevation Does Not Exist");
+                    }
+                    filename += " Elevated";
+                    break;
+                case 2:
+                    Console.WriteLine("Bridge");
+                    loadedPrefab = AssetEditorRoadUtils.TryGetBridge(loadedPrefab);
+                    if (loadedPrefab == null)
+                    {
+                        throw new Exception("Bridge Elevation Does Not Exist");
+                    }
+                    filename += " Bridge";
+                    break;
+                case 3:
+                    loadedPrefab = AssetEditorRoadUtils.TryGetSlope(loadedPrefab);
+                    if (loadedPrefab == null)
+                    {
+                        throw new Exception("Slope Elevation Does Not Exist");
+                    }
+                    filename += " Slope";
+                    break;
+                case 4:
+                    loadedPrefab = AssetEditorRoadUtils.TryGetTunnel(loadedPrefab);
+                    if (loadedPrefab == null)
+                    {
+                        throw new Exception("Tunnel Elevation Does Not Exist");
+                    }
+                    filename += " Tunnel";
+                    break;
+                default:
+                    throw new System.ArgumentOutOfRangeException("No Elevations Found");
+
+            }
+
+
+            diffuseTexturePath = Path.Combine(importFolder, filename);
+            meshPath = Path.Combine(importFolder, filename);
+            lodMeshPath = Path.Combine(importFolder, filename);
+            aFilePath = Path.Combine(importFolder, filename);
+            pFilePath = Path.Combine(importFolder, filename);
+            rFilePath = Path.Combine(importFolder, filename);
+
+            Debug.Log("meshnum" + meshnum);
+
+
+
+            if (NetDumpPanel.instance.NetworkType == "Segment")
+            {
+                material = loadedPrefab.m_segments[meshnum].m_segmentMaterial;
+                diffuseTexturePath += "_d.png";
+                meshPath += ".obj";
+                lodMeshPath += "_lod.obj";
+                aFilePath += "_a.png";
+                pFilePath += "_p.png";
+                rFilePath += "_r.png";
+                roadMesh = loadedPrefab.m_segments[meshnum].m_mesh;
+                roadMeshLod = loadedPrefab.m_segments[meshnum].m_lodMesh;
+                aprmaterial = loadedPrefab.m_segments[meshnum].m_segmentMaterial;
+
+            }
+            else if (NetDumpPanel.instance.NetworkType == "Node")
+            {
+                material = loadedPrefab.m_nodes[meshnum].m_nodeMaterial;
+                diffuseTexturePath += "_node_d.png";
+                meshPath += "_node.obj";
+                lodMeshPath += "_node_lod.obj";
+                aFilePath += "_node_a.png";
+                pFilePath += "_node_p.png";
+                rFilePath += "_node_r.png";
+                roadMesh = loadedPrefab.m_nodes[meshnum].m_mesh;
+                roadMeshLod = loadedPrefab.m_nodes[meshnum].m_lodMesh;
+                aprmaterial = loadedPrefab.m_nodes[meshnum].m_nodeMaterial;
+            }
+            else
+            {
+                throw new System.ArgumentException("Invalid network selection type");
+            }
+
+
+        }
+        public Vector3[] VerticesFromMesh()
+        {
+            string networkName_init = sim.m_editPrefabInfo.name;
+            FindMesh(networkName_init);
+            DumpMeshToOBJ(roadMesh, "none", loadedPrefab, false);
+            return newvertices;
         }
 
         //Texture flipping script from https://stackoverflow.com/questions/35950660/unity-180-rotation-for-a-texture2d-or-maybe-flip-both
@@ -378,7 +398,7 @@ namespace RoadDumpTools
         }
 
 
-        public static void DumpMeshToOBJ(Mesh mesh, string fileName, NetInfo loadedPb)
+        public void DumpMeshToOBJ(Mesh mesh, string fileName, NetInfo loadedPb, bool isDumping = true)
         {
             fileName = Path.Combine(Path.Combine(DataLocation.addonsPath, "Import"), fileName);
             if (File.Exists(fileName))
@@ -386,13 +406,7 @@ namespace RoadDumpTools
                 File.Delete(fileName);
             }
 
-
-            float halfWidthIntial = loadedPb.m_halfWidth;
-            float pavementWidthIntial = loadedPb.m_pavementWidth;
-            float halfWidth;
-            float pavementWidth;
-            
-
+            Debug.Log("dumpobj" + filename);
             try
             {
                 // copy the relevant data to the temporary mesh
@@ -410,58 +424,25 @@ namespace RoadDumpTools
                 };
                 meshToDump.RecalculateBounds();
 
-                Vector3[] newvertices = meshToDump.vertices;
+                //reinsert code to resize here!!
 
-                if (float.TryParse(NetDumpPanel.instance.GetCustomHalfWidth, out _) || float.TryParse(NetDumpPanel.instance.GetCustomPavementEdge, out _))
+                if (!isDumping)
                 {
-                    halfWidth = float.Parse(NetDumpPanel.instance.GetCustomHalfWidth);
-                    pavementWidth = float.Parse(NetDumpPanel.instance.GetCustomPavementEdge);
-                    float pavementVertexIntial = halfWidthIntial - pavementWidthIntial;
-                    Debug.Log("pavementVertexIntial " + pavementVertexIntial);
+                    newvertices = meshToDump.vertices; //get vertices for other method
+                    Debug.Log("copied new verts");
+                }
 
-                    for (int i = 0; i < newvertices.Length; i++)
+                else
+                {
+
+                    using (var stream = new FileStream(fileName, FileMode.Create))
                     {
-
-                        Debug.Log("xvaluesbf" + newvertices[i].x);
-
-                        // newvertices[i].x += 5;
-
-                        //one thing to try does this still apply on something you export with this tool and reimport again??
-
-                        // only works sometimes???????
-                        if (Mathf.Approximately(newvertices[i].x,11.2f))
-                        {
-                            Debug.Log("FOUND! 11.2 newer code!!");
-                        }
-
-                        if (Mathf.Approximately(newvertices[i].x, 3.2f))
-                        {
-                            Debug.Log("FOUND! 3.2 with newer code (noice)!!");
-                        }
-
-
-                        if (newvertices[i].x == halfWidthIntial)
-                        {
-                            newvertices[i].x = halfWidth;
-                        }
-                        if (newvertices[i].x == -halfWidthIntial)
-                        {
-                            newvertices[i].x = -halfWidth;
-                        }
-
-                        Debug.Log("xvaluesaf" + newvertices[i].x);
+                        OBJLoader.ExportOBJ(meshToDump.EncodeOBJ(), stream);
                     }
-                    meshToDump.RecalculateBounds();
+
+
+
                 }
-
-                //Debug.Log("mesh readable");
-                using (var stream = new FileStream(fileName, FileMode.Create))
-                {
-                    OBJLoader.ExportOBJ(meshToDump.EncodeOBJ(), stream);
-                }
-
-
-
             }
             catch (Exception ex)
             {

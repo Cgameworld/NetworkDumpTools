@@ -2,7 +2,7 @@
 
 using UnityEngine;
 using ColossalFramework.UI;
-
+using ColossalFramework;
 
 namespace SamsamTS
 {
@@ -46,6 +46,61 @@ namespace SamsamTS
             label.canFocus = false;
             return label;
         }
+
+        public static UIScrollablePanel CreateScrollBox(UIComponent parent, UITextureAtlas atlas_a)
+        {
+            //code from tmpe
+            UIScrollablePanel scrollablePanel = parent.AddUIComponent<UIScrollablePanel>();
+            scrollablePanel.backgroundSprite = string.Empty;
+            //scrollablePanel.size = new Vector2(550, 340);
+            scrollablePanel.size = new Vector2(130, 240);
+            scrollablePanel.relativePosition = new Vector3(0, 0);
+            scrollablePanel.clipChildren = true;
+            //scrollablePanel.autoLayoutStart = LayoutStart.TopLeft;
+            //scrollablePanel.autoLayoutDirection = LayoutDirection.Vertical;
+            // scrollablePanel.autoLayout = true;
+
+            scrollablePanel.FitTo(parent);
+            scrollablePanel.scrollWheelDirection = UIOrientation.Vertical;
+            scrollablePanel.builtinKeyNavigation = true;
+
+            UIScrollbar verticalScroll = parent.AddUIComponent<UIScrollbar>();
+            verticalScroll.stepSize = 1;
+            verticalScroll.relativePosition = new Vector2(parent.width - 15, 0);
+            verticalScroll.orientation = UIOrientation.Vertical;
+            verticalScroll.size = new Vector2(20, parent.size.y);
+            verticalScroll.incrementAmount = 25;
+            verticalScroll.scrollEasingType = EasingType.BackEaseOut;
+
+            scrollablePanel.verticalScrollbar = verticalScroll;
+
+            UISlicedSprite track = verticalScroll.AddUIComponent<UISlicedSprite>();
+            track.spriteName = "ScrollbarTrack";
+            track.relativePosition = Vector3.zero;
+            track.size = new Vector2(16, parent.size.y);
+
+            verticalScroll.trackObject = track;
+
+            UISlicedSprite thumb = track.AddUIComponent<UISlicedSprite>();
+            thumb.spriteName = "ScrollbarThumb";
+            thumb.autoSize = true;
+            thumb.relativePosition = Vector3.zero;
+            verticalScroll.thumbObject = thumb;
+
+            /*  UILabel testLabel = scrollablePanel.AddUIComponent<UILabel>();
+              testLabel.text = "newnewa\nb\ntest\nb\ntest\nb\ntest\nb\ntest\nb\ntest\nb\ntest\nb\ntest\n\ntest\nb\ntest\nb\ntest\n\ntest\nb\ntest\nb\ntest\n\ntest\nb\ntest\nb\ntest\n\ntest\nb\ntest\nb\ntest\n\n222te22st\nb\nt222est\nb\ntest\n\nb\ntest\n\nb\ntest\n\nb\ntest\n\nb\ntest\n56464646464646464";
+              testLabel.textAlignment = UIHorizontalAlignment.Center;
+              testLabel.width = 50f;
+              testLabel.height = 500f;
+              testLabel.relativePosition = new Vector2(0, 0);
+              testLabel.isVisible = true;
+              */
+
+            return scrollablePanel;
+        }
+
+
+
 
         public static UICheckBox CreateCheckBox(UIComponent parent)
         {
@@ -96,6 +151,29 @@ namespace SamsamTS
 
             return textField;
         }
+
+        public static UITextField CreateTextFieldCell(UIComponent parent, UITextureAtlas atlas_a)
+        {
+            UITextField textField = parent.AddUIComponent<UITextField>();
+
+            textField.atlas = atlas_a;
+            textField.size = new Vector2(90f, 20f);
+            textField.padding = new RectOffset(6, 6, 3, 3);
+            textField.builtinKeyNavigation = true;
+            textField.isInteractive = true;
+            textField.readOnly = false;
+            textField.horizontalAlignment = UIHorizontalAlignment.Center;
+            textField.selectionSprite = "EmptySprite";
+            textField.selectionBackgroundColor = new Color32(0, 172, 234, 255);
+            textField.normalBgSprite = "OptionsCell";
+            textField.textColor = new Color32(0, 0, 0, 255);
+            textField.disabledTextColor = new Color32(80, 80, 80, 128);
+            textField.color = new Color32(255, 255, 255, 255);
+            textField.padding.top = 5;
+
+            return textField;
+        }
+
 
         public static UIDropDown CreateDropDown(UIComponent parent)
         {

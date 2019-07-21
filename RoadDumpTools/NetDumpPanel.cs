@@ -1,11 +1,11 @@
 ﻿using ColossalFramework.UI;
-using UnityEngine;
-using UIUtils = SamsamTS.UIUtils;
 using MoreShortcuts.GUI;
-using System.IO;
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
+using UnityEngine;
+using Debug = UnityEngine.Debug;
+using UIUtils = SamsamTS.UIUtils;
 
 namespace RoadDumpTools
 {
@@ -15,7 +15,7 @@ namespace RoadDumpTools
         public string dumpedFiles = null;
 
         public const int INITIAL_HEIGHT = 360;
-       
+
         private UITextureAtlas m_atlas;
 
         private UITitleBar m_title;
@@ -47,17 +47,13 @@ namespace RoadDumpTools
         private Vector3 meshResizeButtonIntial;
         private Vector3 meshResizeButtonToggleIntial;
         private UICheckBox enableMeshResize;
-        private Vector3 halfWidthLabelIntial;
-        private UITextField halfWidth;
         private Vector3 enableMeshResizeIntial;
-        private UILabel halfWidthLabel;
-        private Vector3 halfWidthIntial;
-        private UILabel pavementEdgeLabel;
-        private Vector3 pavementEdgeLabelIntial;
-        private UITextField pavementEdge;
-        private Vector3 pavementEdgeIntial;
+        private UIButton openMeshPoints;
         private UIButton lodGen;
         private UICheckBox removeSuffix;
+        private UIScrollablePanel gridscroll;
+        private UITextField[] coordBox;
+        private Vector3 openMeshPointsIntial;
 
         public static NetDumpPanel instance
         {
@@ -271,45 +267,81 @@ namespace RoadDumpTools
             enableMeshResize.isVisible = false;
             enableMeshResizeIntial = enableMeshResize.relativePosition;
 
-            halfWidthLabel = AddUIComponent<UILabel>();
-            halfWidthLabel.text = "Half Width:";
-            halfWidthLabel.autoSize = false;
-            halfWidthLabel.width = 105f;
-            halfWidthLabel.height = 20f;
-            halfWidthLabel.relativePosition = new Vector2(70, 272);
-            halfWidthLabel.isVisible = false;
-            halfWidthLabelIntial = halfWidthLabel.relativePosition;
+            openMeshPoints = UIUtils.CreateButton(this);
+            openMeshPoints.text = "View Mesh Points";
+            openMeshPoints.textScale = 0.95f;
+            openMeshPoints.relativePosition = new Vector3(40, 272);
+            openMeshPoints.width = 200;
+            openMeshPoints.tooltip = "Dumps the network";
+            openMeshPoints.isVisible = false;
+            openMeshPointsIntial = openMeshPoints.relativePosition;
 
-            halfWidth = UIUtils.CreateTextField(this);
-            halfWidth.text = "";
-            halfWidth.width = 40f;
-            halfWidth.height = 25f;
-            halfWidth.padding = new RectOffset(6, 6, 6, 6);
-            halfWidth.relativePosition = new Vector3(175, 267);
-            halfWidth.tooltip = "Enter the half width you want the mesh to be\n\nCheck the properties panel in road properties to see current\nhalf width and be sure to change after reimporting."; //change move to checkbox
-            halfWidth.isVisible = false;
-            halfWidthIntial = halfWidth.relativePosition;
-
-            pavementEdgeLabel = AddUIComponent<UILabel>();
-            pavementEdgeLabel.text = "Pavement Edge:";
-            pavementEdgeLabel.autoSize = false;
-            pavementEdgeLabel.width = 140f;
-            pavementEdgeLabel.height = 20f;
-            pavementEdgeLabel.relativePosition = new Vector2(52, 307);
-            pavementEdgeLabel.isVisible = false;
-            pavementEdgeLabelIntial = pavementEdgeLabel.relativePosition;
-
-            pavementEdge = UIUtils.CreateTextField(this);
-            pavementEdge.text = "";
-            pavementEdge.width = 40f;
-            pavementEdge.height = 25f;
-            pavementEdge.padding = new RectOffset(6, 6, 6, 6);
-            pavementEdge.relativePosition = new Vector3(192, 302);
-            pavementEdge.tooltip = "Enter the pavement width you for the mesh\n\nCheck the properties panel in road properties to see current\npavement width and be sure to change after reimporting.";
-            pavementEdge.isVisible = false;
-            pavementEdgeIntial = pavementEdge.relativePosition;
+            openMeshPoints.eventClick += (c, p) =>
+            {
+                PointListView.instance.Show();
+                PointListView.instance.GetMeshPoints();
+            };
 
 
+
+            UIPanel panel = AddUIComponent<UIPanel>();
+            panel.relativePosition = new Vector2(20, 315);
+            panel.size = new Vector2(250, 150);
+            panel.isVisible = false;
+            gridscroll = UIUtils.CreateScrollBox(panel, m_atlas);
+            gridscroll.size = new Vector2(235, 155);
+
+            UILabel titleLabel = gridscroll.AddUIComponent<UILabel>();
+            titleLabel.text = "  Existing Pts          New Pts";
+            titleLabel.tooltip = "Enter values to change";
+            //titleLabel.textAlignment = UIHorizontalAlignment.Center;
+            titleLabel.autoSize = false;
+            titleLabel.width = 240f;
+            titleLabel.height = 30f;
+            titleLabel.relativePosition = new Vector2(-5, 0);
+            titleLabel.isVisible = true;
+
+            UILabel boxInfoLabel = gridscroll.AddUIComponent<UILabel>();
+            boxInfoLabel.text = "    Pos    Height       Pos    Height ";
+            boxInfoLabel.tooltip = "Position from center of mesh | Height from ground level\n(default height for road surface is -0.3m)";
+            boxInfoLabel.autoSize = false;
+            boxInfoLabel.textScale = 0.85f;
+            boxInfoLabel.width = 240f;
+            boxInfoLabel.height = 25f;
+            boxInfoLabel.relativePosition = new Vector2(0, 20);
+            boxInfoLabel.isVisible = true;
+
+            coordBox = new UITextField[60];
+            int row = 0;
+            for (int i = 0; i < coordBox.Length; i++)
+            {
+                coordBox[i] = new UITextField();
+                coordBox[i] = UIUtils.CreateTextFieldCell(gridscroll, m_atlas);
+                coordBox[i].name = "Text Box " + i;
+                coordBox[i].width = 55f;
+                coordBox[i].height = 25f;  //line 2pixels tall
+                if (i % 4 == 0)
+                {
+                    coordBox[i].relativePosition = new Vector2(0, 40 + ((coordBox[i].height - 2) * row));
+                }
+                else if (i % 4 == 1)
+                {
+                    coordBox[i].relativePosition = new Vector2(53, 40 + ((coordBox[i].height - 2) * row));
+                }
+                else if (i % 4 == 2)
+                {
+                    coordBox[i].relativePosition = new Vector2(118, 40 + ((coordBox[i].height - 2) * row));
+                }
+                else
+                {
+                    coordBox[i].relativePosition = new Vector2(173, 40 + ((coordBox[i].height - 2) * row));
+                    row++;
+                }
+
+            }
+
+
+            //UITextField seginput;
 
             meshResizeButton.eventClick += (c, p) =>
             {
@@ -321,20 +353,17 @@ namespace RoadDumpTools
                         exportMeshOffset = 0;
                         meshResizeButtonToggle.backgroundSprite = "PropertyGroupClosed";
                         enableMeshResize.isVisible = false;
-                        halfWidthLabel.isVisible = false;
-                        halfWidth.isVisible = false;
-                        pavementEdgeLabel.isVisible = false;
-                        pavementEdge.isVisible = false;
+                        openMeshPoints.isVisible = false;
+                        panel.isVisible = false;
+
                     }
                     else
                     {
-                        exportMeshOffset = 100;
+                        exportMeshOffset = 200;
                         meshResizeButtonToggle.backgroundSprite = "PropertyGroupOpen";
                         enableMeshResize.isVisible = true;
-                        halfWidthLabel.isVisible = true;
-                        halfWidth.isVisible = true;
-                        pavementEdgeLabel.isVisible = true;
-                        pavementEdge.isVisible = true;
+                        openMeshPoints.isVisible = true;
+                        panel.isVisible = true;
 
 
                     }
@@ -343,7 +372,7 @@ namespace RoadDumpTools
                 }
             };
 
-            
+
 
 
             dumpNet = UIUtils.CreateButton(this);
@@ -370,7 +399,7 @@ namespace RoadDumpTools
             dumpedTotal.height = 20f;
             dumpedTotal.relativePosition = new Vector2(10, height - dumpNet.height);
             dumpedTotal.tooltip = "Total Items Dumped During Session (Duplicate Dumps Included)";
-           
+
 
             dumpNet.eventClick += (c, p) =>
             {
@@ -383,18 +412,18 @@ namespace RoadDumpTools
                 }
             };
 
-           
+
 
             //list files dumped and open import folder button!
 
-            
+
             dumpedFolderButton = UIUtils.CreateButtonSpriteImage(this, m_atlas);
             dumpedFolderButton.normalBgSprite = "ButtonMenu";
             dumpedFolderButton.hoveredBgSprite = "ButtonMenuHovered";
             dumpedFolderButton.pressedBgSprite = "ButtonMenuPressed";
             dumpedFolderButton.disabledBgSprite = "ButtonMenuDisabled";
             dumpedFolderButton.normalFgSprite = "Folder";
-            dumpedFolderButton.relativePosition = new Vector2(210, height - dumpNet.height-2);
+            dumpedFolderButton.relativePosition = new Vector2(210, height - dumpNet.height - 2);
             dumpedFolderButton.height = 25;
             dumpedFolderButton.width = 31;
             dumpedFolderButton.tooltip = "Open Import Folder (file dump location)";
@@ -404,7 +433,7 @@ namespace RoadDumpTools
                 if (isVisible)
                 {
                     //windows only for now
-                    string importPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) +  "\\Colossal Order" + "\\Cities_Skylines" + "\\Addons" + "\\Import";
+                    string importPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Colossal Order" + "\\Cities_Skylines" + "\\Addons" + "\\Import";
                     Process.Start("explorer.exe", importPath);
                 }
             };
@@ -455,10 +484,7 @@ namespace RoadDumpTools
             meshResizeButtonToggle.relativePosition = meshResizeButtonToggleIntial + new Vector3(0, exportCustOffset);
 
             enableMeshResize.relativePosition = enableMeshResizeIntial + new Vector3(0, exportCustOffset);
-            halfWidthLabel.relativePosition = halfWidthLabelIntial + new Vector3(0, exportCustOffset);
-            halfWidth.relativePosition = halfWidthIntial + new Vector3(0, exportCustOffset);
-            pavementEdgeLabel.relativePosition = pavementEdgeLabelIntial + new Vector3(0, exportCustOffset);
-            pavementEdge.relativePosition = pavementEdgeIntial +new Vector3(0, exportCustOffset);
+            openMeshPoints.relativePosition = openMeshPointsIntial + new Vector3(0, exportCustOffset);
         }
 
         public string MeshNumber => seginput.text;
@@ -469,35 +495,38 @@ namespace RoadDumpTools
         public bool GetDumpDiffuseOnly => dumpDiffuseOnly.isChecked;
         public bool GetIfFlippedTextures => flippedTextures.isChecked;
         public bool GetIfMeshResize => enableMeshResize.isChecked;
-        public string GetCustomHalfWidth => halfWidth.text;
-        public string GetCustomPavementEdge => pavementEdge.text;
+
         private void LoadResources()
         {
             string[] spriteNames = new string[]
             {
                 "Folder",
-                "Log"
-                
+                "Log",
+                "OptionsCell",
+                "OptionsCellDisabled"
             };
 
             m_atlas = ResourceLoader.CreateTextureAtlas("RoadDumpTools", spriteNames, "RoadDumpTools.Icons.");
 
             UITextureAtlas defaultAtlas = ResourceLoader.GetAtlas("Ingame");
-            Texture2D[] textures = new Texture2D[10];
+            Texture2D[] textures = new Texture2D[13];
 
             textures[0] = defaultAtlas["ButtonMenu"].texture;
             textures[1] = defaultAtlas["ButtonMenuFocused"].texture;
             textures[2] = defaultAtlas["ButtonMenuHovered"].texture;
             textures[3] = defaultAtlas["ButtonMenuPressed"].texture;
             textures[4] = defaultAtlas["ButtonMenuDisabled"].texture;
+            textures[5] = defaultAtlas["EmptySprite"].texture;
+            textures[6] = defaultAtlas["ScrollbarTrack"].texture;
+            textures[7] = defaultAtlas["ScrollbarThumb"].texture;
 
             UITextureAtlas mapAtlas = ResourceLoader.GetAtlas("InMapEditor");
-            textures[5] = mapAtlas["SubBarButtonBase"].texture;
-            textures[6] = mapAtlas["SubBarButtonBaseHovered"].texture;
-            textures[7] = mapAtlas["SubBarButtonBaseDisabled"].texture;
-            textures[8] = mapAtlas["PropertyGroupClosed"].texture;
-            textures[9] = mapAtlas["PropertyGroupOpen"].texture;
-            
+            textures[8] = mapAtlas["SubBarButtonBase"].texture;
+            textures[9] = mapAtlas["SubBarButtonBaseHovered"].texture;
+            textures[10] = mapAtlas["SubBarButtonBaseDisabled"].texture;
+            textures[11] = mapAtlas["PropertyGroupClosed"].texture;
+            textures[12] = mapAtlas["PropertyGroupOpen"].texture;
+
 
             ResourceLoader.AddTexturesInAtlas(m_atlas, textures);
 
