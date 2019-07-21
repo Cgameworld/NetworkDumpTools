@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
-using UIUtils = SamsamTS.UIUtils;
+using UIUtils = RoadDumpTools.UIUtils;
 
 namespace RoadDumpTools
 {
@@ -54,6 +54,7 @@ namespace RoadDumpTools
         private UIScrollablePanel gridscroll;
         private UITextField[] coordBox;
         private Vector3 openMeshPointsIntial;
+        private bool done;
 
         public static NetDumpPanel instance
         {
@@ -280,16 +281,17 @@ namespace RoadDumpTools
             {
                 PointListView.instance.Show();
                 PointListView.instance.GetMeshPoints();
+                openMeshPoints.text = "Refresh Mesh Points";
             };
 
 
 
             UIPanel panel = AddUIComponent<UIPanel>();
             panel.relativePosition = new Vector2(20, 315);
-            panel.size = new Vector2(250, 150);
+            panel.size = new Vector2(250, 120);
             panel.isVisible = false;
             gridscroll = UIUtils.CreateScrollBox(panel, m_atlas);
-            gridscroll.size = new Vector2(235, 155);
+            gridscroll.size = new Vector2(235, 125);
 
             UILabel titleLabel = gridscroll.AddUIComponent<UILabel>();
             titleLabel.text = "  Existing Pts          New Pts";
@@ -338,7 +340,14 @@ namespace RoadDumpTools
                     row++;
                 }
 
+                coordBox[i].eventTextChanged += (c, p) =>
+                {
+                    Debug.Log("Box " + i + " text changed!!");
+                };
+
             }
+
+
 
 
             //UITextField seginput;
@@ -359,7 +368,7 @@ namespace RoadDumpTools
                     }
                     else
                     {
-                        exportMeshOffset = 200;
+                        exportMeshOffset = 230;
                         meshResizeButtonToggle.backgroundSprite = "PropertyGroupOpen";
                         enableMeshResize.isVisible = true;
                         openMeshPoints.isVisible = true;
@@ -470,6 +479,47 @@ namespace RoadDumpTools
 
         }
 
+        public override void Update()
+        {
+
+            if (Input.GetKey(KeyCode.Tab))
+            {
+                if (!done)
+                {
+                    Debug.Log("tabpressed!");
+                    for (int i = 0; i < coordBox.Length; i++)
+                    {
+                        if (coordBox[i].hasFocus)
+                        {
+                            coordBox[i + 1].Focus();
+                            //Debug.Log("box " + i + " is focused!");
+                            break;
+                        }
+                    }
+                    done = true;
+                }
+                else
+                {
+                    Debug.Log("Done!");
+                }
+            }
+            else
+            {
+                done = false;
+            }
+
+            /*
+                for (int i = 0; i < coordBox.Length; i++)
+                {
+                    coordBox[i].eventKeyPress += (c, p) =>
+                    {
+                        Debug.Log("Box " + i + " in Focus! TAB");
+                    };
+                }
+
+            */
+
+        }
         public void RefreshFooterItems()
         {
             openFileLog.relativePosition = new Vector2(248, height - dumpNet.height - 2);

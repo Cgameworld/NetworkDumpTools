@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using ColossalFramework.UI;
-using UIUtils = SamsamTS.UIUtils;
+using UIUtils = RoadDumpTools.UIUtils;
 
 namespace MoreShortcuts.GUI
 {

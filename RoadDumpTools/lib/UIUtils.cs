@@ -4,13 +4,15 @@ using UnityEngine;
 using ColossalFramework.UI;
 using ColossalFramework;
 
-namespace SamsamTS
+namespace RoadDumpTools
 {
     public class UIUtils
     {
         // Figuring all this was a pain (no documentation whatsoever)
         // So if your are using it for your mod consider thanking me (SamsamTS)
         // Extended Public Transport UI's code helped me a lot so thanks a lot AcidFire
+        
+        // - modified with several extra methods
 
         public static UIButton CreateButton(UIComponent parent)
         {
@@ -52,13 +54,9 @@ namespace SamsamTS
             //code from tmpe
             UIScrollablePanel scrollablePanel = parent.AddUIComponent<UIScrollablePanel>();
             scrollablePanel.backgroundSprite = string.Empty;
-            //scrollablePanel.size = new Vector2(550, 340);
             scrollablePanel.size = new Vector2(130, 240);
             scrollablePanel.relativePosition = new Vector3(0, 0);
             scrollablePanel.clipChildren = true;
-            //scrollablePanel.autoLayoutStart = LayoutStart.TopLeft;
-            //scrollablePanel.autoLayoutDirection = LayoutDirection.Vertical;
-            // scrollablePanel.autoLayout = true;
 
             scrollablePanel.FitTo(parent);
             scrollablePanel.scrollWheelDirection = UIOrientation.Vertical;
@@ -87,20 +85,8 @@ namespace SamsamTS
             thumb.relativePosition = Vector3.zero;
             verticalScroll.thumbObject = thumb;
 
-            /*  UILabel testLabel = scrollablePanel.AddUIComponent<UILabel>();
-              testLabel.text = "newnewa\nb\ntest\nb\ntest\nb\ntest\nb\ntest\nb\ntest\nb\ntest\nb\ntest\n\ntest\nb\ntest\nb\ntest\n\ntest\nb\ntest\nb\ntest\n\ntest\nb\ntest\nb\ntest\n\ntest\nb\ntest\nb\ntest\n\n222te22st\nb\nt222est\nb\ntest\n\nb\ntest\n\nb\ntest\n\nb\ntest\n\nb\ntest\n56464646464646464";
-              testLabel.textAlignment = UIHorizontalAlignment.Center;
-              testLabel.width = 50f;
-              testLabel.height = 500f;
-              testLabel.relativePosition = new Vector2(0, 0);
-              testLabel.isVisible = true;
-              */
-
             return scrollablePanel;
         }
-
-
-
 
         public static UICheckBox CreateCheckBox(UIComponent parent)
         {

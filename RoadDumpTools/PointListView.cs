@@ -1,6 +1,6 @@
 ﻿using ColossalFramework.UI;
 using UnityEngine;
-using UIUtils = SamsamTS.UIUtils;
+using UIUtils = RoadDumpTools.UIUtils;
 using MoreShortcuts.GUI;
 using System.IO;
 using System;
@@ -14,7 +14,7 @@ namespace RoadDumpTools
     public class PointListView : UIPanel
     {
 
-        public const int INITIAL_HEIGHT = 560;
+        public const int INITIAL_HEIGHT = 590;
 
         private UITextureAtlas m_atlas;
 
@@ -61,7 +61,7 @@ namespace RoadDumpTools
             panel.relativePosition = new Vector2(20, 55);
             panel.size = new Vector2(145, 530);
             gridscroll = UIUtils.CreateScrollBox(panel, m_atlas);
-            gridscroll.size = new Vector2(130, 520);
+            gridscroll.size = new Vector2(130, 510);
 
             UILabel titleLabel = gridscroll.AddUIComponent<UILabel>();
             titleLabel.text = "   Pos    Height";
@@ -72,9 +72,12 @@ namespace RoadDumpTools
             titleLabel.height = 30f;
             titleLabel.relativePosition = new Vector2(0, 0);
             titleLabel.isVisible = true; //[textboxNum]
+
             coordBox = new List<UITextField>();
             GetMeshPoints(true);
             GenerateGrid();
+
+
             //GetMeshPoints();
         }
 
@@ -110,7 +113,8 @@ namespace RoadDumpTools
             {
                 for (int i = 0; i < coordBox.Count; i++)
                 {
-                    coordBox[i].enabled = false;
+                    DestroyImmediate(coordBox[i].gameObject);
+                    //coordBox[i].enabled = false;
                 }
                 coordBox.Clear();
                     GetMeshPoints(true);
@@ -173,6 +177,7 @@ namespace RoadDumpTools
                 }
                 //Debug.Log("x: " + xyvertices[i][0] + "\ny: " + xyvertices[i][1] + "\ny+1: " + xyvertices[i + 1][1] + ">");
             }
+
             textboxNum = cell;
         }
 
