@@ -55,6 +55,9 @@ namespace RoadDumpTools
         private UITextField[] coordBox;
         private Vector3 openMeshPointsIntial;
         private bool done;
+        private UIButton addCoordRow;
+        private UIButton removeCoordRow;
+        private UIButton refreshCoordRows;
 
         public static NetDumpPanel instance
         {
@@ -288,10 +291,10 @@ namespace RoadDumpTools
 
             UIPanel panel = AddUIComponent<UIPanel>();
             panel.relativePosition = new Vector2(20, 315);
-            panel.size = new Vector2(250, 120);
+            panel.size = new Vector2(250, 115);
             panel.isVisible = false;
             gridscroll = UIUtils.CreateScrollBox(panel, m_atlas);
-            gridscroll.size = new Vector2(235, 125);
+            gridscroll.size = new Vector2(230, 120);
 
             UILabel titleLabel = gridscroll.AddUIComponent<UILabel>();
             titleLabel.text = "  Existing Pts          New Pts";
@@ -313,7 +316,7 @@ namespace RoadDumpTools
             boxInfoLabel.relativePosition = new Vector2(0, 20);
             boxInfoLabel.isVisible = true;
 
-            coordBox = new UITextField[60];
+            coordBox = new UITextField[30];
             int row = 0;
             for (int i = 0; i < coordBox.Length; i++)
             {
@@ -347,6 +350,74 @@ namespace RoadDumpTools
 
             }
 
+            UIPanel gridButtons = AddUIComponent<UIPanel>();
+            gridButtons.relativePosition = new Vector2(0, 445);
+            gridButtons.size = new Vector2(285, 30);
+            gridButtons.isVisible = true;
+            gridButtons.name = "Grid Buttons";
+
+
+
+            refreshCoordRows = UIUtils.CreateButtonSpriteImage(gridButtons, m_atlas);
+            refreshCoordRows.normalBgSprite = "ButtonMenu";
+            refreshCoordRows.hoveredBgSprite = "ButtonMenuHovered";
+            refreshCoordRows.pressedBgSprite = "ButtonMenuPressed";
+            refreshCoordRows.disabledBgSprite = "ButtonMenuDisabled";
+            refreshCoordRows.normalFgSprite = "Reset";
+            refreshCoordRows.relativePosition = new Vector2(25, 0);
+            refreshCoordRows.height = 25;
+            refreshCoordRows.width = 31;
+            refreshCoordRows.tooltip = "Reset";
+
+            refreshCoordRows.eventClick += (c, p) =>
+            {
+                if (isVisible)
+                {
+                    Debug.Log("Clicked Refresh!");
+                }
+            };
+
+            addCoordRow = UIUtils.CreateButtonSpriteImage(gridButtons, m_atlas);
+            addCoordRow.normalBgSprite = "ButtonMenu";
+            addCoordRow.hoveredBgSprite = "ButtonMenuHovered";
+            addCoordRow.pressedBgSprite = "ButtonMenuPressed";
+            addCoordRow.disabledBgSprite = "ButtonMenuDisabled";
+            addCoordRow.normalFgSprite = "Add";
+            //addCoordRow.relativePosition = new Vector2(170, 445);
+            addCoordRow.relativePosition = new Vector2(179, 0);
+            addCoordRow.height = 25;
+            addCoordRow.width = 31;
+            addCoordRow.tooltip = "add";
+
+            addCoordRow.eventClick += (c, p) =>
+            {
+                if (isVisible)
+                {
+                    Debug.Log("Clicked Add!");
+                }
+            };
+
+            removeCoordRow = UIUtils.CreateButtonSpriteImage(gridButtons, m_atlas);
+            removeCoordRow.normalBgSprite = "ButtonMenu";
+            removeCoordRow.hoveredBgSprite = "ButtonMenuHovered";
+            removeCoordRow.pressedBgSprite = "ButtonMenuPressed";
+            removeCoordRow.disabledBgSprite = "ButtonMenuDisabled";
+            removeCoordRow.normalFgSprite = "Remove";
+            //removeCoordRow.relativePosition = new Vector2(208, 445);
+            removeCoordRow.relativePosition = new Vector2(217, 0);
+            removeCoordRow.height = 25;
+            removeCoordRow.width = 31;
+            removeCoordRow.tooltip = "remove";
+
+            removeCoordRow.eventClick += (c, p) =>
+            {
+                if (isVisible)
+                {
+                    Debug.Log("Clicked Remove!");
+                }
+            };
+
+
 
 
 
@@ -368,7 +439,7 @@ namespace RoadDumpTools
                     }
                     else
                     {
-                        exportMeshOffset = 230;
+                        exportMeshOffset = 250;
                         meshResizeButtonToggle.backgroundSprite = "PropertyGroupOpen";
                         enableMeshResize.isVisible = true;
                         openMeshPoints.isVisible = true;
@@ -481,44 +552,26 @@ namespace RoadDumpTools
 
         public override void Update()
         {
-
+            //allows tabbing between fields for mesh point replacement
             if (Input.GetKey(KeyCode.Tab))
             {
                 if (!done)
                 {
-                    Debug.Log("tabpressed!");
                     for (int i = 0; i < coordBox.Length; i++)
                     {
                         if (coordBox[i].hasFocus)
                         {
                             coordBox[i + 1].Focus();
-                            //Debug.Log("box " + i + " is focused!");
                             break;
                         }
                     }
                     done = true;
-                }
-                else
-                {
-                    Debug.Log("Done!");
                 }
             }
             else
             {
                 done = false;
             }
-
-            /*
-                for (int i = 0; i < coordBox.Length; i++)
-                {
-                    coordBox[i].eventKeyPress += (c, p) =>
-                    {
-                        Debug.Log("Box " + i + " in Focus! TAB");
-                    };
-                }
-
-            */
-
         }
         public void RefreshFooterItems()
         {
@@ -553,7 +606,10 @@ namespace RoadDumpTools
                 "Folder",
                 "Log",
                 "OptionsCell",
-                "OptionsCellDisabled"
+                "OptionsCellDisabled",
+                "Add",
+                "Remove",
+                "Refresh"
             };
 
             m_atlas = ResourceLoader.CreateTextureAtlas("RoadDumpTools", spriteNames, "RoadDumpTools.Icons.");
