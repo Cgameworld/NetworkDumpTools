@@ -21,7 +21,6 @@ namespace RoadDumpTools
         private static PointListView _instance;
 
         private UITitleBar m_title;
-        private UILabel TestLine;
         private int textboxNum = 2;
         private List<UITextField> coordBox;
         private UIScrollablePanel gridscroll;

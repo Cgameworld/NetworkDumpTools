@@ -114,7 +114,15 @@ namespace RoadDumpTools
                     }
                 }
 
-                panel.SetMessage("Network Dump Successful", "Network Name: " + networkName + "\n\nDumped Items:\n" + exportedFilePaths, false);
+                string a = "";
+
+                for (int i =0; i < NetDumpPanel.instance.enteredMeshPoints().Length; i++)
+                {
+                    a = a + NetDumpPanel.instance.enteredMeshPoints()[i];
+                }
+
+                Debug.Log("beforepopup");
+                panel.SetMessage("Network Dump Successful", "Network Name: " + networkName + "\n\nDumped Items:\n" + exportedFilePaths + "\n entered points: " + a,false);
 
             }
             catch (Exception e)
