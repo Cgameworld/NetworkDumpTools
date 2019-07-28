@@ -434,11 +434,62 @@ namespace RoadDumpTools
 
                 //reinsert code to resize here!!
 
+                newvertices = meshToDump.vertices; //get vertices for other method
+
+                Debug.Log("IsChecked? " + NetDumpPanel.instance.enableMeshResize.isChecked);
+                float[] enteredVals = NetDumpPanel.instance.enteredMeshPoints();
+
+                float[] newVertsX = new float[newvertices.Length];
+                float[] newVertsY = new float[newvertices.Length];
+                if (NetDumpPanel.instance.enableMeshResize.isChecked)
+                {
+                    Debug.Log("enable box is checked!");
+
+                    /*
+                    advanced mode?
+                    for (int i = 0; i < 8; i = i + 4)
+                    {
+                        // enteredVals[i] 
+                        Debug.Log("enteredVals[i]: " + enteredVals[i] + "  |  enteredVals[i + 1]: " + enteredVals[i + 1]);
+                        int b = Array.IndexOf(newvertices, new Vector3(enteredVals[i], enteredVals[i + 1], 32f));
+                        Debug.Log("indexOF " + b);
+
+                        newvertices[b] = new Vector3(enteredVals[i + 2], enteredVals[i + 3], 32f);
+
+                      //compare index 
+                    }
+                  */
+                    Debug.Log("val 0 " + enteredVals[0] + " val 1 " + enteredVals[1]);
+
+                    for (int a = 0; a<newvertices.Length; a++)
+                    {
+                        newVertsX[a] = newvertices[a].x;
+
+                        for (int b = 0; b < enteredVals.Length; b = b + 2)
+                        {
+                            if (Mathf.Approximately(newVertsX[a], enteredVals[b]))
+                            {
+                                newvertices[a].x = enteredVals[b+1];
+                                Debug.Log("replaced point " + newVertsX[a] + " | with enterVals[0] " + enteredVals[b+1]);
+                            }
+                        }
+
+                    }
+
+
+                    meshToDump.vertices = newvertices;
+
+                    meshToDump.RecalculateBounds();
+                }
+
+
+
                 if (!isDumping)
                 {
-                    newvertices = meshToDump.vertices; //get vertices for other method
+                    //newvertices = meshToDump.vertices; //get vertices for other method
                     Debug.Log("copied new verts");
                 }
+
 
                 else
                 {
