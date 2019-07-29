@@ -472,7 +472,6 @@ namespace RoadDumpTools
                                 Debug.Log("replaced point " + newVertsX[a] + " | with enterVals[0] " + enteredVals[b+1]);
                             }
                         }
-
                     }
 
 
