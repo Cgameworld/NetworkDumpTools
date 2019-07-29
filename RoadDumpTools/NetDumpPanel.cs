@@ -51,16 +51,24 @@ namespace RoadDumpTools
         private UIButton openMeshPoints;
         private UIButton lodGen;
         private UICheckBox removeSuffix;
+        private Vector3 panelIntial;
         private UIScrollablePanel gridscroll;
+        private Vector3 boxInfoLabelIntial;
         private List<UITextField> coordBox;
         private Vector3 openMeshPointsIntial;
         private bool done;
         private UIButton addCoordRow;
         private UIButton removeCoordRow;
+        private Vector3 gridButtonsInitial;
         private UIButton refreshCoordRows;
         private float celloffset;
         private UIButton gridModeToggle;
         private bool advancedToggled;
+        private Vector3 titleLabelIntial;
+        private UILabel boxInfoLabel;
+        private UIPanel cellpanel;
+        private UIPanel gridButtons;
+        private UILabel titleLabel;
 
         public static NetDumpPanel instance
         {
@@ -292,14 +300,15 @@ namespace RoadDumpTools
 
 
 
-            UIPanel panel = AddUIComponent<UIPanel>();
-            panel.relativePosition = new Vector2(17, 315);
-            panel.size = new Vector2(255, 135);
-            panel.isVisible = false;
-            gridscroll = UIUtils.CreateScrollBox(panel, m_atlas);
+            cellpanel = AddUIComponent<UIPanel>();
+            cellpanel.relativePosition = new Vector2(17, 315);
+            cellpanel.size = new Vector2(255, 135);
+            cellpanel.isVisible = false;
+            panelIntial = cellpanel.relativePosition;
+            gridscroll = UIUtils.CreateScrollBox(cellpanel, m_atlas);
             gridscroll.size = new Vector2(230, 138);
 
-            UILabel titleLabel = gridscroll.AddUIComponent<UILabel>();
+            titleLabel = gridscroll.AddUIComponent<UILabel>();
             titleLabel.text = "            Existing         New";
             titleLabel.tooltip = "Enter values to change";
             //titleLabel.textAlignment = UIHorizontalAlignment.Center;
@@ -309,9 +318,9 @@ namespace RoadDumpTools
             titleLabel.relativePosition = new Vector2(-5, 0);
             titleLabel.isVisible = true;
 
-            UILabel boxInfoLabel = gridscroll.AddUIComponent<UILabel>();
+            boxInfoLabel = gridscroll.AddUIComponent<UILabel>();
             boxInfoLabel.text = "          Position     Position";
-            boxInfoLabel.tooltip = "Position from center of mesh | Height from ground level\n(default height for road surface is -0.3m)";
+            boxInfoLabel.tooltip = "Position from center of mesh";
             boxInfoLabel.autoSize = false;
             //boxInfoLabel.textScale = 0.85f;
             boxInfoLabel.width = 230f;
@@ -322,17 +331,18 @@ namespace RoadDumpTools
             //coordBox = new UITextField[30];
             coordBox = new List<UITextField>();
             celloffset = 0;
-            AddCellFieldsTwo(8);
-            for (int a = 0; a<8; a++) //fixes intial 5 px shift to the right for text boxes - find better solution??????
+            AddCellFieldsTwo(4);
+            for (int a = 0; a<4; a++) //fixes intial 5 px shift to the right for text boxes - find better solution??????
             {
                 coordBox[a].relativePosition = coordBox[a].relativePosition + new Vector3(-5f, 0f);
             }
 
-            UIPanel gridButtons = AddUIComponent<UIPanel>();
+            gridButtons = AddUIComponent<UIPanel>();
             gridButtons.relativePosition = new Vector2(0, 458);
             gridButtons.size = new Vector2(285, 30);
             gridButtons.isVisible = false;
             gridButtons.name = "Grid Buttons";
+            gridButtonsInitial = gridButtons.relativePosition;
 
             refreshCoordRows = UIUtils.CreateButtonSpriteImage(gridButtons, m_atlas);
             refreshCoordRows.normalBgSprite = "ButtonMenu";
@@ -378,7 +388,7 @@ namespace RoadDumpTools
                             coordBox.RemoveAt(coordBox.Count - 1);
                         }
                         celloffset = 0;
-                        AddCellFieldsFour(16);
+                        AddCellFieldsTwo(4);
 
 
                     });
@@ -472,13 +482,9 @@ namespace RoadDumpTools
                     Debug.Log("Clicked Remove!");
                     for (int j = 1; j < 3; j++)
                     {
-                        //DestroyImmediate(coordBox[coordBox.Count - j]);
-                        //coordBox[coordBox.Count - 1].isEnabled = false;
-                        //coordBox[coordBox.Count - 1].text = "Removed";
                         coordBox[coordBox.Count - 1].isVisible = false;
                         coordBox.RemoveAt(coordBox.Count - 1);
-                        //coordBox.Count = coordBox.Count - 1;
-                        Debug.Log("coordBox.Count: " + coordBox.Count + " | j: " + j);
+                        //Debug.Log("coordBox.Count: " + coordBox.Count + " | j: " + j);
                     }
                     celloffset -= 23; // pushes offset up by 23 pixel (make dynamic?)
 
@@ -502,17 +508,17 @@ namespace RoadDumpTools
                         meshResizeButtonToggle.backgroundSprite = "PropertyGroupClosed";
                         enableMeshResize.isVisible = false;
                         openMeshPoints.isVisible = false;
-                        panel.isVisible = false;
+                        cellpanel.isVisible = false;
                         gridButtons.isVisible = false;
 
                     }
                     else
                     {
-                        exportMeshOffset = 250;
+                        exportMeshOffset = 255;
                         meshResizeButtonToggle.backgroundSprite = "PropertyGroupOpen";
                         enableMeshResize.isVisible = true;
                         openMeshPoints.isVisible = true;
-                        panel.isVisible = true;
+                        cellpanel.isVisible = true;
                         gridButtons.isVisible = true;
 
 
@@ -705,7 +711,6 @@ namespace RoadDumpTools
                 coordBox[cell].name = "Text Box " + cell;
                 coordBox[cell].width = 80f;
                 coordBox[cell].height = 25f;  //line 2pixels tall
-                coordBox[cell].text = cell.ToString();
                 if (i % 2 == 0)
                 {
                     coordBox[cell].relativePosition = new Vector2(37, celloffset + 40f + ((coordBox[i].height - 2) * row));
@@ -741,6 +746,8 @@ namespace RoadDumpTools
 
             enableMeshResize.relativePosition = enableMeshResizeIntial + new Vector3(0, exportCustOffset);
             openMeshPoints.relativePosition = openMeshPointsIntial + new Vector3(0, exportCustOffset);
+            cellpanel.relativePosition = panelIntial + new Vector3(0, exportCustOffset);
+            gridButtons.relativePosition = gridButtonsInitial + new Vector3(0, exportCustOffset);
         }
 
         public string MeshNumber => seginput.text;

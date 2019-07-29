@@ -459,12 +459,11 @@ namespace RoadDumpTools
                       //compare index 
                     }
                   */
-                    Debug.Log("val 0 " + enteredVals[0] + " val 1 " + enteredVals[1]);
 
+                    //Debug.Log("val 0 " + enteredVals[0] + " val 1 " + enteredVals[1]);
                     for (int a = 0; a<newvertices.Length; a++)
                     {
                         newVertsX[a] = newvertices[a].x;
-
                         for (int b = 0; b < enteredVals.Length; b = b + 2)
                         {
                             if (Mathf.Approximately(newVertsX[a], enteredVals[b]))
