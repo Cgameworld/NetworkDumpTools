@@ -53,7 +53,6 @@ namespace RoadDumpTools
         private UICheckBox removeSuffix;
         private Vector3 panelIntial;
         private UIScrollablePanel gridscroll;
-        private Vector3 boxInfoLabelIntial;
         private List<UITextField> coordBox;
         private Vector3 openMeshPointsIntial;
         private bool done;
@@ -64,11 +63,11 @@ namespace RoadDumpTools
         private float celloffset;
         private UIButton gridModeToggle;
         private bool advancedToggled;
-        private Vector3 titleLabelIntial;
         private UILabel boxInfoLabel;
         private UIPanel cellpanel;
         private UIPanel gridButtons;
         private UILabel titleLabel;
+        public string lodFilePath = "";
 
         public static NetDumpPanel instance
         {
@@ -544,7 +543,17 @@ namespace RoadDumpTools
             lodGen.relativePosition = new Vector2(40, height - lodGen.height - 45);
             lodGen.width = 200;
             lodGen.tooltip = "Generates lod .png files\nMust dump network first or have existing matching files in the import folder";
-            lodGen.isEnabled = false;
+
+            lodGen.eventClick += (c, p) =>
+            {
+                if (isVisible)
+                {
+                    LodImageGenerator lodgen = new LodImageGenerator();
+                    //string filepath = "C:\\Users\\Cam\\AppData\\Local\\Colossal Order\\Cities_Skylines\\Addons\\Import\\test11_d.png";
+                    lodgen.GenerateLodImages(lodFilePath);
+                }
+            };
+
 
             dumpedTotal = AddUIComponent<UILabel>();
             dumpedTotal.text = "Total Dumped Items: (0)";
@@ -564,6 +573,7 @@ namespace RoadDumpTools
                     DumpProcessing dumpProcess = new DumpProcessing();
                     dumpedSessionItems = Int32.Parse(dumpProcess.DumpNetworks()[0]) + dumpedSessionItems;
                     dumpedFiles += dumpProcess.DumpNetworks()[1];
+                    lodFilePath = dumpProcess.DumpNetworks()[2];
                     dumpedTotal.text = "Total Dumped Items: (" + dumpedSessionItems.ToString() + ")";
                 }
             };
@@ -758,6 +768,7 @@ namespace RoadDumpTools
         public bool GetDumpDiffuseOnly => dumpDiffuseOnly.isChecked;
         public bool GetIfFlippedTextures => flippedTextures.isChecked;
         public bool GetIfMeshResize => enableMeshResize.isChecked;
+        public string GetDumpedTotalLabel => dumpedTotal.text;
 
         public float [] enteredMeshPoints()
         {

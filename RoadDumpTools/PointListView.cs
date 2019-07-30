@@ -110,16 +110,21 @@ namespace RoadDumpTools
 
             if (!getLengthOnly)
             {
-                for (int i = 0; i < coordBox.Count; i++)
+                Debug.Log("coordBoxCount: " + coordBox.Count);
+                if (coordBox.Count != 0)
                 {
-                    DestroyImmediate(coordBox[i].gameObject);
-                    //coordBox[i].enabled = false;
-                }
-                coordBox.Clear();
+                    for (int i = 0; i < coordBox.Count; i++)
+                    {
+                        DestroyImmediate(coordBox[i].gameObject);
+                        //coordBox[i].enabled = false;
+                    }
+                    coordBox.Clear();
                     GetMeshPoints(true);
                     Debug.Log("textboxNum:  " + textboxNum);
                     GenerateGrid();
+                }
             }
+
             DumpProcessing dumpProcess = new DumpProcessing();
             Vector3[] meshVertices = dumpProcess.VerticesFromMesh();
 

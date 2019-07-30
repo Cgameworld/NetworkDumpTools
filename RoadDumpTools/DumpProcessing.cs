@@ -114,15 +114,8 @@ namespace RoadDumpTools
                     }
                 }
 
-                string a = "";
-
-                for (int i =0; i < NetDumpPanel.instance.enteredMeshPoints().Length; i++)
-                {
-                    a = a + NetDumpPanel.instance.enteredMeshPoints()[i];
-                }
-
                 Debug.Log("beforepopup");
-                panel.SetMessage("Network Dump Successful", "Network Name: " + networkName + "\n\nDumped Items:\n" + exportedFilePaths + "\n entered points: " + a,false);
+                panel.SetMessage("Network Dump Successful", "Network Name: " + networkName + "\n\nDumped Items:\n" + exportedFilePaths,false);
 
             }
             catch (Exception e)
@@ -134,7 +127,7 @@ namespace RoadDumpTools
                 filesExported = 0;
             }
 
-            string[] returnArray = { filesExported.ToString(), exportedFilePaths };
+            string[] returnArray = { filesExported.ToString(), exportedFilePaths, diffuseTexturePath.Substring(0, diffuseTexturePath.LastIndexOf("_"))};
             return returnArray;
         }
 
@@ -414,7 +407,7 @@ namespace RoadDumpTools
                 File.Delete(fileName);
             }
 
-            Debug.Log("dumpobj" + filename);
+           // Debug.Log("dumpobj" + filename);
             try
             {
                 // copy the relevant data to the temporary mesh
@@ -432,34 +425,14 @@ namespace RoadDumpTools
                 };
                 meshToDump.RecalculateBounds();
 
-                //reinsert code to resize here!!
-
-                newvertices = meshToDump.vertices; //get vertices for other method
-
-                Debug.Log("IsChecked? " + NetDumpPanel.instance.enableMeshResize.isChecked);
-                float[] enteredVals = NetDumpPanel.instance.enteredMeshPoints();
-
-                float[] newVertsX = new float[newvertices.Length];
-                float[] newVertsY = new float[newvertices.Length];
+                //Debug.Log("IsChecked? " + NetDumpPanel.instance.enableMeshResize.isChecked);
+                
                 if (NetDumpPanel.instance.enableMeshResize.isChecked)
                 {
-                    Debug.Log("enable box is checked!");
-
-                    /*
-                    advanced mode?
-                    for (int i = 0; i < 8; i = i + 4)
-                    {
-                        // enteredVals[i] 
-                        Debug.Log("enteredVals[i]: " + enteredVals[i] + "  |  enteredVals[i + 1]: " + enteredVals[i + 1]);
-                        int b = Array.IndexOf(newvertices, new Vector3(enteredVals[i], enteredVals[i + 1], 32f));
-                        Debug.Log("indexOF " + b);
-
-                        newvertices[b] = new Vector3(enteredVals[i + 2], enteredVals[i + 3], 32f);
-
-                      //compare index 
-                    }
-                  */
-
+                    newvertices = meshToDump.vertices; //get vertices for other method
+                    float[] enteredVals = NetDumpPanel.instance.enteredMeshPoints();
+                    float[] newVertsX = new float[newvertices.Length];
+                    float[] newVertsY = new float[newvertices.Length];
                     //Debug.Log("val 0 " + enteredVals[0] + " val 1 " + enteredVals[1]);
                     for (int a = 0; a<newvertices.Length; a++)
                     {
@@ -484,7 +457,7 @@ namespace RoadDumpTools
 
                 if (!isDumping)
                 {
-                    //newvertices = meshToDump.vertices; //get vertices for other method
+                    newvertices = meshToDump.vertices; //get vertices for other method
                     Debug.Log("copied new verts");
                 }
 
