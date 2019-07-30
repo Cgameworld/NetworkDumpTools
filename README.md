@@ -4,7 +4,6 @@ WIP
 
 This mod allows for the easy dumping of roads inside the Cities: Skylines Road Editor.
 
-
 Files this tool dumps:
 
 _d.png\
