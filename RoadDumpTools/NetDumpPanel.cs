@@ -18,7 +18,7 @@ namespace RoadDumpTools
 
         private UITextureAtlas m_atlas;
 
-        private UITitleBar m_title;
+        public UITitleBar m_title;
         private UITextField seginput;
         private UIDropDown net_type;
         private UIDropDown netEle;
@@ -99,6 +99,7 @@ namespace RoadDumpTools
             // Title Bar
             m_title = AddUIComponent<UITitleBar>();
             m_title.title = "Network Dump Tools";
+            m_title.closeButton.isVisible = false;
 
 
             UILabel netEle_label = AddUIComponent<UILabel>();
@@ -698,6 +699,7 @@ namespace RoadDumpTools
                 coordBox[i].eventTextChanged += (c, p) =>
                 {
                     Debug.Log("Box " + i + " text changed!!");
+                    enableMeshResize.isChecked = true;
                 };
             }
 
@@ -734,6 +736,7 @@ namespace RoadDumpTools
                 coordBox[i].eventTextChanged += (c, p) =>
                 {
                     Debug.Log("Box " + i + " text changed!!");
+                    enableMeshResize.isChecked = true;
                 };
             }
 

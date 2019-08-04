@@ -16,7 +16,17 @@ namespace RoadDumpTools
 
             GameObject.FindObjectOfType<ToolController>().eventEditPrefabChanged += (info) =>
             {
-                NetDumpPanel.instance.Show();
+                Debug.Log("objectype" + info.GetType());
+
+                if (info.GetType().ToString() == "NetInfo")
+                {
+                    NetDumpPanel.instance.Show();
+                }
+                else
+                {
+                    NetDumpPanel.instance.Hide();
+                    Debug.Log("not NetInfo");
+                }
             };
 
 

@@ -120,10 +120,9 @@ namespace RoadDumpTools
             }
             catch (Exception e)
             {
-
                 ExceptionPanel panel = UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel");
                 panel.SetMessage("Network Dump Failed", "" + e, false);
-
+                panel.GetComponentInChildren<UISprite>().spriteName = "IconError";
                 filesExported = 0;
             }
 
@@ -424,8 +423,6 @@ namespace RoadDumpTools
                     name = mesh.name //name = mesh.name.Split('_')[0] //removes extra _0 at end of displayed name
                 };
                 meshToDump.RecalculateBounds();
-
-                //Debug.Log("IsChecked? " + NetDumpPanel.instance.enableMeshResize.isChecked);
                 
                 if (NetDumpPanel.instance.enableMeshResize.isChecked)
                 {
@@ -433,7 +430,6 @@ namespace RoadDumpTools
                     float[] enteredVals = NetDumpPanel.instance.enteredMeshPoints();
                     float[] newVertsX = new float[newvertices.Length];
                     float[] newVertsY = new float[newvertices.Length];
-                    //Debug.Log("val 0 " + enteredVals[0] + " val 1 " + enteredVals[1]);
                     for (int a = 0; a<newvertices.Length; a++)
                     {
                         newVertsX[a] = newvertices[a].x;
@@ -476,7 +472,9 @@ namespace RoadDumpTools
             }
             catch (Exception ex)
             {
+
                 Debug.Log("Nope! Mesh dumping doesn't work");
+                throw new System.ArgumentException("Mesh Dumping Error - Check Point Replacer Input\n");
             }
 
         }

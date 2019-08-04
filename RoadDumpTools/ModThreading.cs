@@ -23,7 +23,8 @@ namespace RoadDumpTools
                 // _processed = true;
                 Debug.Log("keyboard shortcut ran!");
                 NetDumpPanel.instance.Show();
-           }
+                NetDumpPanel.instance.m_title.closeButton.isVisible = true;
+            }
 
             else
             {
