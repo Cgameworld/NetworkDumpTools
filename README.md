@@ -1,6 +1,6 @@
 WIP
 
-![](Images/panel-image1.png)
+![Main Panel](/Images/panel_image1.png "Panel")
 
 This mod allows for the easy dumping of roads inside the Cities: Skylines Road Editor.
 
