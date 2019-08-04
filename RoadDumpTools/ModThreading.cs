@@ -12,7 +12,7 @@ namespace RoadDumpTools
 {
     public class ModThreading : ThreadingExtensionBase
     {
-        private bool _processed = false;
+        //private bool _processed = false;
 
         public override void OnUpdate(float realTimeDelta, float simulationTimeDelta)
         {
@@ -21,9 +21,8 @@ namespace RoadDumpTools
            {
                 // if (_processed) return;
                 // _processed = true;
-                Debug.Log("ran!");
+                Debug.Log("keyboard shortcut ran!");
                 NetDumpPanel.instance.Show();
-                //NetDumpPanel.instance.UpdateInfo(sim_init.m_editPrefabInfo.name);
            }
 
             else
