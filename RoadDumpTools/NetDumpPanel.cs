@@ -188,7 +188,7 @@ namespace RoadDumpTools
             flippedTextures.text = "Flip Dumped Textures";
             flippedTextures.isChecked = true;
             flippedTextures.relativePosition = new Vector2(50, 270);
-            flippedTextures.tooltip = "Flip textures horizontally after exporting\n(default setting is true)\nThe game stores a horizontally flipped version of\n the original texture, this corrects it by flipping it back \n Important only for asymmetrical roads for elevated???";
+            flippedTextures.tooltip = "Flip textures horizontally after exporting\n(default setting is true)\nSometimes this feature needs to be disabled for uncommon texture maps (i.e. Industries DLC roads, Certain custom roads";
             flippedTextures.isVisible = false;
             ///when dropdown selected to others uncheck this one?
 
@@ -213,8 +213,8 @@ namespace RoadDumpTools
             removeSuffix.text = "Remove Added Suffixes";
             removeSuffix.isChecked = false;
             removeSuffix.relativePosition = new Vector2(30, 360);
-            removeSuffix.tooltip = "NOFUNCTIONALRemoves the added descriptors at the end of dumped file names\n\n" +
-                "Example: An Elevated Node network without this option enabled would\nhave Elevated_node added to the end of each file name";
+            removeSuffix.tooltip = "Removes the added descriptors at the end of dumped file names\n\n" +
+                "Caution: Each new export regardless of elevation/mesh type will overwrite the previous file with the same name\nExample: An Elevated Node network without this option enabled would\nhave Elevated_node added to the end of each file name";
             removeSuffix.isVisible = false;
 
             //and or label
@@ -412,7 +412,7 @@ namespace RoadDumpTools
             gridModeToggle.tooltip = "[FUTURE] Point Entering Mode (Switches Between Basic/Advanced";
             advancedToggled = false;
 
-            gridModeToggle.eventClick += (c, p) =>
+            /* gridModeToggle.eventClick += (c, p) =>
             {
                 if (isVisible)
                 {
@@ -439,7 +439,7 @@ namespace RoadDumpTools
 
                 }
             };
-
+            */
 
             addCoordRow = UIUtils.CreateButtonSpriteImage(gridButtons, m_atlas);
             addCoordRow.normalBgSprite = "ButtonMenu";
@@ -578,7 +578,6 @@ namespace RoadDumpTools
                     dumpedTotal.text = "Total Dumped Items: (" + dumpedSessionItems.ToString() + ")";
                 }
             };
-
 
 
             //list files dumped and open import folder button!
@@ -772,6 +771,7 @@ namespace RoadDumpTools
         public bool GetIfFlippedTextures => flippedTextures.isChecked;
         public bool GetIfMeshResize => enableMeshResize.isChecked;
         public string GetDumpedTotalLabel => dumpedTotal.text;
+        public bool GetRemoveSuffix => removeSuffix.isChecked;
 
         public float [] enteredMeshPoints()
         {

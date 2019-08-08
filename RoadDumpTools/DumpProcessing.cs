@@ -186,6 +186,7 @@ namespace RoadDumpTools
                     {
                         throw new Exception("Elevated Elevation Does Not Exist");
                     }
+                    if (!NetDumpPanel.instance.GetRemoveSuffix)
                     filename += " Elevated";
                     break;
                 case 2:
@@ -195,6 +196,7 @@ namespace RoadDumpTools
                     {
                         throw new Exception("Bridge Elevation Does Not Exist");
                     }
+                    if (!NetDumpPanel.instance.GetRemoveSuffix)
                     filename += " Bridge";
                     break;
                 case 3:
@@ -203,6 +205,7 @@ namespace RoadDumpTools
                     {
                         throw new Exception("Slope Elevation Does Not Exist");
                     }
+                    if (!NetDumpPanel.instance.GetRemoveSuffix)
                     filename += " Slope";
                     break;
                 case 4:
@@ -211,6 +214,7 @@ namespace RoadDumpTools
                     {
                         throw new Exception("Tunnel Elevation Does Not Exist");
                     }
+                    if (!NetDumpPanel.instance.GetRemoveSuffix)
                     filename += " Tunnel";
                     break;
                 default:
@@ -228,8 +232,7 @@ namespace RoadDumpTools
 
             Debug.Log("meshnum" + meshnum);
 
-
-
+            
             if (NetDumpPanel.instance.NetworkType == "Segment")
             {
                 material = loadedPrefab.m_segments[meshnum].m_segmentMaterial;
@@ -247,12 +250,25 @@ namespace RoadDumpTools
             else if (NetDumpPanel.instance.NetworkType == "Node")
             {
                 material = loadedPrefab.m_nodes[meshnum].m_nodeMaterial;
-                diffuseTexturePath += "_node_d.png";
-                meshPath += "_node.obj";
-                lodMeshPath += "_node_lod.obj";
-                aFilePath += "_node_a.png";
-                pFilePath += "_node_p.png";
-                rFilePath += "_node_r.png";
+                if (NetDumpPanel.instance.GetRemoveSuffix)
+                {
+                    diffuseTexturePath += "_d.png";
+                    meshPath += ".obj";
+                    lodMeshPath += "_lod.obj";
+                    aFilePath += "_a.png";
+                    pFilePath += "_p.png";
+                    rFilePath += "_r.png";
+                }
+                else
+                {
+                    diffuseTexturePath += "_node_d.png";
+                    meshPath += "_node.obj";
+                    lodMeshPath += "_node_lod.obj";
+                    aFilePath += "_node_a.png";
+                    pFilePath += "_node_p.png";
+                    rFilePath += "_node_r.png";
+                }
+
                 roadMesh = loadedPrefab.m_nodes[meshnum].m_mesh;
                 roadMeshLod = loadedPrefab.m_nodes[meshnum].m_lodMesh;
                 aprmaterial = loadedPrefab.m_nodes[meshnum].m_nodeMaterial;

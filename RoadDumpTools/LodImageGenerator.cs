@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace RoadDumpTools
@@ -70,6 +69,7 @@ namespace RoadDumpTools
             {
                 ExceptionPanel panel = UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel");
                 panel.SetMessage("LOD File Generation Failed", "" + e, false);
+                panel.GetComponentInChildren<UISprite>().spriteName = "IconError";
             }
         }
 
