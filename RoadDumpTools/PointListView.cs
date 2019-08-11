@@ -116,7 +116,6 @@ namespace RoadDumpTools
                     for (int i = 0; i < coordBox.Count; i++)
                     {
                         DestroyImmediate(coordBox[i].gameObject);
-                        //coordBox[i].enabled = false;
                     }
                     coordBox.Clear();
                     GetMeshPoints(true);
@@ -151,24 +150,12 @@ namespace RoadDumpTools
             xyvertices.Sort((sa1, sa2) => sa1[1].CompareTo(sa2[1]));  //sort by y
             xyvertices.Sort((sa1, sa2) => sa1[0].CompareTo(sa2[0]));  //sort by x
 
-            for (int i = 0; i < xyvertices.Count; i++)
-            {
-                Debug.Log("i = " + i + "   x: " + xyvertices[i][0] + "  y: " + xyvertices[i][1]);
-            }
             int cell = 0;
             for (int i = 0; i < xyvertices.Count; i++)
             {
-                //doesn't work like it should!!!!!!!
-                Debug.Log("i:" + i + " |  xyvertices length [0] " + xyvertices[0].Count + " |length no arr " + xyvertices.Count);
-                //Debug.Log("i = " + i + "   x: " + xyvertices[i][0] + "  y: " + xyvertices[i][1]);
 
 
-                if (i < xyvertices.Count - 1 && xyvertices[i][0].Equals(xyvertices[i + 1][0]) && xyvertices[i][1].Equals(xyvertices[i + 1][1]))
-                {
-                    Debug.Log("duplicate");
-                }
-
-                else
+                if (i >= xyvertices.Count - 1 || !xyvertices[i][0].Equals(xyvertices[i + 1][0]) || !xyvertices[i][1].Equals(xyvertices[i + 1][1]))
                 {
                     //unsorts self?
                     if (!getLengthOnly)
@@ -179,7 +166,7 @@ namespace RoadDumpTools
                     cell = cell + 2;
 
                 }
-                //Debug.Log("x: " + xyvertices[i][0] + "\ny: " + xyvertices[i][1] + "\ny+1: " + xyvertices[i + 1][1] + ">");
+
             }
 
             textboxNum = cell;

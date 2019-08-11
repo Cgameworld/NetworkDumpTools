@@ -188,7 +188,7 @@ namespace RoadDumpTools
             flippedTextures.text = "Flip Dumped Textures";
             flippedTextures.isChecked = true;
             flippedTextures.relativePosition = new Vector2(50, 270);
-            flippedTextures.tooltip = "Flip textures horizontally after exporting\n(default setting is true)\nSometimes this feature needs to be disabled for uncommon texture maps (i.e. Industries DLC roads, Certain custom roads";
+            flippedTextures.tooltip = "Flip textures horizontally after exporting";
             flippedTextures.isVisible = false;
             ///when dropdown selected to others uncheck this one?
 
@@ -213,8 +213,7 @@ namespace RoadDumpTools
             removeSuffix.text = "Remove Added Suffixes";
             removeSuffix.isChecked = false;
             removeSuffix.relativePosition = new Vector2(30, 360);
-            removeSuffix.tooltip = "Removes the added descriptors at the end of dumped file names\n\n" +
-                "Caution: Each new export regardless of elevation/mesh type will overwrite the previous file with the same name\nExample: An Elevated Node network without this option enabled would\nhave Elevated_node added to the end of each file name";
+            removeSuffix.tooltip = "Removes the added descriptors at the end of dumped file names";
             removeSuffix.isVisible = false;
 
             //and or label
@@ -359,21 +358,8 @@ namespace RoadDumpTools
             {
                 if (isVisible)
                 {
-                    Debug.Log("Clicked Refresh! \n coordboxcount: " + coordBox.Count);
-
-
-                    //ConfirmPanel confirmingpanel = UIView.library.ShowModal<ConfirmPanel>("ConfirmPanel");
-
-
                     ConfirmPanel.ShowModal("Reset Confimation", "Are you sure you want to clear all entered points and reset the number of rows?", delegate (UIComponent comp, int ret)
                     {
-
-                       /* for (int i = 0; i < coordBox.Count; i++)
-                        {
-                            Debug.Log(coordBox[i].text + "  ");
-                        }
-                        */
-
                         if (ret != 1)
                         {
                             Debug.Log("pressed no!");
@@ -389,8 +375,6 @@ namespace RoadDumpTools
                         }
                         celloffset = 0;
                         AddCellFieldsTwo(4);
-
-
                     });
 
                    
@@ -484,7 +468,6 @@ namespace RoadDumpTools
                     {
                         coordBox[coordBox.Count - 1].isVisible = false;
                         coordBox.RemoveAt(coordBox.Count - 1);
-                        //Debug.Log("coordBox.Count: " + coordBox.Count + " | j: " + j);
                     }
                     celloffset -= 23; // pushes offset up by 23 pixel (make dynamic?)
 
@@ -664,14 +647,12 @@ namespace RoadDumpTools
         {
             int row = 0;
             int cell = 0;
-            Debug.Log("load1 coordboxcount: " + coordBox.Count);
             int coordBoxOffset = coordBox.Count;
 
             for (int i = 0; i < cellnum; i++)
             {
                 cell = i + coordBoxOffset;
                 coordBox.Add(new UITextField());
-                Debug.Log("editing cell:  " + cell);
                 coordBox[cell] = UIUtils.CreateTextFieldCell(gridscroll, m_atlas);
                 coordBox[cell].name = "Text Box " + cell;
                 coordBox[cell].width = 55f;
@@ -697,12 +678,9 @@ namespace RoadDumpTools
 
                 coordBox[i].eventTextChanged += (c, p) =>
                 {
-                    Debug.Log("Box " + i + " text changed!!");
                     enableMeshResize.isChecked = true;
                 };
             }
-
-            Debug.Log("cellnum  " + cellnum);
             celloffset += (coordBox[cellnum - 1].height - 2) * row; //add final cell height for next time
         }
 
@@ -717,7 +695,6 @@ namespace RoadDumpTools
             {
                 cell = i + coordBoxOffset;
                 coordBox.Add(new UITextField());
-                Debug.Log("editing cell:  " + cell);
                 coordBox[cell] = UIUtils.CreateTextFieldCell(gridscroll, m_atlas);
                 coordBox[cell].name = "Text Box " + cell;
                 coordBox[cell].width = 80f;
@@ -734,12 +711,10 @@ namespace RoadDumpTools
 
                 coordBox[i].eventTextChanged += (c, p) =>
                 {
-                    Debug.Log("Box " + i + " text changed!!");
                     enableMeshResize.isChecked = true;
                 };
             }
 
-            Debug.Log("cellnum  " + cellnum);
             celloffset += (coordBox[cellnum - 1].height - 2) * row; //add final cell height for next time
         }
 
@@ -750,8 +725,6 @@ namespace RoadDumpTools
             dumpedTotal.relativePosition = new Vector2(10, height - dumpNet.height + 5);
             dumpNet.relativePosition = new Vector2(40, height - dumpNet.height - 85);
             lodGen.relativePosition = new Vector2(40, height - lodGen.height - 45);
-
-            UnityEngine.Debug.Log("relativepos y" + meshResizeButton.relativePosition.y);
 
             meshResizeButton.relativePosition = meshResizeButtonIntial + new Vector3(0, exportCustOffset);
             meshResizeButtonToggle.relativePosition = meshResizeButtonToggleIntial + new Vector3(0, exportCustOffset);
@@ -779,9 +752,7 @@ namespace RoadDumpTools
 
             for (int i = 0; i< coordBox.Count; i++)
             {
-               // Debug.Log("init _ p");
                 points[i] = float.Parse(coordBox[i].text);
-               // Debug.Log("added point " + points[i]);
             }
             return points;
         }

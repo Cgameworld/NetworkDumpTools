@@ -88,8 +88,6 @@ namespace RoadDumpTools
                 {
                     DumpTexture2D(FlipTexture(target, false, flippingTextures), diffuseTexturePath);
                     DumpAPR(filename, FlipTexture(aprsource, false, flippingTextures), aFilePath, pFilePath, rFilePath, true);
-                    Debug.Log("default dump setting!");
-
                     //dump meshes
                     DumpMeshToOBJ(roadMesh, meshPath, loadedPrefab);
                     DumpMeshToOBJ(roadMeshLod, lodMeshPath, loadedPrefab);
@@ -113,8 +111,6 @@ namespace RoadDumpTools
                         filesExported += 1;
                     }
                 }
-
-                Debug.Log("beforepopup");
                 panel.SetMessage("Network Dump Successful", "Network Name: " + networkName + "\n\nDumped Items:\n" + exportedFilePaths,false);
 
             }
@@ -152,18 +148,15 @@ namespace RoadDumpTools
                 Debug.Log("custom prefix");
                 filename = NetDumpPanel.instance.GetCustomFilePrefix();
             }
-            Debug.Log("filename: aa : " + filename);
             meshnum = 0;
 
             if (int.TryParse(NetDumpPanel.instance.MeshNumber, out meshnum))
             {
                 if (meshnum > 1)
                 {
-                    //Debug.Log("mnbefore" + meshnum);
                     filename = filename + "_mesh" + meshnum;
                 }
                 meshnum = meshnum - 1; //adjust for array
-                                       //Debug.Log("mnafter" + meshnum);
             }
             else
             {
@@ -222,6 +215,8 @@ namespace RoadDumpTools
 
             }
 
+            Debug.Log("Prefab: " + loadedPrefab);
+
 
             diffuseTexturePath = Path.Combine(importFolder, filename);
             meshPath = Path.Combine(importFolder, filename);
@@ -229,10 +224,7 @@ namespace RoadDumpTools
             aFilePath = Path.Combine(importFolder, filename);
             pFilePath = Path.Combine(importFolder, filename);
             rFilePath = Path.Combine(importFolder, filename);
-
-            Debug.Log("meshnum" + meshnum);
-
-            
+         
             if (NetDumpPanel.instance.NetworkType == "Segment")
             {
                 material = loadedPrefab.m_segments[meshnum].m_segmentMaterial;
@@ -454,7 +446,6 @@ namespace RoadDumpTools
                             if (Mathf.Approximately(newVertsX[a], enteredVals[b]))
                             {
                                 newvertices[a].x = enteredVals[b+1];
-                                Debug.Log("replaced point " + newVertsX[a] + " | with enterVals[0] " + enteredVals[b+1]);
                             }
                         }
                     }
