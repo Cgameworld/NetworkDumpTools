@@ -21,6 +21,7 @@ Use:
 5) Generate LOD images anytime afterwards by clicking "Make _lod.png Files" - this allows the lod images to be generated after editing the main textures
 
 Options:
+
 -Main Panel--
 1) Net Elevation - Select the elevation to dump (Basic, Elevated, etc)
 2) Mesh Type - Select the mesh type (Segment, Node)
@@ -40,10 +41,10 @@ Options:
 -Mesh Resizing-
 1) View Mesh Points - View all the points of the mesh at the cross section z=32
 2) Point Replacer - enter the existing position (value that is in the Pos table in the Mesh Points Window) and the new position - All of the (x) points that match the existing postion in the main mesh and in the lod are replaced with the new value.
-> (from left to right) Resets entered values | Changes entering mode | Add Row | Delete Row
+3) (From left to right) Resets entered values | Changes entering mode | Add Row | Delete Row
 
 
 FAQ:
 
-Q: When reimporting a dumped road the texture is completely mismatched with the road
-A: Try unchecking the Flip Textures Option under Export Customization
+Q: When reimporting a dumped road the texture is completely mismatched with the road\
+A: Try unchecking the Flip Textures Option under Export Customization\
