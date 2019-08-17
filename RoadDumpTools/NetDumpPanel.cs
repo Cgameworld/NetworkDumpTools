@@ -37,9 +37,6 @@ namespace RoadDumpTools
         private UIButton meshResizeButton;
         private UILabel meshResizeButtonToggle;
 
-        //public UICheckBox dumpedFolderOpen;
-
-
         private static NetDumpPanel _instance;
 
         public int exportCustOffset = 0;
@@ -119,7 +116,20 @@ namespace RoadDumpTools
             netEle.selectedIndex = 0;
             netEle.relativePosition = new Vector3(149, 55);
 
-            UILabel net_type_label = AddUIComponent<UILabel>();
+            //disables flipping textures when selecting non ground level elevations
+            netEle.eventSelectedIndexChanged += (c, p) =>
+            {
+                if (netEle.selectedIndex == 0)
+                {
+                    flippedTextures.isChecked = true;
+                }
+                else
+                {
+                    flippedTextures.isChecked = false;
+                }
+            };
+
+           UILabel net_type_label = AddUIComponent<UILabel>();
             net_type_label.text = "Mesh Type:";
             net_type_label.autoSize = false;
             net_type_label.width = 120f;
@@ -166,10 +176,6 @@ namespace RoadDumpTools
             advancedOptionsButtonToggle.height = 18f;
             advancedOptionsButtonToggle.relativePosition = new Vector2(45, 177);
 
-            //open seen when advanced settings are open
-            //add custom file name box
-            //add mesh mod config here
-            //lod config?
             dumpMeshOnly = UIUtils.CreateCheckBox(this);
             dumpMeshOnly.text = "Dump Mesh Only";
             dumpMeshOnly.isChecked = false;

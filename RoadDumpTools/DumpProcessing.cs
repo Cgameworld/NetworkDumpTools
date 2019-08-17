@@ -48,24 +48,6 @@ namespace RoadDumpTools
                 target.wrapMode = source.wrapMode; target.Apply();
                 UnityEngine.Object.FindObjectOfType<NetProperties>().m_downwardDiffuse = target;
 
-
-
-                /**features to add
-                 * 
-                 * 
-                 * 
-                 * add reset settings button (nah)
-                 * when texture is default color don't export! (also add to log)
-                 * 
-                 * add lod generator for exisiting files
-                 * doesn't support specular no nets have it?
-                 * add feature export all maps anyway - etc?
-                 * collapsable menu to hide advanced features?
-                 * add log button shows log of all exported roads? - do it by adding file name to string as it
-                 * keyboard shortcut reimports road exported (find method in ILSPY?)!
-                 * if mesh problems import in blender - check UV - reexport as fbx!
-                 */
-
                 bool flippingTextures = NetDumpPanel.instance.GetIfFlippedTextures;
                 Texture2D aprsource = aprmaterial.GetTexture("_APRMap") as Texture2D;
 
