@@ -27,7 +27,7 @@ Options:
 2) Mesh Type - Select the mesh type (Segment, Node)
 3) Dump Mesh # - The index of the mesh in the Segment/Node area in the vanilla Road Properties panel (First mesh in the list is "1")
 4) Dump Network - Dumps Network in \Import Folder - Only the relevant files are exported, If a network uses the default texture for a certain map type it is not exported
-5) Make _lod.png Files - Generates LOD images of the related textures (_d,_p, etc) for the last dumped mesh. If no mesh was dumped in the session, the files that match the custom file prefix (in export customization) will be used.
+5) Make _lod.png Files - Generates LOD images of the related textures (_d,_p, etc) for the last dumped mesh. If no mesh was dumped in the session, the files that match the custom file prefix (in export customization) will be used. For now, when elevations other than ground are selected the main mesh replaces the lod mesh.
 
 -Export Customization-
 1) Only export the specific files you need - Filters are available to export the meshes only or the diffuse texture only
