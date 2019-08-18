@@ -1,4 +1,5 @@
 ﻿using ColossalFramework.IO;
+using ColossalFramework.Plugins;
 using ColossalFramework.UI;
 using System;
 using System.Collections.Generic;
@@ -20,12 +21,11 @@ namespace RoadDumpTools
 
             try
             {
-                Debug.Log("filename: " + filepath);
+                DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "filename: " + filepath);
                 if (filepath == "")
                 {
                     if (NetDumpPanel.instance.GetCustomFilePrefix() != "")
                     {
-                        Debug.Log("using customfilename");
                         string importFolder = Path.Combine(DataLocation.addonsPath, "Import");
                         filepath = Path.Combine(importFolder, NetDumpPanel.instance.GetCustomFilePrefix());
                     }
@@ -44,10 +44,12 @@ namespace RoadDumpTools
                         texture1.anisoLevel = 16;
                         texture1.MakeReadable();
                         TextureScaler.scale(texture1, 64, 64);
-                        FlipTexture(texture1, false);
-                        //texture1.Resize(64, 64);
-                        //string fileprefix = filepath.Substring(0, filepath.LastIndexOf("_"));
-                        //string fileExt = "_lod" + filepath.Substring(filepath.LastIndexOf("_"));
+                        //turn off if elevated?
+                        if (NetDumpPanel.instance.GetNetEleIndex == 0)
+                        {
+                            texture1 = FlipTexture(texture1, false);
+                            DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "flipped texture1!");
+                        }
                         string fileExt = "_lod" + textureFileExtensions[i];
                         string lodFilepath = filepath + fileExt;
 
@@ -59,6 +61,12 @@ namespace RoadDumpTools
                     { //make this try/catch?
                         Debug.Log(textureFileExtensions[i] + " failed");
                     }
+                }
+
+                if (NetDumpPanel.instance.GetNetEleIndex != 0)
+                {
+                    //bit of hack since for some reason uv maps are often completely different on lod meshes than main mesh on some vanilla elevations - ok since elevated sections are not used that much on a map anyway for custom roads. - do properly later maybe?
+                    File.Copy(filepath + ".obj", filepath + "_lod.obj", true);
                 }
 
                 ExceptionPanel panel = UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel");
@@ -122,7 +130,6 @@ namespace RoadDumpTools
                 }
             }
             flipped.Apply();
-
             return flipped;
         }
 

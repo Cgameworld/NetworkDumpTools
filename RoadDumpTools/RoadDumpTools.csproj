@@ -41,7 +41,8 @@
     <Reference Include="ICities">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Cities_Skylines\Cities_Data\Managed\ICities.dll</HintPath>
     </Reference>
-    <Reference Include="ObjUnity3D">
+    <Reference Include="ObjUnity3D, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\ObjUnity3D.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -78,7 +79,7 @@
     <EmbeddedResource Include="Icons\OptionsCellDisabled.png" />
     <EmbeddedResource Include="Icons\Refresh.png" />
     <EmbeddedResource Include="Icons\Remove.png" />
-    <Content Include="lib\ObjUnity3D.dll" />
+    <EmbeddedResource Include="lib\ObjUnity3D.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
