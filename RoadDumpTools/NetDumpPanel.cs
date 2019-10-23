@@ -14,7 +14,7 @@ namespace RoadDumpTools
         public int dumpedSessionItems = 0;
         public string dumpedFiles = null;
 
-        public const int INITIAL_HEIGHT = 360;
+        public const int INITIAL_HEIGHT = 390;
 
         private UITextureAtlas m_atlas;
 
@@ -65,6 +65,11 @@ namespace RoadDumpTools
         private UIPanel gridButtons;
         private UILabel titleLabel;
         public string lodFilePath = "";
+        private UIButton bulkExportButton;
+        private Vector3 bulkExportButtonIntial;
+        private UILabel bulkExportButtonToggle;
+        private int exportBulkButtonOffset;
+        private Vector3 bulkExportButtonToggleIntial;
 
         public static NetDumpPanel instance
         {
@@ -249,7 +254,7 @@ namespace RoadDumpTools
                         customFilePrefix.isVisible = true;
                         removeSuffix.isVisible = true;
                     }
-                    this.height = INITIAL_HEIGHT + exportCustOffset + exportMeshOffset;
+                    this.height = INITIAL_HEIGHT + exportCustOffset + exportMeshOffset + exportBulkButtonOffset;
                     RefreshFooterItems();
 
                 }
@@ -481,11 +486,6 @@ namespace RoadDumpTools
             };
 
 
-
-
-
-            //UITextField seginput;
-
             meshResizeButton.eventClick += (c, p) =>
             {
                 if (isVisible)
@@ -512,12 +512,50 @@ namespace RoadDumpTools
 
 
                     }
-                    this.height = INITIAL_HEIGHT + exportCustOffset + exportMeshOffset;
+                    this.height = INITIAL_HEIGHT + exportCustOffset + exportMeshOffset + exportBulkButtonOffset;
                     RefreshFooterItems();
                 }
             };
 
 
+            bulkExportButton = UIUtils.CreateButtonSpriteImage(this, m_atlas);
+            bulkExportButton.normalBgSprite = "SubBarButtonBase";
+            bulkExportButton.hoveredBgSprite = "SubBarButtonBaseHovered";
+            bulkExportButton.text = "Bulk Exporting";
+            bulkExportButton.textScale = 0.8f;
+            bulkExportButton.textPadding.top = 5;
+            bulkExportButton.relativePosition = new Vector2(20, 243);
+            bulkExportButton.height = 25;
+            bulkExportButton.width = 240;
+            bulkExportButton.tooltip = "Run Export for several (rewrite)";
+            bulkExportButtonIntial = bulkExportButton.relativePosition;
+
+            bulkExportButtonToggle = UIUtils.CreateLabelSpriteImage(this, m_atlas);
+            bulkExportButtonToggle.backgroundSprite = "PropertyGroupClosed";
+            bulkExportButtonToggle.width = 18f;
+            bulkExportButtonToggle.height = 18f;
+            bulkExportButtonToggle.relativePosition = new Vector2(45, 247);
+            bulkExportButtonToggleIntial = bulkExportButtonToggle.relativePosition;
+
+            bulkExportButton.eventClick += (c, p) =>
+            {
+                if (isVisible)
+                {
+
+                    if (bulkExportButtonToggle.backgroundSprite == "PropertyGroupOpen")
+                    {
+                        exportBulkButtonOffset = 0;
+                        bulkExportButtonToggle.backgroundSprite = "PropertyGroupClosed";
+                    }
+                    else
+                    {
+                        exportBulkButtonOffset = 100;
+                        bulkExportButtonToggle.backgroundSprite = "PropertyGroupOpen";
+                    }
+                    this.height = INITIAL_HEIGHT + exportCustOffset + exportMeshOffset + exportBulkButtonOffset;
+                    RefreshFooterItems();
+                }
+            };
 
 
             dumpNet = UIUtils.CreateButton(this);
@@ -739,6 +777,10 @@ namespace RoadDumpTools
             openMeshPoints.relativePosition = openMeshPointsIntial + new Vector3(0, exportCustOffset);
             cellpanel.relativePosition = panelIntial + new Vector3(0, exportCustOffset);
             gridButtons.relativePosition = gridButtonsInitial + new Vector3(0, exportCustOffset);
+
+
+            bulkExportButton.relativePosition = bulkExportButtonIntial + new Vector3(0, exportCustOffset + exportMeshOffset);
+            bulkExportButtonToggle.relativePosition = bulkExportButtonToggleIntial + new Vector3(0, exportCustOffset + exportMeshOffset);
         }
 
         public string MeshNumber => seginput.text;
