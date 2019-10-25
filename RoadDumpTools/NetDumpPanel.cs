@@ -14,7 +14,7 @@ namespace RoadDumpTools
         public int dumpedSessionItems = 0;
         public string dumpedFiles = null;
 
-        public const int INITIAL_HEIGHT = 390;
+        public const int INITIAL_HEIGHT = 890;
 
         private UITextureAtlas m_atlas;
 
@@ -70,6 +70,8 @@ namespace RoadDumpTools
         private UILabel bulkExportButtonToggle;
         private int exportBulkButtonOffset;
         private Vector3 bulkExportButtonToggleIntial;
+        private UIScrollablePanel mainScroll;
+        private UIPanel mainPanel;
 
         public static NetDumpPanel instance
         {
@@ -94,7 +96,8 @@ namespace RoadDumpTools
             canFocus = true;
             isInteractive = true;
             clipChildren = true;
-            width = 285;
+            //width = 285;
+            width = 300;
             height = INITIAL_HEIGHT;
             relativePosition = new Vector3(0, 55);
 
@@ -103,15 +106,21 @@ namespace RoadDumpTools
             m_title.title = "Network Dump Tools";
             m_title.closeButton.isVisible = false;
 
+            mainPanel = AddUIComponent<UIPanel>();
+            mainPanel.relativePosition = new Vector2(0, 55);
+            mainPanel.size = new Vector2(300, Screen.height-100);
+            mainScroll = UIUtils.CreateScrollBox(mainPanel, m_atlas);
+            mainScroll.size = new Vector2(285, Screen.height - 100);
 
-            UILabel netEle_label = AddUIComponent<UILabel>();
+
+            UILabel netEle_label = mainScroll.AddUIComponent<UILabel>();
             netEle_label.text = "Net Elevation:";
             netEle_label.autoSize = false;
             netEle_label.width = 124f;
             netEle_label.height = 20f;
             netEle_label.relativePosition = new Vector2(25, 60);
 
-            netEle = UIUtils.CreateDropDown(this);
+            netEle = UIUtils.CreateDropDown(mainScroll);
             netEle.width = 110;
             netEle.AddItem("Basic");
             netEle.AddItem("Elevated");
@@ -134,7 +143,7 @@ namespace RoadDumpTools
                 }
             };
 
-           UILabel net_type_label = AddUIComponent<UILabel>();
+           UILabel net_type_label = mainScroll.AddUIComponent<UILabel>();
             net_type_label.text = "Mesh Type:";
             net_type_label.autoSize = false;
             net_type_label.width = 120f;
@@ -142,21 +151,21 @@ namespace RoadDumpTools
             net_type_label.relativePosition = new Vector2(40, 100);
 
             //make this segmented?
-            net_type = UIUtils.CreateDropDown(this);
+            net_type = UIUtils.CreateDropDown(mainScroll);
             net_type.width = 105;
             net_type.AddItem("Segment");
             net_type.AddItem("Node");
             net_type.selectedIndex = 0;
             net_type.relativePosition = new Vector3(140, 95);
 
-            UILabel seglabel = AddUIComponent<UILabel>();
+            UILabel seglabel = mainScroll.AddUIComponent<UILabel>();
             seglabel.text = "Dump Mesh #:";
             seglabel.autoSize = false;
             seglabel.width = 125f;
             seglabel.height = 20f;
             seglabel.relativePosition = new Vector2(50, 140);
 
-            seginput = UIUtils.CreateTextField(this);
+            seginput = UIUtils.CreateTextField(mainScroll);
             seginput.text = "1";
             seginput.width = 40f;
             seginput.height = 25f;
@@ -164,7 +173,7 @@ namespace RoadDumpTools
             seginput.relativePosition = new Vector3(175, 135);
             seginput.tooltip = "Enter the mesh you want to extract here\nExample: To dump the second mesh for a segment enter '2'";
 
-            advancedOptionsButton = UIUtils.CreateButtonSpriteImage(this, m_atlas);
+            advancedOptionsButton = UIUtils.CreateButtonSpriteImage(mainScroll, m_atlas);
             advancedOptionsButton.normalBgSprite = "SubBarButtonBase";
             advancedOptionsButton.hoveredBgSprite = "SubBarButtonBaseHovered";
             advancedOptionsButton.text = "Export Customization";
@@ -175,27 +184,27 @@ namespace RoadDumpTools
             advancedOptionsButton.width = 240;
             advancedOptionsButton.tooltip = "Filter items to export and set custom file names";
 
-            advancedOptionsButtonToggle = UIUtils.CreateLabelSpriteImage(this, m_atlas);
+            advancedOptionsButtonToggle = UIUtils.CreateLabelSpriteImage(mainScroll, m_atlas);
             advancedOptionsButtonToggle.backgroundSprite = "PropertyGroupClosed";
             advancedOptionsButtonToggle.width = 18f;
             advancedOptionsButtonToggle.height = 18f;
             advancedOptionsButtonToggle.relativePosition = new Vector2(45, 177);
 
-            dumpMeshOnly = UIUtils.CreateCheckBox(this);
+            dumpMeshOnly = UIUtils.CreateCheckBox(mainScroll);
             dumpMeshOnly.text = "Dump Mesh Only";
             dumpMeshOnly.isChecked = false;
             dumpMeshOnly.relativePosition = new Vector2(50, 210);
             dumpMeshOnly.tooltip = "Only dump the meshes (files ending in .obj and _lod.obj)";
             dumpMeshOnly.isVisible = false;
 
-            dumpDiffuseOnly = UIUtils.CreateCheckBox(this);
+            dumpDiffuseOnly = UIUtils.CreateCheckBox(mainScroll);
             dumpDiffuseOnly.text = "Dump Diffuse Only";
             dumpDiffuseOnly.isChecked = false;
             dumpDiffuseOnly.relativePosition = new Vector2(50, 240);
             dumpDiffuseOnly.tooltip = "Only dump the diffuse texture (file ending in _d.png)";
             dumpDiffuseOnly.isVisible = false;
 
-            flippedTextures = UIUtils.CreateCheckBox(this);
+            flippedTextures = UIUtils.CreateCheckBox(mainScroll);
             flippedTextures.text = "Flip Dumped Textures";
             flippedTextures.isChecked = true;
             flippedTextures.relativePosition = new Vector2(50, 270);
@@ -203,7 +212,7 @@ namespace RoadDumpTools
             flippedTextures.isVisible = false;
             ///when dropdown selected to others uncheck this one?
 
-            UILabel customFilePrefixLabel = AddUIComponent<UILabel>();
+            UILabel customFilePrefixLabel = mainScroll.AddUIComponent<UILabel>();
             customFilePrefixLabel.text = "Custom File Prefix:";
             customFilePrefixLabel.textAlignment = UIHorizontalAlignment.Center;
             customFilePrefixLabel.autoSize = false;
@@ -212,7 +221,7 @@ namespace RoadDumpTools
             customFilePrefixLabel.relativePosition = new Vector2(30, 300);
             customFilePrefixLabel.isVisible = false;
 
-            customFilePrefix = UIUtils.CreateTextField(this);
+            customFilePrefix = UIUtils.CreateTextField(mainScroll);
             customFilePrefix.width = 225f;
             customFilePrefix.height = 28f;
             customFilePrefix.padding = new RectOffset(6, 6, 6, 6);
@@ -220,7 +229,7 @@ namespace RoadDumpTools
             customFilePrefix.tooltip = "Enter a custom file prefix here for the dumped files\nAsset name is the file name if left blank";
             customFilePrefix.isVisible = false;
 
-            removeSuffix = UIUtils.CreateCheckBox(this);
+            removeSuffix = UIUtils.CreateCheckBox(mainScroll);
             removeSuffix.text = "Remove Added Suffixes";
             removeSuffix.isChecked = false;
             removeSuffix.relativePosition = new Vector2(30, 360);
@@ -254,7 +263,7 @@ namespace RoadDumpTools
                         customFilePrefix.isVisible = true;
                         removeSuffix.isVisible = true;
                     }
-                    this.height = INITIAL_HEIGHT + exportCustOffset + exportMeshOffset + exportBulkButtonOffset;
+                    //mainScroll.height = INITIAL_HEIGHT + exportCustOffset + exportMeshOffset + exportBulkButtonOffset;
                     RefreshFooterItems();
 
                 }
@@ -263,7 +272,7 @@ namespace RoadDumpTools
 
 
 
-            meshResizeButton = UIUtils.CreateButtonSpriteImage(this, m_atlas);
+            meshResizeButton = UIUtils.CreateButtonSpriteImage(mainScroll, m_atlas);
             meshResizeButton.normalBgSprite = "SubBarButtonBase";
             meshResizeButton.hoveredBgSprite = "SubBarButtonBaseHovered";
             meshResizeButton.text = "Mesh Resizing";
@@ -276,14 +285,14 @@ namespace RoadDumpTools
             meshResizeButton.tooltip = "Customize the size of the exported mesh";
 
 
-            meshResizeButtonToggle = UIUtils.CreateLabelSpriteImage(this, m_atlas);
+            meshResizeButtonToggle = UIUtils.CreateLabelSpriteImage(mainScroll, m_atlas);
             meshResizeButtonToggle.backgroundSprite = "PropertyGroupClosed";
             meshResizeButtonToggle.width = 18f;
             meshResizeButtonToggle.height = 18f;
             meshResizeButtonToggle.relativePosition = new Vector2(70, 212);
             meshResizeButtonToggleIntial = meshResizeButtonToggle.relativePosition;
 
-            enableMeshResize = UIUtils.CreateCheckBox(this);
+            enableMeshResize = UIUtils.CreateCheckBox(mainScroll);
             enableMeshResize.width = 150f;
             enableMeshResize.text = "Enabled";
             enableMeshResize.isChecked = false;
@@ -292,7 +301,7 @@ namespace RoadDumpTools
             enableMeshResize.isVisible = false;
             enableMeshResizeIntial = enableMeshResize.relativePosition;
 
-            openMeshPoints = UIUtils.CreateButton(this);
+            openMeshPoints = UIUtils.CreateButton(mainScroll);
             openMeshPoints.text = "View Mesh Points";
             openMeshPoints.textScale = 0.95f;
             openMeshPoints.relativePosition = new Vector3(40, 272);
@@ -310,7 +319,7 @@ namespace RoadDumpTools
 
 
 
-            cellpanel = AddUIComponent<UIPanel>();
+            cellpanel = mainScroll.AddUIComponent<UIPanel>();
             cellpanel.relativePosition = new Vector2(17, 315);
             cellpanel.size = new Vector2(255, 135);
             cellpanel.isVisible = false;
@@ -347,7 +356,7 @@ namespace RoadDumpTools
                 coordBox[a].relativePosition = coordBox[a].relativePosition + new Vector3(-5f, 0f);
             }
 
-            gridButtons = AddUIComponent<UIPanel>();
+            gridButtons = mainScroll.AddUIComponent<UIPanel>();
             gridButtons.relativePosition = new Vector2(0, 458);
             gridButtons.size = new Vector2(285, 30);
             gridButtons.isVisible = false;
@@ -512,13 +521,13 @@ namespace RoadDumpTools
 
 
                     }
-                    this.height = INITIAL_HEIGHT + exportCustOffset + exportMeshOffset + exportBulkButtonOffset;
+                   // mainScroll.height = INITIAL_HEIGHT + exportCustOffset + exportMeshOffset + exportBulkButtonOffset;
                     RefreshFooterItems();
                 }
             };
 
 
-            bulkExportButton = UIUtils.CreateButtonSpriteImage(this, m_atlas);
+            bulkExportButton = UIUtils.CreateButtonSpriteImage(mainScroll, m_atlas);
             bulkExportButton.normalBgSprite = "SubBarButtonBase";
             bulkExportButton.hoveredBgSprite = "SubBarButtonBaseHovered";
             bulkExportButton.text = "Bulk Exporting";
@@ -530,7 +539,7 @@ namespace RoadDumpTools
             bulkExportButton.tooltip = "Run Export for several (rewrite)";
             bulkExportButtonIntial = bulkExportButton.relativePosition;
 
-            bulkExportButtonToggle = UIUtils.CreateLabelSpriteImage(this, m_atlas);
+            bulkExportButtonToggle = UIUtils.CreateLabelSpriteImage(mainScroll, m_atlas);
             bulkExportButtonToggle.backgroundSprite = "PropertyGroupClosed";
             bulkExportButtonToggle.width = 18f;
             bulkExportButtonToggle.height = 18f;
@@ -552,20 +561,20 @@ namespace RoadDumpTools
                         exportBulkButtonOffset = 100;
                         bulkExportButtonToggle.backgroundSprite = "PropertyGroupOpen";
                     }
-                    this.height = INITIAL_HEIGHT + exportCustOffset + exportMeshOffset + exportBulkButtonOffset;
+                    //mainScroll.height = INITIAL_HEIGHT + exportCustOffset + exportMeshOffset + exportBulkButtonOffset;
                     RefreshFooterItems();
                 }
             };
 
 
-            dumpNet = UIUtils.CreateButton(this);
+            dumpNet = UIUtils.CreateButton(mainScroll);
             dumpNet.text = "Dump Network";
             dumpNet.textScale = 1f;
             dumpNet.relativePosition = new Vector2(40, height - dumpNet.height - 85);
             dumpNet.width = 200;
             dumpNet.tooltip = "Dumps the network";
 
-            lodGen = UIUtils.CreateButton(this);
+            lodGen = UIUtils.CreateButton(mainScroll);
             lodGen.text = "Make _lod.png Files";
             lodGen.textScale = 1f;
             lodGen.relativePosition = new Vector2(40, height - lodGen.height - 45);
@@ -583,7 +592,7 @@ namespace RoadDumpTools
             };
 
 
-            dumpedTotal = AddUIComponent<UILabel>();
+            dumpedTotal = mainScroll.AddUIComponent<UILabel>();
             dumpedTotal.text = "Total Dumped Items: (0)";
             dumpedTotal.textScale = 0.8f;
             dumpedTotal.textAlignment = UIHorizontalAlignment.Center;
@@ -610,7 +619,7 @@ namespace RoadDumpTools
             //list files dumped and open import folder button!
 
 
-            dumpedFolderButton = UIUtils.CreateButtonSpriteImage(this, m_atlas);
+            dumpedFolderButton = UIUtils.CreateButtonSpriteImage(mainScroll, m_atlas);
             dumpedFolderButton.normalBgSprite = "ButtonMenu";
             dumpedFolderButton.hoveredBgSprite = "ButtonMenuHovered";
             dumpedFolderButton.pressedBgSprite = "ButtonMenuPressed";
@@ -631,7 +640,7 @@ namespace RoadDumpTools
                 }
             };
 
-            openFileLog = UIUtils.CreateButtonSpriteImage(this, m_atlas);
+            openFileLog = UIUtils.CreateButtonSpriteImage(mainScroll, m_atlas);
             openFileLog.normalBgSprite = "ButtonMenu";
             openFileLog.hoveredBgSprite = "ButtonMenuHovered";
             openFileLog.pressedBgSprite = "ButtonMenuPressed";
@@ -764,11 +773,13 @@ namespace RoadDumpTools
 
         public void RefreshFooterItems()
         {
+            /*
             openFileLog.relativePosition = new Vector2(248, height - dumpNet.height - 2);
             dumpedFolderButton.relativePosition = new Vector2(210, height - dumpNet.height - 2);
             dumpedTotal.relativePosition = new Vector2(10, height - dumpNet.height + 5);
             dumpNet.relativePosition = new Vector2(40, height - dumpNet.height - 85);
             lodGen.relativePosition = new Vector2(40, height - lodGen.height - 45);
+            */
 
             meshResizeButton.relativePosition = meshResizeButtonIntial + new Vector3(0, exportCustOffset);
             meshResizeButtonToggle.relativePosition = meshResizeButtonToggleIntial + new Vector3(0, exportCustOffset);
@@ -780,7 +791,8 @@ namespace RoadDumpTools
 
 
             bulkExportButton.relativePosition = bulkExportButtonIntial + new Vector3(0, exportCustOffset + exportMeshOffset);
-            bulkExportButtonToggle.relativePosition = bulkExportButtonToggleIntial + new Vector3(0, exportCustOffset + exportMeshOffset);
+            bulkExportButtonToggle.relativePosition = bulkExportButtonToggleIntial + new Vector3(0, exportCustOffset + exportMeshOffset); 
+          
         }
 
         public string MeshNumber => seginput.text;
