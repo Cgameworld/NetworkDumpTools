@@ -79,6 +79,11 @@ namespace RoadDumpTools
         private UIPanel mainPanel;
         private UIPanel bottomButtons;
         private int previousWindowHeight = 0;
+        private Vector3 bulkExportButtonsIntial;
+        private UIButton dumpAllWithinTypeButton;
+        private UIPanel bulkExportButtons;
+        private UIButton dumpAllWithinElevationButton;
+        private UIButton dumpAllMeshesButton;
 
         public static NetDumpPanel instance
         {
@@ -562,17 +567,51 @@ namespace RoadDumpTools
                     if (bulkExportButtonToggle.backgroundSprite == "PropertyGroupOpen")
                     {
                         exportBulkButtonOffset = 0;
+                        bulkExportButtons.isVisible = false;
                         bulkExportButtonToggle.backgroundSprite = "PropertyGroupClosed";
+                        dumpNet.text = "Dump Network";
                     }
                     else
                     {
-                        exportBulkButtonOffset = 300;
+                        exportBulkButtonOffset = 120;
+                        bulkExportButtons.isVisible = true;
                         bulkExportButtonToggle.backgroundSprite = "PropertyGroupOpen";
+                        dumpNet.text = "Dump Selected";
                     }
-                    //mainScroll.height = INITIAL_HEIGHT + exportCustOffset + exportMeshOffset + exportBulkButtonOffset;
                     RefreshFooterItems();
                 }
             };
+
+            bulkExportButtons = mainScroll.AddUIComponent<UIPanel>();
+            bulkExportButtons.relativePosition = new Vector2(0, 282);
+            //footerHeight - dumpNet.height - 85
+            bulkExportButtons.size = new Vector2(260, 110);
+            bulkExportButtons.isVisible = false;
+            bulkExportButtonsIntial = bulkExportButtons.relativePosition; 
+
+
+            dumpAllWithinTypeButton = UIUtils.CreateButton(bulkExportButtons);
+            dumpAllWithinTypeButton.text = "Dump All in Mesh Type";
+            dumpAllWithinTypeButton.textScale = 1f;
+            dumpAllWithinTypeButton.relativePosition = new Vector2(40, 0);
+            dumpAllWithinTypeButton.width = 200;
+            dumpAllWithinTypeButton.tooltip = "";
+
+            dumpAllWithinElevationButton = UIUtils.CreateButton(bulkExportButtons);
+            dumpAllWithinElevationButton.text = "Dump All in Elevation";
+            dumpAllWithinElevationButton.textScale = 1f;
+            dumpAllWithinElevationButton.relativePosition = new Vector2(40, 40);
+            dumpAllWithinElevationButton.width = 200;
+            dumpAllWithinElevationButton.tooltip = "";
+
+            dumpAllMeshesButton = UIUtils.CreateButton(bulkExportButtons);
+            dumpAllMeshesButton.text = "Dump All";
+            dumpAllMeshesButton.textScale = 1f;
+            dumpAllMeshesButton.relativePosition = new Vector2(40, 80);
+            dumpAllMeshesButton.width = 200;
+            dumpAllMeshesButton.tooltip = "";
+
+
 
             bottomButtons = mainScroll.AddUIComponent<UIPanel>();
             bottomButtons.relativePosition = new Vector2(0, footerHeight-115);
@@ -786,13 +825,6 @@ namespace RoadDumpTools
 
         public void RefreshFooterItems()
         {
-            /*
-            openFileLog.relativePosition = new Vector2(248, height - dumpNet.height - 2);
-            dumpedFolderButton.relativePosition = new Vector2(210, height - dumpNet.height - 2);
-            dumpedTotal.relativePosition = new Vector2(10, height - dumpNet.height + 5);
-            dumpNet.relativePosition = new Vector2(40, height - dumpNet.height - 85);
-            lodGen.relativePosition = new Vector2(40, height - lodGen.height - 45);
-            */
             mainScroll.scrollPosition = new Vector2(0f, 0f);
 
             meshResizeButton.relativePosition = meshResizeButtonIntial + new Vector3(0, exportCustOffset);
@@ -806,9 +838,9 @@ namespace RoadDumpTools
 
             bulkExportButton.relativePosition = bulkExportButtonIntial + new Vector3(0, exportCustOffset + exportMeshOffset);
             bulkExportButtonToggle.relativePosition = bulkExportButtonToggleIntial + new Vector3(0, exportCustOffset + exportMeshOffset);
+            bulkExportButtons.relativePosition = bulkExportButtonsIntial + new Vector3(0, exportCustOffset + exportMeshOffset);
+
             int windowHeight = footerHeight + exportCustOffset + exportMeshOffset + exportBulkButtonOffset;
-
-
 
             bottomButtons.relativePosition = new Vector2(0, windowHeight - 115);
             if (windowHeight > MAX_HEIGHT) //limit window size and activate scrollbar
