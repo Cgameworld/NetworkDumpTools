@@ -1,9 +1,11 @@
 ﻿using ColossalFramework;
+using ColossalFramework.IO;
 using ColossalFramework.UI;
 using MoreShortcuts.GUI;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 using UIUtils = RoadDumpTools.UIUtils;
@@ -782,9 +784,7 @@ namespace RoadDumpTools
             {
                 if (isVisible)
                 {
-                    //windows only for now
-                    string importPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Colossal Order" + "\\Cities_Skylines" + "\\Addons" + "\\Import";
-                    Process.Start("explorer.exe", importPath);
+                    Utils.OpenInFileBrowser(Path.Combine(DataLocation.addonsPath, "Import"));
                 }
             };
 

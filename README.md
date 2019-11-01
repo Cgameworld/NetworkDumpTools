@@ -1,5 +1,3 @@
-WIP
-
 ![Main Panel](/Images/panel_image1.png "Panel")
 
 This mod allows for the easy dumping of networks inside the Cities: Skylines Road Editor.
@@ -44,9 +42,35 @@ Options:
 3) (From left to right) Resets entered values | Changes entering mode | Add Row | Delete Row
 
 
+Changelog:
+
+v1.1(WIP)
+-Added Road Extras section
+-Added Bulk Exporting section
+   >Dump All in Mesh Type - dumps all available mesh #'s for given selection
+   >Dump All in Elevation - dumps all segment and node meshes for selected elevation
+   >Dump All - dumps all meshes contained in the network across elevations
+-Import Folder Shortcut now works cross platfrom
+
+
+v1.0
+Intial Release
+
 FAQ:
 
 Q: When reimporting a dumped road the texture is completely mismatched with the road\
 A: Try unchecking the Flip Textures Option under Export Customization\
 
-ObjUnity3D library taken from ModTools
+Q: ModTools can dump networks as well, why would I use this?\
+A: This mod has some extra features, mainly file customization on export and mesh resizing\
+
+Q: I got an error/something is not working\
+A: Post the error message and the steps leading up to the problem as an issue
+
+Q: Point Replacer/View Mesh Points is not working!
+A: This part of the mod requires the right sequence of events for it to work, namely pressing "View Mesh Points" button first and then entering the new postion values. It's currently a bit buggy in general though fixing it would require a rewrite of that part of the mod.
+
+Q: Elevated parts of networks from the workshop are not dumping!
+A: Instead of opening workshop roads with "New", use "Load" from the main menu
+
+Contributions are encouraged

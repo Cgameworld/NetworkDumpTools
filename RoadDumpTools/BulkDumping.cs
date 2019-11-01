@@ -14,6 +14,7 @@ namespace RoadDumpTools
         NetInfo loadedPrefab;
         public int bulkDumpedSessionItems;
         private int netEleItems;
+        string errorAddOn = "";
 
         public void Setup()
         {
@@ -29,6 +30,7 @@ namespace RoadDumpTools
                 NetDumpPanel.instance.netEle.selectedIndex = i;
                 DumpAllWithinElevation(true);
             }
+            SuccessModal(networkName_init);
         }
         public void DumpAllWithinElevation(bool isNested)
         {
@@ -50,6 +52,7 @@ namespace RoadDumpTools
                 DumpProcessing dumpProcess = new DumpProcessing();
                 bool endPopup = false;
                 bulkDumpedSessionItems = Int32.Parse(dumpProcess.DumpNetworks(endPopup)[0]) + bulkDumpedSessionItems;
+                errorAddOn = dumpProcess.bulkErrorText + errorAddOn;
             }
 
             if (isNested == false)

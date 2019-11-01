@@ -34,6 +34,7 @@ namespace RoadDumpTools
         string rFilePath;
 
         Vector3[] newvertices;
+        public string bulkErrorText;
 
         public string[] DumpNetworks(bool endPopup = true)
         {
@@ -103,10 +104,17 @@ namespace RoadDumpTools
             }
             catch (Exception e)
             {
-                ExceptionPanel panel = UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel");
-                panel.SetMessage("Network Dump Failed", "" + e, false);
-                panel.GetComponentInChildren<UISprite>().spriteName = "IconError";
-                filesExported = 0;
+                if (endPopup == true)
+                {
+                    ExceptionPanel panel = UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel");
+                    panel.SetMessage("Network Dump Failed", "" + e, false);
+                    panel.GetComponentInChildren<UISprite>().spriteName = "IconError";
+                    filesExported = 0;
+                }
+                else
+                {
+                    bulkErrorText = e.ToString();
+                }
             }
 
             string[] returnArray = { filesExported.ToString(), exportedFilePaths, diffuseTexturePath.Substring(0, diffuseTexturePath.LastIndexOf("_"))};
