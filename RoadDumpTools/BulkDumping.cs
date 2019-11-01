@@ -2,6 +2,7 @@
 using ColossalFramework.IO;
 using ColossalFramework.UI;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
@@ -14,6 +15,7 @@ namespace RoadDumpTools
         NetInfo loadedPrefab;
         public int bulkDumpedSessionItems;
         private int netEleItems;
+        List<int> dumpableElevationIndexes = new List<int>();
 
         public void Setup()
         {
@@ -26,9 +28,62 @@ namespace RoadDumpTools
             netEleItems = NetDumpPanel.instance.netEle.items.Length;
             for (int i = 0; i < netEleItems; i++)
             {
+                Debug.Log("i " + i);
+                CheckElevation(i);
+            }
+
+            foreach (var item in dumpableElevationIndexes)
+            {
+                Debug.Log("netele_index" + item);
+                NetDumpPanel.instance.netEle.selectedIndex = item;
+                //DumpAllWithinElevation(true);
+            }
+                
+/*
+            for (int i = 0; i < netEleItems; i++)
+            {
                 NetDumpPanel.instance.netEle.selectedIndex = i;
                 DumpAllWithinElevation(true);
             }
+            */
+        }
+        public void CheckElevation(int elevationIndex)
+        {
+            switch (elevationIndex)
+            {
+                case 0:
+                    dumpableElevationIndexes.Add(elevationIndex);
+                    break;
+                case 1:
+                    loadedPrefab = AssetEditorRoadUtils.TryGetElevated(loadedPrefab);
+                    if (loadedPrefab != null)
+                    {
+                        dumpableElevationIndexes.Add(elevationIndex);
+                    }
+                    break;
+                case 2:
+                    Console.WriteLine("Bridge");
+                    loadedPrefab = AssetEditorRoadUtils.TryGetBridge(loadedPrefab);
+                    if (loadedPrefab != null)
+                    {
+                        dumpableElevationIndexes.Add(elevationIndex);
+                    }
+                    break;
+                case 3:
+                    loadedPrefab = AssetEditorRoadUtils.TryGetSlope(loadedPrefab);
+                    if (loadedPrefab != null)
+                    {
+                        dumpableElevationIndexes.Add(elevationIndex);
+                    }
+                    break;
+                case 4:
+                    loadedPrefab = AssetEditorRoadUtils.TryGetTunnel(loadedPrefab);
+                    if (loadedPrefab != null)
+                    {
+                        dumpableElevationIndexes.Add(elevationIndex);
+                    }
+                    break;
+            }          
         }
         public void DumpAllWithinElevation(bool isNested)
         {
