@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BulkDumping.cs" />
+    <Compile Include="PillarDumping.cs" />
     <Compile Include="DumpProcessing.cs" />
     <Compile Include="lib\ResourceLoader.cs" />
     <Compile Include="lib\TextureScaler.cs" />
