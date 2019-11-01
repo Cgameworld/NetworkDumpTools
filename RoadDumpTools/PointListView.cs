@@ -50,7 +50,7 @@ namespace RoadDumpTools
             clipChildren = true;
             width = 180;
             height = INITIAL_HEIGHT;
-            relativePosition = new Vector3(295, 55);
+            relativePosition = new Vector3(310, 55);
 
             // Title Bar
             m_title = AddUIComponent<UITitleBar>();

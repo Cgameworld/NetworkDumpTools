@@ -1,4 +1,5 @@
-﻿using ColossalFramework.UI;
+﻿using ColossalFramework;
+using ColossalFramework.UI;
 using MoreShortcuts.GUI;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,9 @@ namespace RoadDumpTools
         public int dumpedSessionItems = 0;
         public string dumpedFiles = null;
 
-        public const int INITIAL_HEIGHT = 890;
+        public const int MAX_HEIGHT = 830;
+
+        public int footerHeight = 400;
 
         private UITextureAtlas m_atlas;
 
@@ -39,7 +42,9 @@ namespace RoadDumpTools
 
         private static NetDumpPanel _instance;
 
-        public int exportCustOffset = 0;
+
+        public int hackOffset = 55; //hack for first collapsable menu to work with main scrolling window
+        public int exportCustOffset = -55;
         public int exportMeshOffset = 0;
         private Vector3 meshResizeButtonIntial;
         private Vector3 meshResizeButtonToggleIntial;
@@ -53,13 +58,13 @@ namespace RoadDumpTools
         private List<UITextField> coordBox;
         private Vector3 openMeshPointsIntial;
         private bool done;
+        private bool advancedToggled;
         private UIButton addCoordRow;
         private UIButton removeCoordRow;
         private Vector3 gridButtonsInitial;
         private UIButton refreshCoordRows;
         private float celloffset;
         private UIButton gridModeToggle;
-        private bool advancedToggled;
         private UILabel boxInfoLabel;
         private UIPanel cellpanel;
         private UIPanel gridButtons;
@@ -72,6 +77,8 @@ namespace RoadDumpTools
         private Vector3 bulkExportButtonToggleIntial;
         private UIScrollablePanel mainScroll;
         private UIPanel mainPanel;
+        private UIPanel bottomButtons;
+        private int previousWindowHeight = 0;
 
         public static NetDumpPanel instance
         {
@@ -96,9 +103,9 @@ namespace RoadDumpTools
             canFocus = true;
             isInteractive = true;
             clipChildren = true;
-            //width = 285;
-            width = 300;
-            height = INITIAL_HEIGHT;
+            width = 285;
+            //width = 300;
+            height = footerHeight;
             relativePosition = new Vector3(0, 55);
 
             // Title Bar
@@ -108,9 +115,9 @@ namespace RoadDumpTools
 
             mainPanel = AddUIComponent<UIPanel>();
             mainPanel.relativePosition = new Vector2(0, 55);
-            mainPanel.size = new Vector2(300, Screen.height-100);
+            mainPanel.size = new Vector2(300, MAX_HEIGHT-20);
             mainScroll = UIUtils.CreateScrollBox(mainPanel, m_atlas);
-            mainScroll.size = new Vector2(285, Screen.height - 100);
+            mainScroll.size = new Vector2(285, MAX_HEIGHT-20);
 
 
             UILabel netEle_label = mainScroll.AddUIComponent<UILabel>();
@@ -243,7 +250,8 @@ namespace RoadDumpTools
                 {
                     if (advancedOptionsButtonToggle.backgroundSprite == "PropertyGroupOpen")
                     {
-                        exportCustOffset = 0;
+                        //bad hack
+                        exportCustOffset = -hackOffset;
                         advancedOptionsButtonToggle.backgroundSprite = "PropertyGroupClosed";
                         dumpMeshOnly.isVisible = false;
                         dumpDiffuseOnly.isVisible = false;
@@ -254,7 +262,7 @@ namespace RoadDumpTools
                     }
                     else
                     {
-                        exportCustOffset = 185;
+                        exportCustOffset = 140;
                         advancedOptionsButtonToggle.backgroundSprite = "PropertyGroupOpen";
                         dumpMeshOnly.isVisible = true;
                         dumpDiffuseOnly.isVisible = true;
@@ -558,7 +566,7 @@ namespace RoadDumpTools
                     }
                     else
                     {
-                        exportBulkButtonOffset = 100;
+                        exportBulkButtonOffset = 300;
                         bulkExportButtonToggle.backgroundSprite = "PropertyGroupOpen";
                     }
                     //mainScroll.height = INITIAL_HEIGHT + exportCustOffset + exportMeshOffset + exportBulkButtonOffset;
@@ -566,18 +574,23 @@ namespace RoadDumpTools
                 }
             };
 
+            bottomButtons = mainScroll.AddUIComponent<UIPanel>();
+            bottomButtons.relativePosition = new Vector2(0, footerHeight-115);
+            //footerHeight - dumpNet.height - 85
+            bottomButtons.size = new Vector2(260, 110);
 
-            dumpNet = UIUtils.CreateButton(mainScroll);
+
+            dumpNet = UIUtils.CreateButton(bottomButtons);
             dumpNet.text = "Dump Network";
             dumpNet.textScale = 1f;
-            dumpNet.relativePosition = new Vector2(40, height - dumpNet.height - 85);
+            dumpNet.relativePosition = new Vector2(40, 0);
             dumpNet.width = 200;
             dumpNet.tooltip = "Dumps the network";
 
-            lodGen = UIUtils.CreateButton(mainScroll);
+            lodGen = UIUtils.CreateButton(bottomButtons);
             lodGen.text = "Make _lod.png Files";
             lodGen.textScale = 1f;
-            lodGen.relativePosition = new Vector2(40, height - lodGen.height - 45);
+            lodGen.relativePosition = new Vector2(40, 40);
             lodGen.width = 200;
             lodGen.tooltip = "Generates lod .png files\nMust dump network first or have existing matching files in the import folder";
 
@@ -592,14 +605,14 @@ namespace RoadDumpTools
             };
 
 
-            dumpedTotal = mainScroll.AddUIComponent<UILabel>();
+            dumpedTotal = bottomButtons.AddUIComponent<UILabel>();
             dumpedTotal.text = "Total Dumped Items: (0)";
             dumpedTotal.textScale = 0.8f;
             dumpedTotal.textAlignment = UIHorizontalAlignment.Center;
             dumpedTotal.autoSize = false;
             dumpedTotal.width = 200f;
             dumpedTotal.height = 20f;
-            dumpedTotal.relativePosition = new Vector2(10, height - dumpNet.height);
+            dumpedTotal.relativePosition = new Vector2(10, 90);
             dumpedTotal.tooltip = "Total Items Dumped During Session (Duplicate Dumps Included)";
 
 
@@ -619,13 +632,13 @@ namespace RoadDumpTools
             //list files dumped and open import folder button!
 
 
-            dumpedFolderButton = UIUtils.CreateButtonSpriteImage(mainScroll, m_atlas);
+            dumpedFolderButton = UIUtils.CreateButtonSpriteImage(bottomButtons, m_atlas);
             dumpedFolderButton.normalBgSprite = "ButtonMenu";
             dumpedFolderButton.hoveredBgSprite = "ButtonMenuHovered";
             dumpedFolderButton.pressedBgSprite = "ButtonMenuPressed";
             dumpedFolderButton.disabledBgSprite = "ButtonMenuDisabled";
             dumpedFolderButton.normalFgSprite = "Folder";
-            dumpedFolderButton.relativePosition = new Vector2(210, height - dumpNet.height - 2);
+            dumpedFolderButton.relativePosition = new Vector2(210, 83);
             dumpedFolderButton.height = 25;
             dumpedFolderButton.width = 31;
             dumpedFolderButton.tooltip = "Open Import Folder (file dump location)";
@@ -640,13 +653,13 @@ namespace RoadDumpTools
                 }
             };
 
-            openFileLog = UIUtils.CreateButtonSpriteImage(mainScroll, m_atlas);
+            openFileLog = UIUtils.CreateButtonSpriteImage(bottomButtons, m_atlas);
             openFileLog.normalBgSprite = "ButtonMenu";
             openFileLog.hoveredBgSprite = "ButtonMenuHovered";
             openFileLog.pressedBgSprite = "ButtonMenuPressed";
             openFileLog.disabledBgSprite = "ButtonMenuDisabled";
             openFileLog.normalFgSprite = "Log";
-            openFileLog.relativePosition = new Vector2(248, height - dumpNet.height - 2);
+            openFileLog.relativePosition = new Vector2(248, 83);
             openFileLog.height = 25;
             openFileLog.width = 31;
             openFileLog.tooltip = "Open Export Log";
@@ -780,6 +793,7 @@ namespace RoadDumpTools
             dumpNet.relativePosition = new Vector2(40, height - dumpNet.height - 85);
             lodGen.relativePosition = new Vector2(40, height - lodGen.height - 45);
             */
+            mainScroll.scrollPosition = new Vector2(0f, 0f);
 
             meshResizeButton.relativePosition = meshResizeButtonIntial + new Vector3(0, exportCustOffset);
             meshResizeButtonToggle.relativePosition = meshResizeButtonToggleIntial + new Vector3(0, exportCustOffset);
@@ -791,8 +805,56 @@ namespace RoadDumpTools
 
 
             bulkExportButton.relativePosition = bulkExportButtonIntial + new Vector3(0, exportCustOffset + exportMeshOffset);
-            bulkExportButtonToggle.relativePosition = bulkExportButtonToggleIntial + new Vector3(0, exportCustOffset + exportMeshOffset); 
-          
+            bulkExportButtonToggle.relativePosition = bulkExportButtonToggleIntial + new Vector3(0, exportCustOffset + exportMeshOffset);
+            int windowHeight = footerHeight + exportCustOffset + exportMeshOffset + exportBulkButtonOffset;
+
+
+
+            bottomButtons.relativePosition = new Vector2(0, windowHeight - 115);
+            if (windowHeight > MAX_HEIGHT) //limit window size and activate scrollbar
+            {
+                this.height = MAX_HEIGHT + hackOffset;
+
+                if (previousWindowHeight < MAX_HEIGHT)
+                {
+                    ValueAnimator.Animate("NDTScrollBarShow", delegate (float val)
+                    {
+                        Vector2 size = this.size;
+                        size.x = val;
+                        this.size = size;
+                    }, new AnimatedFloat(285f, 300f, 0.25f, EasingType.ExpoEaseOut));
+                }
+                else
+                {
+                    this.width = 300;
+                }
+
+            }
+            else
+            {
+                this.height = windowHeight + hackOffset;
+
+                if (previousWindowHeight > MAX_HEIGHT)
+                {
+                    ValueAnimator.Animate("NDTScrollBarHide", delegate (float val)
+                    {
+                        Vector2 size = this.size;
+                        size.x = val;
+                        this.size = size;
+                    }, new AnimatedFloat(300f, 285f, 0.25f, EasingType.ExpoEaseOut));
+                }
+                else
+                {
+                    this.width = 285;
+                }
+                //make panel group of bottom buttons and hack offset other direction
+            }
+            Debug.Log("prevwinheight" + previousWindowHeight);
+            Debug.Log("winheight " + windowHeight);
+
+            previousWindowHeight = windowHeight;
+           
+
         }
 
         public string MeshNumber => seginput.text;
