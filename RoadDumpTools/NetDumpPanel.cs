@@ -17,14 +17,14 @@ namespace RoadDumpTools
 
         public const int MAX_HEIGHT = 830;
 
-        public int footerHeight = 400;
+        public int footerHeight = 430;
 
         private UITextureAtlas m_atlas;
 
         public UITitleBar m_title;
-        private UITextField seginput;
-        private UIDropDown net_type;
-        private UIDropDown netEle;
+        public UITextField seginput;
+        public UIDropDown net_type;
+        public UIDropDown netEle;
         private UIButton dumpNet;
 
         private UILabel dumpedTotal;
@@ -70,6 +70,8 @@ namespace RoadDumpTools
         private UIPanel gridButtons;
         private UILabel titleLabel;
         public string lodFilePath = "";
+        private Vector3 roadExtrasButtonsIntial;
+        private UIButton dumpPillarsButton;
         private UIButton bulkExportButton;
         private Vector3 bulkExportButtonIntial;
         private UILabel bulkExportButtonToggle;
@@ -84,6 +86,12 @@ namespace RoadDumpTools
         private UIPanel bulkExportButtons;
         private UIButton dumpAllWithinElevationButton;
         private UIButton dumpAllMeshesButton;
+        private UIButton roadExtrasButton;
+        private Vector3 roadExtrasButtonIntial;
+        private UILabel roadExtrasButtonToggle;
+        private Vector3 roadExtrasButtonToggleIntial;
+        private UIPanel roadExtrasButtons;
+        private int exportRoadExtrasOffset;
 
         public static NetDumpPanel instance
         {
@@ -539,6 +547,66 @@ namespace RoadDumpTools
                 }
             };
 
+            roadExtrasButton = UIUtils.CreateButtonSpriteImage(mainScroll, m_atlas);
+            roadExtrasButton.normalBgSprite = "SubBarButtonBase";
+            roadExtrasButton.hoveredBgSprite = "SubBarButtonBaseHovered";
+            roadExtrasButton.text = "Road Extras";
+            roadExtrasButton.textScale = 0.8f;
+            roadExtrasButton.textPadding.top = 5;
+            roadExtrasButton.relativePosition = new Vector2(20, 243);
+            roadExtrasButton.height = 25;
+            roadExtrasButton.width = 240;
+            roadExtrasButton.tooltip = "Run Export for several (rewrite)";
+            roadExtrasButtonIntial = roadExtrasButton.relativePosition;
+
+            roadExtrasButtonToggle = UIUtils.CreateLabelSpriteImage(mainScroll, m_atlas);
+            roadExtrasButtonToggle.backgroundSprite = "PropertyGroupClosed";
+            roadExtrasButtonToggle.width = 18f;
+            roadExtrasButtonToggle.height = 18f;
+            roadExtrasButtonToggle.relativePosition = new Vector2(45, 247);
+            roadExtrasButtonToggleIntial = roadExtrasButtonToggle.relativePosition;
+
+            roadExtrasButton.eventClick += (c, p) =>
+            {
+                if (isVisible)
+                {
+
+                    if (roadExtrasButtonToggle.backgroundSprite == "PropertyGroupOpen")
+                    {
+                        exportRoadExtrasOffset = 0;
+                        roadExtrasButtons.isVisible = false;
+                        roadExtrasButtonToggle.backgroundSprite = "PropertyGroupClosed";
+                    }
+                    else
+                    {
+                        exportRoadExtrasOffset = 85;
+                        roadExtrasButtons.isVisible = true;
+                        roadExtrasButtonToggle.backgroundSprite = "PropertyGroupOpen";
+                    }
+                    RefreshFooterItems();
+                }
+            };
+
+            roadExtrasButtons = mainScroll.AddUIComponent<UIPanel>();
+            roadExtrasButtons.relativePosition = new Vector2(0, 282);
+            roadExtrasButtons.size = new Vector2(260, 110);
+            roadExtrasButtons.isVisible = false;
+            roadExtrasButtonsIntial = roadExtrasButtons.relativePosition;
+
+            dumpPillarsButton = UIUtils.CreateButton(roadExtrasButtons);
+            dumpPillarsButton.text = "Dump Pillars";
+            dumpPillarsButton.textScale = 1f;
+            dumpPillarsButton.relativePosition = new Vector2(40, 0);
+            dumpPillarsButton.width = 200;
+            dumpPillarsButton.tooltip = "";
+
+            dumpPillarsButton = UIUtils.CreateButton(roadExtrasButtons);
+            dumpPillarsButton.text = "Dump All Props";
+            dumpPillarsButton.textScale = 1f;
+            dumpPillarsButton.relativePosition = new Vector2(40, 40);
+            dumpPillarsButton.width = 200;
+            dumpPillarsButton.tooltip = "";
+
 
             bulkExportButton = UIUtils.CreateButtonSpriteImage(mainScroll, m_atlas);
             bulkExportButton.normalBgSprite = "SubBarButtonBase";
@@ -546,7 +614,7 @@ namespace RoadDumpTools
             bulkExportButton.text = "Bulk Exporting";
             bulkExportButton.textScale = 0.8f;
             bulkExportButton.textPadding.top = 5;
-            bulkExportButton.relativePosition = new Vector2(20, 243);
+            bulkExportButton.relativePosition = new Vector2(20, 278);
             bulkExportButton.height = 25;
             bulkExportButton.width = 240;
             bulkExportButton.tooltip = "Run Export for several (rewrite)";
@@ -556,7 +624,7 @@ namespace RoadDumpTools
             bulkExportButtonToggle.backgroundSprite = "PropertyGroupClosed";
             bulkExportButtonToggle.width = 18f;
             bulkExportButtonToggle.height = 18f;
-            bulkExportButtonToggle.relativePosition = new Vector2(45, 247);
+            bulkExportButtonToggle.relativePosition = new Vector2(45, 282);
             bulkExportButtonToggleIntial = bulkExportButtonToggle.relativePosition;
 
             bulkExportButton.eventClick += (c, p) =>
@@ -583,7 +651,7 @@ namespace RoadDumpTools
             };
 
             bulkExportButtons = mainScroll.AddUIComponent<UIPanel>();
-            bulkExportButtons.relativePosition = new Vector2(0, 282);
+            bulkExportButtons.relativePosition = new Vector2(0, 317);
             //footerHeight - dumpNet.height - 85
             bulkExportButtons.size = new Vector2(260, 110);
             bulkExportButtons.isVisible = false;
@@ -597,12 +665,32 @@ namespace RoadDumpTools
             dumpAllWithinTypeButton.width = 200;
             dumpAllWithinTypeButton.tooltip = "";
 
+            dumpAllWithinTypeButton.eventClick += (c, p) =>
+            {
+                if (isVisible)
+                {
+                    BulkDumping bulkdump = new BulkDumping();
+                    bulkdump.Setup();
+                    bulkdump.DumpAllWithinType(false);
+                }
+            };
+
             dumpAllWithinElevationButton = UIUtils.CreateButton(bulkExportButtons);
             dumpAllWithinElevationButton.text = "Dump All in Elevation";
             dumpAllWithinElevationButton.textScale = 1f;
             dumpAllWithinElevationButton.relativePosition = new Vector2(40, 40);
             dumpAllWithinElevationButton.width = 200;
             dumpAllWithinElevationButton.tooltip = "";
+
+            dumpAllWithinElevationButton.eventClick += (c, p) =>
+            {
+                if (isVisible)
+                {
+                    BulkDumping bulkdump = new BulkDumping();
+                    bulkdump.Setup();
+                    bulkdump.DumpAllWithinElevation(false);
+                }
+            };
 
             dumpAllMeshesButton = UIUtils.CreateButton(bulkExportButtons);
             dumpAllMeshesButton.text = "Dump All";
@@ -611,7 +699,15 @@ namespace RoadDumpTools
             dumpAllMeshesButton.width = 200;
             dumpAllMeshesButton.tooltip = "";
 
-
+            dumpAllMeshesButton.eventClick += (c, p) =>
+            {
+                if (isVisible)
+                {
+                    BulkDumping bulkdump = new BulkDumping();
+                    bulkdump.Setup();
+                    bulkdump.DumpAllMeshes();
+                }
+            };
 
             bottomButtons = mainScroll.AddUIComponent<UIPanel>();
             bottomButtons.relativePosition = new Vector2(0, footerHeight-115);
@@ -836,11 +932,16 @@ namespace RoadDumpTools
             gridButtons.relativePosition = gridButtonsInitial + new Vector3(0, exportCustOffset);
 
 
-            bulkExportButton.relativePosition = bulkExportButtonIntial + new Vector3(0, exportCustOffset + exportMeshOffset);
-            bulkExportButtonToggle.relativePosition = bulkExportButtonToggleIntial + new Vector3(0, exportCustOffset + exportMeshOffset);
-            bulkExportButtons.relativePosition = bulkExportButtonsIntial + new Vector3(0, exportCustOffset + exportMeshOffset);
+            roadExtrasButton.relativePosition = roadExtrasButtonIntial + new Vector3(0, exportCustOffset + exportMeshOffset);
+            roadExtrasButtonToggle.relativePosition = roadExtrasButtonToggleIntial + new Vector3(0, exportCustOffset + exportMeshOffset);
+            roadExtrasButtons.relativePosition = roadExtrasButtonsIntial + new Vector3(0, exportCustOffset + exportMeshOffset);
 
-            int windowHeight = footerHeight + exportCustOffset + exportMeshOffset + exportBulkButtonOffset;
+
+            bulkExportButton.relativePosition = bulkExportButtonIntial + new Vector3(0, exportCustOffset + exportMeshOffset + exportRoadExtrasOffset);
+            bulkExportButtonToggle.relativePosition = bulkExportButtonToggleIntial + new Vector3(0, exportCustOffset + exportMeshOffset + exportRoadExtrasOffset);
+            bulkExportButtons.relativePosition = bulkExportButtonsIntial + new Vector3(0, exportCustOffset + exportMeshOffset + exportRoadExtrasOffset);
+
+            int windowHeight = footerHeight + exportCustOffset + exportMeshOffset + exportRoadExtrasOffset + exportBulkButtonOffset;
 
             bottomButtons.relativePosition = new Vector2(0, windowHeight - 115);
             if (windowHeight > MAX_HEIGHT) //limit window size and activate scrollbar

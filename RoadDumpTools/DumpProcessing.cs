@@ -35,7 +35,7 @@ namespace RoadDumpTools
 
         Vector3[] newvertices;
 
-        public string[] DumpNetworks()
+        public string[] DumpNetworks(bool endPopup = true)
         {
             try
             {
@@ -93,7 +93,12 @@ namespace RoadDumpTools
                         filesExported += 1;
                     }
                 }
-                panel.SetMessage("Network Dump Successful", "Network Name: " + networkName + "\n\nDumped Items:\n" + exportedFilePaths,false);
+
+                Debug.Log("ENDPOPUP:" + endPopup);
+                if (endPopup == true)
+                {
+                    panel.SetMessage("Network Dump Successful", "Network Name: " + networkName + "\n\nDumped Items:\n" + exportedFilePaths, false);
+                }
 
             }
             catch (Exception e)
