@@ -624,7 +624,10 @@ namespace RoadDumpTools
             {
                 if (isVisible)
                 {
-                    RoadExtrasAlert.instance.Show();
+                    PropDumping propdump = new PropDumping();
+                    propdump.Setup();
+                    propdump.DumpProps();
+                    
                 }
             };
 
