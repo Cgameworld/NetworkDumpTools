@@ -38,6 +38,8 @@ namespace RoadDumpTools
             panel.SetMessage("Pillar Dumping Successful", "Network Name: " + networkName_init + "\nExported To: " + importFolder + "\nPillars Dumped: " + pillarsDumped, false);
             //explain how to replace after that not that straightfoward (restart the game or reload the asset editor with no workshop on!)
 
+            RoadExtrasAlert.instance.setExtraType("Pillar");
+            RoadExtrasAlert.instance.Show();
         }
 
         private void DumpBuildingInfo(BuildingInfo pillar)
@@ -60,22 +62,18 @@ namespace RoadDumpTools
 
             if (ta != null)
             {
-                Debug.Log("ta_notnull");
                 return (type == PillarType.BridgePillar) ? ta.m_bridgePillarInfo : ta.m_middlePillarInfo;
             }
             else if (ra != null)
             {
-                Debug.Log("ra_notnull");
                 return (type == PillarType.BridgePillar) ? ra.m_bridgePillarInfo : ra.m_middlePillarInfo;
             }
             else if (pa != null)
             {
-                Debug.Log("pa_notnull");
                 return (type == PillarType.BridgePillar) ? pa.m_bridgePillarInfo : null;
             }
             else
             {
-                Debug.Log("empty!-n");
                 return null;
             }
         }

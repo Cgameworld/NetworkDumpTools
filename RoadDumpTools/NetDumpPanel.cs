@@ -94,6 +94,7 @@ namespace RoadDumpTools
         private Vector3 roadExtrasButtonToggleIntial;
         private UIPanel roadExtrasButtons;
         private int exportRoadExtrasOffset;
+        private UIButton dumpPropsButton;
 
         public static NetDumpPanel instance
         {
@@ -612,12 +613,20 @@ namespace RoadDumpTools
                 }
             };
 
-            dumpPillarsButton = UIUtils.CreateButton(roadExtrasButtons);
-            dumpPillarsButton.text = "Dump All Props";
-            dumpPillarsButton.textScale = 1f;
-            dumpPillarsButton.relativePosition = new Vector2(40, 40);
-            dumpPillarsButton.width = 200;
-            dumpPillarsButton.tooltip = "";
+            dumpPropsButton = UIUtils.CreateButton(roadExtrasButtons);
+            dumpPropsButton.text = "Dump All Props";
+            dumpPropsButton.textScale = 1f;
+            dumpPropsButton.relativePosition = new Vector2(40, 40);
+            dumpPropsButton.width = 200;
+            dumpPropsButton.tooltip = "";
+
+            dumpPropsButton.eventClick += (c, p) =>
+            {
+                if (isVisible)
+                {
+                    RoadExtrasAlert.instance.Show();
+                }
+            };
 
 
             bulkExportButton = UIUtils.CreateButtonSpriteImage(mainScroll, m_atlas);

@@ -16,6 +16,7 @@ namespace RoadDumpTools
                 UIComponent uic = v.AddUIComponent(typeof(NetDumpPanel));
 
                 NetDumpPanel.instance.Show(); //extra needed to intialize
+                RoadExtrasAlert.instance.Show(); //init
 
                 GameObject.FindObjectOfType<ToolController>().eventEditPrefabChanged += (info) =>
                 {

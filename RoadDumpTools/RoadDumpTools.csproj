@@ -65,6 +65,7 @@
     <Compile Include="lib\ResourceLoader.cs" />
     <Compile Include="lib\TextureScaler.cs" />
     <Compile Include="LodImageGenerator.cs" />
+    <Compile Include="RoadExtrasAlert.cs" />
     <Compile Include="PointListView.cs" />
     <Compile Include="NetDumpPanel.cs" />
     <Compile Include="ModThreading.cs" />
