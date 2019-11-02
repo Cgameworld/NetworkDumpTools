@@ -4,7 +4,8 @@ using System.Text.RegularExpressions;
 using ColossalFramework.IO;
 using UnityEngine;
 
-namespace ModTools.Utils
+//from ModTools
+namespace RoadDumpTools.Lib
 {
     internal static class TextureUtil
     {
@@ -171,6 +172,20 @@ namespace ModTools.Utils
                 result[i].g = (byte)(byte.MaxValue - colors[i].g);
                 result[i].b = (byte)(byte.MaxValue - colors[i].b);
                 result[i].a = (byte)(byte.MaxValue - colors[i].a);
+            }
+
+            return result;
+        }
+
+        public static Color32[] BuildBlankTextureColors(int length)
+        {
+            var result = new Color32[length];
+            for (var i = 0; i < length; i++)
+            {
+                result[i].r = byte.MaxValue;
+                result[i].g = byte.MaxValue;
+                result[i].b = byte.MaxValue;
+                result[i].a = byte.MaxValue;
             }
 
             return result;

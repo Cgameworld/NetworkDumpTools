@@ -602,6 +602,16 @@ namespace RoadDumpTools
             dumpPillarsButton.width = 200;
             dumpPillarsButton.tooltip = "";
 
+            dumpPillarsButton.eventClick += (c, p) =>
+            {
+                if (isVisible)
+                {
+                    PillarDumping pillardump = new PillarDumping();
+                    pillardump.Setup();
+                    pillardump.DumpPillar();
+                }
+            };
+
             dumpPillarsButton = UIUtils.CreateButton(roadExtrasButtons);
             dumpPillarsButton.text = "Dump All Props";
             dumpPillarsButton.textScale = 1f;

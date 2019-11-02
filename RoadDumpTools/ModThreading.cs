@@ -2,7 +2,6 @@
 using ColossalFramework.IO;
 using ColossalFramework.UI;
 using ICities;
-using ModTools.Utils;
 using ObjUnity3D;
 using System;
 using System.IO;

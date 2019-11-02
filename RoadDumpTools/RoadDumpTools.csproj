@@ -57,6 +57,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BulkDumping.cs" />
+    <Compile Include="lib\DumpUtil.cs" />
+    <Compile Include="lib\FileUtil.cs" />
+    <Compile Include="lib\PillarType.cs" />
     <Compile Include="PillarDumping.cs" />
     <Compile Include="DumpProcessing.cs" />
     <Compile Include="lib\ResourceLoader.cs" />
