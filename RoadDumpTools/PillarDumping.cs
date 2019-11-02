@@ -1,5 +1,6 @@
 ﻿using ColossalFramework;
 using ColossalFramework.IO;
+using ColossalFramework.UI;
 using RoadDumpTools.Lib;
 using System;
 using System.IO;
@@ -14,7 +15,7 @@ namespace RoadDumpTools
         NetInfo loadedPrefab;
         public int bulkDumpedSessionItems;
         private int netEleItems;
-        string errorAddOn = "";
+        int pillarsDumped = 0;
 
         public void Setup()
         {
@@ -24,23 +25,28 @@ namespace RoadDumpTools
 
         public void DumpPillar()
         {
+            NetInfo elevatedNet = AssetEditorRoadUtils.TryGetElevated(loadedPrefab);
+            DumpBuildingInfo(GetActivePillar(elevatedNet, PillarType.BridgePillar));
+            DumpBuildingInfo(GetActivePillar(elevatedNet, PillarType.MiddlePillar));
+
             NetInfo bridgeNet = AssetEditorRoadUtils.TryGetBridge(loadedPrefab);
-            Debug.Log("num of bridge segments" + bridgeNet.m_segments.Length);
-            BuildingInfo bridgePillar = GetActivePillar(bridgeNet, PillarType.BridgePillar);
-            Debug.Log("got pillar: " + bridgePillar.name);
-            //Debug.Log(bridgePillar.ToString());
+            DumpBuildingInfo(GetActivePillar(bridgeNet, PillarType.BridgePillar));
+            DumpBuildingInfo(GetActivePillar(bridgeNet, PillarType.MiddlePillar));
 
-            //Lib.DumpUtil.DumpMeshToOBJ(bridgePillar.m_mesh, bridgePillar.m_mesh.name);
-            Debug.Log(bridgePillar.m_mesh.bounds);
-            Lib.DumpUtil.DumpMeshAndTextures(bridgePillar.name, bridgePillar.m_mesh, bridgePillar.m_material);
-            Debug.Log("BridgePillar DUMPED");
+            string importFolder = Path.Combine(DataLocation.addonsPath, "Import");
+            ExceptionPanel panel = UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel");
+            panel.SetMessage("Pillar Dumping Successful", "Network Name: " + networkName_init + "\nExported To: " + importFolder + "\nPillars Dumped: " + pillarsDumped, false);
+            //explain how to replace after that not that straightfoward (restart the game or reload the asset editor with no workshop on!)
 
-            //loadedPrefab = AssetEditorRoadUtils.TryGetElevated(loadedPrefab);
-            //var a = AssetEditorRoadUtils.TryGetElevated(loadedPrefab);
+        }
 
-            //RoadBridgeAI roadBridge = loadedPrefab.m_netAI as RoadBridgeAI;
-            //DumpMeshToOBJ(roadBridge.m_bridgePillarInfo.m_mesh, "pillarmesh");
-            //loadedPrefab = AssetEditorRoadUtils.TryGetBridge(loadedPrefab);
+        private void DumpBuildingInfo(BuildingInfo pillar)
+        {
+            if (pillar != null)
+            {
+                DumpUtil.DumpMeshAndTextures(pillar.name, pillar.m_mesh, pillar.m_material);
+                pillarsDumped += 1;
+            }
         }
 
         //from network skins
