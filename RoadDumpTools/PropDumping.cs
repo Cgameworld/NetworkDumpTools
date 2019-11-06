@@ -23,8 +23,40 @@ namespace RoadDumpTools
         }
         public void DumpProps()
         {
-            PropInfo a = loadedPrefab.m_lanes[0].m_laneProps.m_props[0].m_prop;
-            DumpUtil.DumpMeshAndTextures(a.name, a.m_mesh, a.m_material);
+            //so far dumps all props in road - problem is that dumping the mesh for most props doesn't work since most are "unreadable" in ModTools
+            //tried investigating getting mesh from the sharedassets11.assets file in /Cities_Data but can't figure out how to load the file directly into the mod
+
+            //Open to any pointers in how to solve this, If you are reading this and know a way feel free to make a new issue in GitHub
+            Debug.Log(loadedPrefab.m_lanes.Length + " Lanes Exist");
+            for (int i = 0; i < loadedPrefab.m_lanes.Length; i++)
+            {
+                NetLaneProps LaneJProps = loadedPrefab.m_lanes[i].m_laneProps;
+                Debug.Log("lane" + i + "props len: " + LaneJProps.m_props.Length);
+
+                for (int j = 0; j < LaneJProps.m_props.Length; j++)
+                {
+                    PropInfo a = loadedPrefab.m_lanes[i].m_laneProps.m_props[j].m_prop;
+                        Debug.Log(a.name);
+                        DumpUtil.DumpMeshAndTextures(a.name, a.m_mesh, a.m_material);
+                }
+            }
+        }
+
+        public void DumpArrows()
+        {
+            //already made the UI so instead of dumping everything, just dumping objects that fully work (lane arrows)
+            for (int i = 0; i < loadedPrefab.m_lanes.Length; i++)
+            {
+                NetLaneProps LaneJProps = loadedPrefab.m_lanes[i].m_laneProps;
+                for (int j = 0; j < LaneJProps.m_props.Length; j++)
+                {
+                    PropInfo a = loadedPrefab.m_lanes[i].m_laneProps.m_props[j].m_prop;
+                    if (a.name.Contains("Arrow"))
+                    {
+                        DumpUtil.DumpMeshAndTextures(a.name, a.m_mesh, a.m_material);
+                    }
+                }
+            }
         }
 
     }
