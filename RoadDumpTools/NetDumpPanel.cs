@@ -559,7 +559,7 @@ namespace RoadDumpTools
             roadExtrasButton.relativePosition = new Vector2(20, 243);
             roadExtrasButton.height = 25;
             roadExtrasButton.width = 240;
-            roadExtrasButton.tooltip = "Run Export for several (rewrite)";
+            roadExtrasButton.tooltip = "Dump road accessories (pillars/props)";
             roadExtrasButtonIntial = roadExtrasButton.relativePosition;
 
             roadExtrasButtonToggle = UIUtils.CreateLabelSpriteImage(mainScroll, m_atlas);
@@ -601,7 +601,7 @@ namespace RoadDumpTools
             dumpPillarsButton.textScale = 1f;
             dumpPillarsButton.relativePosition = new Vector2(40, 0);
             dumpPillarsButton.width = 200;
-            dumpPillarsButton.tooltip = "";
+            dumpPillarsButton.tooltip = "Dumps all pillar buildings in the network";
 
             dumpPillarsButton.eventClick += (c, p) =>
             {
@@ -621,7 +621,7 @@ namespace RoadDumpTools
             dumpLaneArrows.textScale = 1f;
             dumpLaneArrows.relativePosition = new Vector2(40, 40);
             dumpLaneArrows.width = 200;
-            dumpLaneArrows.tooltip = "";
+            dumpLaneArrows.tooltip = "Dumps all lane arrow decals used in the road";
 
             dumpLaneArrows.eventClick += (c, p) =>
             {
@@ -647,7 +647,7 @@ namespace RoadDumpTools
             bulkExportButton.relativePosition = new Vector2(20, 278);
             bulkExportButton.height = 25;
             bulkExportButton.width = 240;
-            bulkExportButton.tooltip = "Run Export for several (rewrite)";
+            bulkExportButton.tooltip = "Export several meshes at once";
             bulkExportButtonIntial = bulkExportButton.relativePosition;
 
             bulkExportButtonToggle = UIUtils.CreateLabelSpriteImage(mainScroll, m_atlas);
@@ -693,7 +693,7 @@ namespace RoadDumpTools
             dumpAllWithinTypeButton.textScale = 1f;
             dumpAllWithinTypeButton.relativePosition = new Vector2(40, 0);
             dumpAllWithinTypeButton.width = 200;
-            dumpAllWithinTypeButton.tooltip = "";
+            dumpAllWithinTypeButton.tooltip = "Dumps all available mesh #'s for given selection";
 
             dumpAllWithinTypeButton.eventClick += (c, p) =>
             {
@@ -711,7 +711,7 @@ namespace RoadDumpTools
             dumpAllWithinElevationButton.textScale = 1f;
             dumpAllWithinElevationButton.relativePosition = new Vector2(40, 40);
             dumpAllWithinElevationButton.width = 200;
-            dumpAllWithinElevationButton.tooltip = "";
+            dumpAllWithinElevationButton.tooltip = "Dumps all segment and node meshes for selected elevation";
 
             dumpAllWithinElevationButton.eventClick += (c, p) =>
             {
@@ -729,7 +729,7 @@ namespace RoadDumpTools
             dumpAllMeshesButton.textScale = 1f;
             dumpAllMeshesButton.relativePosition = new Vector2(40, 80);
             dumpAllMeshesButton.width = 200;
-            dumpAllMeshesButton.tooltip = "";
+            dumpAllMeshesButton.tooltip = "Dumps all meshes contained in the network across all elevations";
 
             dumpAllMeshesButton.eventClick += (c, p) =>
             {

@@ -44,26 +44,40 @@ namespace RoadDumpTools
 
         public void DumpArrows()
         {
-            //already made the UI so instead of dumping everything, just dumping objects that fully work (lane arrows)
-            for (int i = 0; i < loadedPrefab.m_lanes.Length; i++)
+            try
             {
-                NetLaneProps LaneJProps = loadedPrefab.m_lanes[i].m_laneProps;
-                for (int j = 0; j < LaneJProps.m_props.Length; j++)
+                //already made the UI so instead of dumping everything, just dumping objects that fully work (lane arrows)
+                for (int i = 0; i < loadedPrefab.m_lanes.Length; i++)
                 {
-                    PropInfo a = loadedPrefab.m_lanes[i].m_laneProps.m_props[j].m_prop;
-                    if (a.name.Contains("Arrow"))
+                    NetLaneProps LaneJProps = loadedPrefab.m_lanes[i].m_laneProps;
+                    for (int j = 0; j < LaneJProps.m_props.Length; j++)
                     {
-                        DumpUtil.DumpMeshAndTextures(a.name, a.m_mesh, a.m_material);
-                        propsDumped += 1;
+                        PropInfo a = loadedPrefab.m_lanes[i].m_laneProps.m_props[j].m_prop;
+                        if (a.name.Contains("Arrow"))
+                        {
+                            DumpUtil.DumpMeshAndTextures(a.name, a.m_mesh, a.m_material);
+                            propsDumped += 1;
+                        }
                     }
                 }
+
+                if (propsDumped != 0)
+                {
+                    propType = "Lane Arrow";
+                    SuccessModal();
+
+                    RoadExtrasAlert.instance.setExtraType(propType);
+                    RoadExtrasAlert.instance.Show();
+                }
+                else
+                {
+                    Lib.ErrorWindow.ShowErrorWindow("Lane Arrow Prop Dumping Failed", "No Lane Arrows Found");
+                }
             }
-            propType = "Lane Arrow";
-
-            SuccessModal();
-
-            RoadExtrasAlert.instance.setExtraType(propType);
-            RoadExtrasAlert.instance.Show();
+            catch (Exception e)
+            {
+                Lib.ErrorWindow.ShowErrorWindow("Lane Arrow Prop Dumping Failed", e.ToString());
+            }
         }
 
 

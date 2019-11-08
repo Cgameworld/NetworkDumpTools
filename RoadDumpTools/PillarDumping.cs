@@ -25,21 +25,35 @@ namespace RoadDumpTools
 
         public void DumpPillar()
         {
-            NetInfo elevatedNet = AssetEditorRoadUtils.TryGetElevated(loadedPrefab);
-            DumpBuildingInfo(GetActivePillar(elevatedNet, PillarType.BridgePillar));
-            DumpBuildingInfo(GetActivePillar(elevatedNet, PillarType.MiddlePillar));
+            try
+            {
+                NetInfo elevatedNet = AssetEditorRoadUtils.TryGetElevated(loadedPrefab);
+                DumpBuildingInfo(GetActivePillar(elevatedNet, PillarType.BridgePillar));
+                DumpBuildingInfo(GetActivePillar(elevatedNet, PillarType.MiddlePillar));
 
-            NetInfo bridgeNet = AssetEditorRoadUtils.TryGetBridge(loadedPrefab);
-            DumpBuildingInfo(GetActivePillar(bridgeNet, PillarType.BridgePillar));
-            DumpBuildingInfo(GetActivePillar(bridgeNet, PillarType.MiddlePillar));
+                NetInfo bridgeNet = AssetEditorRoadUtils.TryGetBridge(loadedPrefab);
+                DumpBuildingInfo(GetActivePillar(bridgeNet, PillarType.BridgePillar));
+                DumpBuildingInfo(GetActivePillar(bridgeNet, PillarType.MiddlePillar));
 
-            string importFolder = Path.Combine(DataLocation.addonsPath, "Import");
-            ExceptionPanel panel = UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel");
-            panel.SetMessage("Pillar Dumping Successful", "Network Name: " + networkName_init + "\nExported To: " + importFolder + "\nPillars Dumped: " + pillarsDumped, false);
-            //explain how to replace after that not that straightfoward (restart the game or reload the asset editor with no workshop on!)
-            
-            RoadExtrasAlert.instance.setExtraType("Pillar");
-            RoadExtrasAlert.instance.Show();
+                if (pillarsDumped != 0)
+                {
+                    string importFolder = Path.Combine(DataLocation.addonsPath, "Import");
+                    ExceptionPanel panel = UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel");
+                    panel.SetMessage("Pillar Dumping Successful", "Network Name: " + networkName_init + "\nExported To: " + importFolder + "\nPillars Dumped: " + pillarsDumped, false);
+                    //explain how to replace after that not that straightfoward (restart the game or reload the asset editor with no workshop on!)
+
+                    RoadExtrasAlert.instance.setExtraType("Pillar");
+                    RoadExtrasAlert.instance.Show();
+                }
+                else
+                {
+                    Lib.ErrorWindow.ShowErrorWindow("Pillar Dumping Failed", "No Pillars Found");
+                }
+            }
+            catch (Exception e)
+            {
+                Lib.ErrorWindow.ShowErrorWindow("Pillar Dumping Failed", e.ToString());
+            }
         }
 
         public int PillarsDumped => pillarsDumped;

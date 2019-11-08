@@ -49,7 +49,7 @@ v1.1(WIP)
 -Added Bulk Exporting section
    >Dump All in Mesh Type - dumps all available mesh #'s for given selection\
    >Dump All in Elevation - dumps all segment and node meshes for selected elevation\
-   >Dump All - dumps all meshes contained in the network across elevations
+   >Dump All - dumps all meshes contained in the network across alls elevations\
 -Import Folder Shortcut now works cross platfrom
 -Fixed in-game loading problem
 
