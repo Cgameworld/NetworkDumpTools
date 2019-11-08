@@ -13,8 +13,8 @@ namespace RoadDumpTools
         ToolController sim = Singleton<ToolController>.instance;
         public string networkName_init;
         NetInfo loadedPrefab;
-        public int bulkDumpedSessionItems;
         int propsDumped = 0;
+        string propType = "";
 
         public void Setup()
         {
@@ -54,10 +54,29 @@ namespace RoadDumpTools
                     if (a.name.Contains("Arrow"))
                     {
                         DumpUtil.DumpMeshAndTextures(a.name, a.m_mesh, a.m_material);
+                        propsDumped += 1;
                     }
                 }
             }
+            propType = "Lane Arrow";
+
+            SuccessModal();
+
+            RoadExtrasAlert.instance.setExtraType(propType);
+            RoadExtrasAlert.instance.Show();
         }
+
+
+        private void SuccessModal()
+        {
+            string importFolder = Path.Combine(DataLocation.addonsPath, "Import");
+            ExceptionPanel panel = UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel");
+            panel.SetMessage(propType + " Prop Dump Successful", "Number of Files Dumped: " + propsDumped + "\nExported To: " + importFolder + "\n", false);
+        }
+
+        public int PropsDumped => propsDumped;
+
+        public string LogMessage =>  propType + " Props Dumped: " + propsDumped;
 
     }
 }

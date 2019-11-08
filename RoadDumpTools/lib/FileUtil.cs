@@ -34,7 +34,7 @@ namespace RoadDumpTools.Lib
                 }
                 catch
                 {
-                    UnityEngine.Debug.LogWarning($"FYI, ModTools failed to check mod {item.name} (published file ID {item.publishedFileID}) while searching for type {type.FullName}. That mod may malfunction.");
+
                 }
             }
 

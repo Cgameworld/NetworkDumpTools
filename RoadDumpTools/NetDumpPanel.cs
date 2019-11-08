@@ -610,6 +610,9 @@ namespace RoadDumpTools
                     PillarDumping pillardump = new PillarDumping();
                     pillardump.Setup();
                     pillardump.DumpPillar();
+                    dumpedSessionItems += pillardump.PillarsDumped;
+                    dumpedFiles += pillardump.LogMessage + "\n";
+                    dumpedTotal.text = "Total Dumped Items: (" + dumpedSessionItems.ToString() + ")";
                 }
             };
 
@@ -627,7 +630,10 @@ namespace RoadDumpTools
                     PropDumping propdump = new PropDumping();
                     propdump.Setup();
                     propdump.DumpArrows();
-                    
+                    dumpedSessionItems += propdump.PropsDumped;
+                    dumpedFiles += propdump.LogMessage + "\n";
+                    dumpedTotal.text = "Total Dumped Items: (" + dumpedSessionItems.ToString() + ")";
+
                 }
             };
 
@@ -696,6 +702,7 @@ namespace RoadDumpTools
                     BulkDumping bulkdump = new BulkDumping();
                     bulkdump.Setup();
                     bulkdump.DumpAllWithinType(false);
+                    BulkMessageLog(bulkdump);
                 }
             };
 
@@ -713,6 +720,7 @@ namespace RoadDumpTools
                     BulkDumping bulkdump = new BulkDumping();
                     bulkdump.Setup();
                     bulkdump.DumpAllWithinElevation(false);
+                    BulkMessageLog(bulkdump);
                 }
             };
 
@@ -730,6 +738,7 @@ namespace RoadDumpTools
                     BulkDumping bulkdump = new BulkDumping();
                     bulkdump.Setup();
                     bulkdump.DumpAllMeshes();
+                    BulkMessageLog(bulkdump);
                 }
             };
 
@@ -781,7 +790,7 @@ namespace RoadDumpTools
                 {
                     DumpProcessing dumpProcess = new DumpProcessing();
                     dumpedSessionItems = Int32.Parse(dumpProcess.DumpNetworks()[0]) + dumpedSessionItems;
-                    dumpedFiles += dumpProcess.DumpNetworks()[1];
+                    dumpedFiles += dumpProcess.DumpNetworks()[1] + "\n";
                     lodFilePath = dumpProcess.DumpNetworks()[2];
                     dumpedTotal.text = "Total Dumped Items: (" + dumpedSessionItems.ToString() + ")";
                 }
@@ -842,6 +851,13 @@ namespace RoadDumpTools
 
         }
 
+        private void BulkMessageLog(BulkDumping bulkdump)
+        {
+            dumpedSessionItems += bulkdump.RoadsDumped;
+            dumpedFiles += bulkdump.LogMessage + "\n";
+            dumpedTotal.text = "Total Dumped Items: (" + dumpedSessionItems.ToString() + ")";
+        }
+
         public override void Update()
         {
             //allows tabbing between fields for mesh point replacement
@@ -865,7 +881,6 @@ namespace RoadDumpTools
                 done = false;
             }
         }
-
         public void AddCellFieldsFour(int cellnum)
         {
             int row = 0;

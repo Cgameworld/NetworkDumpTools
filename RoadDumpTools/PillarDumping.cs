@@ -37,10 +37,14 @@ namespace RoadDumpTools
             ExceptionPanel panel = UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel");
             panel.SetMessage("Pillar Dumping Successful", "Network Name: " + networkName_init + "\nExported To: " + importFolder + "\nPillars Dumped: " + pillarsDumped, false);
             //explain how to replace after that not that straightfoward (restart the game or reload the asset editor with no workshop on!)
-
+            
             RoadExtrasAlert.instance.setExtraType("Pillar");
             RoadExtrasAlert.instance.Show();
         }
+
+        public int PillarsDumped => pillarsDumped;
+
+        public string LogMessage => "Pillars Dumped: " + pillarsDumped;
 
         private void DumpBuildingInfo(BuildingInfo pillar)
         {

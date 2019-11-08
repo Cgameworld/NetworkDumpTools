@@ -15,6 +15,7 @@ namespace RoadDumpTools
         public int bulkDumpedSessionItems;
         private int netEleItems;
         string errorAddOn = "";
+        string bulkDumpType = "";
 
         public void Setup()
         {
@@ -30,6 +31,7 @@ namespace RoadDumpTools
                 NetDumpPanel.instance.netEle.selectedIndex = i;
                 DumpAllWithinElevation(true);
             }
+            bulkDumpType = "Dumped All";
             SuccessModal(networkName_init);
         }
         public void DumpAllWithinElevation(bool isNested)
@@ -42,6 +44,7 @@ namespace RoadDumpTools
             {
                 SuccessModal(networkName_init);
             }
+            bulkDumpType = "Dumped All Within Elevation";
         }
         public void DumpAllWithinType(bool isNested)
         {
@@ -59,13 +62,18 @@ namespace RoadDumpTools
             {
                 SuccessModal(networkName_init);
             }
+            bulkDumpType = "Dumped All in Mesh Type";
         }
+
+        public int RoadsDumped => bulkDumpedSessionItems;
+
+        public string LogMessage => "Bulk Road Dump - " + bulkDumpType + "\nNumber of Files Dumped: " + bulkDumpedSessionItems + "\n";
 
         private void SuccessModal(string networkName_init)
         {
             string importFolder = Path.Combine(DataLocation.addonsPath, "Import");
             ExceptionPanel panel = UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel");
-            panel.SetMessage("Bulk Network Dump Successful", "Network Name: " + networkName_init + "\nExported To: " + importFolder, false);
+            panel.SetMessage("Bulk Network Dump Successful", "Network Name: " + networkName_init + "\nNumber of Files Dumped: " + bulkDumpedSessionItems + "\nExported To: " + importFolder +"\n", false);
         }
     }
 }
