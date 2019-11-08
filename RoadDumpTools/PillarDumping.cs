@@ -16,6 +16,7 @@ namespace RoadDumpTools
         public int bulkDumpedSessionItems;
         private int netEleItems;
         int pillarsDumped = 0;
+        private string propDumpedMesssage;
 
         public void Setup()
         {
@@ -27,6 +28,8 @@ namespace RoadDumpTools
         {
             try
             {
+                string extraType = "Pillar";
+
                 NetInfo elevatedNet = AssetEditorRoadUtils.TryGetElevated(loadedPrefab);
                 DumpBuildingInfo(GetActivePillar(elevatedNet, PillarType.BridgePillar));
                 DumpBuildingInfo(GetActivePillar(elevatedNet, PillarType.MiddlePillar));
@@ -35,24 +38,39 @@ namespace RoadDumpTools
                 DumpBuildingInfo(GetActivePillar(bridgeNet, PillarType.BridgePillar));
                 DumpBuildingInfo(GetActivePillar(bridgeNet, PillarType.MiddlePillar));
 
+                //check ground elevation for things such as monorail net pillars etc
+                DumpBuildingInfo(GetActivePillar(loadedPrefab, PillarType.BridgePillar));
+                DumpBuildingInfo(GetActivePillar(loadedPrefab, PillarType.BridgePillar2));
+                DumpBuildingInfo(GetActivePillar(loadedPrefab, PillarType.BridgePillar3));
+                DumpBuildingInfo(GetActivePillar(loadedPrefab, PillarType.MiddlePillar));
+
+                //edge case of roads with monorail pillars in the middle
+                int propdumpnum = ExtraUtils.DumpPropsofString(loadedPrefab, "Monorail Pylon"); 
+                Debug.Log("propdumpnum:" + propdumpnum);
+                if (propdumpnum != 0)
+                {
+                    propDumpedMesssage = "\n" + "Pillar Props Dumped: " + propdumpnum;
+                    extraType = "Pillar/Prop";
+                }
+                
                 if (pillarsDumped != 0)
                 {
                     string importFolder = Path.Combine(DataLocation.addonsPath, "Import");
                     ExceptionPanel panel = UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel");
-                    panel.SetMessage("Pillar Dumping Successful", "Network Name: " + networkName_init + "\nExported To: " + importFolder + "\nPillars Dumped: " + pillarsDumped, false);
+                    panel.SetMessage("Pillar Dumping Successful", "Network Name: " + networkName_init + "\nExported To: " + importFolder + propDumpedMesssage + "\nPillars Dumped: " + pillarsDumped, false);
                     //explain how to replace after that not that straightfoward (restart the game or reload the asset editor with no workshop on!)
 
-                    RoadExtrasAlert.instance.setExtraType("Pillar");
+                    RoadExtrasAlert.instance.setExtraType(extraType);
                     RoadExtrasAlert.instance.Show();
                 }
                 else
                 {
-                    Lib.ErrorWindow.ShowErrorWindow("Pillar Dumping Failed", "No Pillars Found");
+                    Lib.ExtraUtils.ShowErrorWindow("Pillar Dumping Failed", "No Pillars Found");
                 }
             }
             catch (Exception e)
             {
-                Lib.ErrorWindow.ShowErrorWindow("Pillar Dumping Failed", e.ToString());
+                Lib.ExtraUtils.ShowErrorWindow("Pillar Dumping Failed", e.ToString());
             }
         }
 
@@ -77,6 +95,7 @@ namespace RoadDumpTools
             var ta = prefab.m_netAI as TrainTrackBridgeAI;
             var ra = prefab.m_netAI as RoadBridgeAI;
             var pa = prefab.m_netAI as PedestrianBridgeAI;
+            var ma = prefab.m_netAI as MonorailTrackAI;
 
             if (ta != null)
             {
@@ -89,6 +108,25 @@ namespace RoadDumpTools
             else if (pa != null)
             {
                 return (type == PillarType.BridgePillar) ? pa.m_bridgePillarInfo : null;
+            }
+            else if (ma != null)
+            {
+                if (type == PillarType.BridgePillar)
+                {
+                    return ma.m_bridgePillarInfo;
+                }
+                else if (type == PillarType.BridgePillar2)
+                {
+                    return ma.m_bridgePillarInfo2;
+                }
+                else if (type == PillarType.BridgePillar3)
+                {
+                    return ma.m_bridgePillarInfo3;
+                }
+                else
+                {
+                    return ma.m_middlePillarInfo;
+                }
             }
             else
             {

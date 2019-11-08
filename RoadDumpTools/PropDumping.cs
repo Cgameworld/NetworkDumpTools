@@ -47,19 +47,7 @@ namespace RoadDumpTools
             try
             {
                 //already made the UI so instead of dumping everything, just dumping objects that fully work (lane arrows)
-                for (int i = 0; i < loadedPrefab.m_lanes.Length; i++)
-                {
-                    NetLaneProps LaneJProps = loadedPrefab.m_lanes[i].m_laneProps;
-                    for (int j = 0; j < LaneJProps.m_props.Length; j++)
-                    {
-                        PropInfo a = loadedPrefab.m_lanes[i].m_laneProps.m_props[j].m_prop;
-                        if (a.name.Contains("Arrow"))
-                        {
-                            DumpUtil.DumpMeshAndTextures(a.name, a.m_mesh, a.m_material);
-                            propsDumped += 1;
-                        }
-                    }
-                }
+                DumpPropsofString("Arrow");
 
                 if (propsDumped != 0)
                 {
@@ -71,15 +59,31 @@ namespace RoadDumpTools
                 }
                 else
                 {
-                    Lib.ErrorWindow.ShowErrorWindow("Lane Arrow Prop Dumping Failed", "No Lane Arrows Found");
+                    Lib.ExtraUtils.ShowErrorWindow("Lane Arrow Prop Dumping Failed", "No Lane Arrows Found");
                 }
             }
             catch (Exception e)
             {
-                Lib.ErrorWindow.ShowErrorWindow("Lane Arrow Prop Dumping Failed", e.ToString());
+                Lib.ExtraUtils.ShowErrorWindow("Lane Arrow Prop Dumping Failed", e.ToString());
             }
         }
 
+        private void DumpPropsofString(string findString)
+        {
+            for (int i = 0; i < loadedPrefab.m_lanes.Length; i++)
+            {
+                NetLaneProps LaneJProps = loadedPrefab.m_lanes[i].m_laneProps;
+                for (int j = 0; j < LaneJProps.m_props.Length; j++)
+                {
+                    PropInfo a = loadedPrefab.m_lanes[i].m_laneProps.m_props[j].m_prop;
+                    if (a.name.Contains(findString))
+                    {
+                        DumpUtil.DumpMeshAndTextures(a.name, a.m_mesh, a.m_material);
+                        propsDumped += 1;
+                    }
+                }
+            }
+        }
 
         private void SuccessModal()
         {

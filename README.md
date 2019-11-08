@@ -46,6 +46,8 @@ Changelog:
 
 v1.1(WIP)
 -Added Road Extras section
+--Dump Pillars (supports monorail pylons too)
+--Dump Arrow Props
 -Added Bulk Exporting section
    >Dump All in Mesh Type - dumps all available mesh #'s for given selection\
    >Dump All in Elevation - dumps all segment and node meshes for selected elevation\

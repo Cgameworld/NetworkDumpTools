@@ -58,7 +58,7 @@
   <ItemGroup>
     <Compile Include="BulkDumping.cs" />
     <Compile Include="lib\DumpUtil.cs" />
-    <Compile Include="lib\ErrorWindow.cs" />
+    <Compile Include="lib\ExtraUtils.cs" />
     <Compile Include="lib\FileUtil.cs" />
     <Compile Include="lib\PillarType.cs" />
     <Compile Include="PropDumping.cs" />

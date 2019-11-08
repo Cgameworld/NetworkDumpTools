@@ -42,6 +42,11 @@ namespace RoadDumpTools
             {
                 assetEditorNew = "Building";
             }
+            else if (input == "Pillar/Prop")
+            {
+                extraType = "Pillar";
+                assetEditorNew = "Building/Prop";
+            }
             else
             {
                 assetEditorNew = "Prop";
