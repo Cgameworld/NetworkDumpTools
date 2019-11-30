@@ -51,7 +51,7 @@ namespace RoadDumpTools
             {
                 assetEditorNew = "Prop";
             }
-            netEle_label.text = extraType + "s are not directly importable into the road editor\n\nTo reimport them, first:\n\n1) Click \"New Asset\" from the pause menu \n2) Make a New " + assetEditorNew + "\n3) Search for the dumped " +  assetEditorNew.ToLower() + " asset(s)\n (Workshop " + assetEditorNew.ToLower() + "s might be in non-road categories) \n4) After importing your changed model and saving, restart the game from the pause menu or (--noWorkshop mode only: Click Reload Editor)\n5) Import new "+ extraType.ToLower() + "s in the vanilla road properties panel\n\nThis information is also in this mod's workshop description";
+            netEle_label.text = extraType + "s are not directly importable into the road editor\n\nTo reimport them, first:\n\n1) Click \"New Asset\" from the pause menu \n2) Make a New " + assetEditorNew + "\n3) Search for the dumped " +  assetEditorNew.ToLower() + " asset(s)\n (Workshop " + assetEditorNew.ToLower() + "s might be in non-road categories) \n4) After importing your changed model and saving, restart the game\n5) Import new "+ extraType.ToLower() + "s in the vanilla road properties panel";
         }
 
         public override void Start()

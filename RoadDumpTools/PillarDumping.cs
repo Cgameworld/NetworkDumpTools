@@ -16,6 +16,7 @@ namespace RoadDumpTools
         public int bulkDumpedSessionItems;
         private int netEleItems;
         int pillarsDumped = 0;
+        public string previouspillarname = "";
         private string propDumpedMesssage;
 
         public void Setup()
@@ -43,15 +44,6 @@ namespace RoadDumpTools
                 DumpBuildingInfo(GetActivePillar(loadedPrefab, PillarType.BridgePillar2));
                 DumpBuildingInfo(GetActivePillar(loadedPrefab, PillarType.BridgePillar3));
                 DumpBuildingInfo(GetActivePillar(loadedPrefab, PillarType.MiddlePillar));
-
-                //edge case of roads with monorail pillars in the middle
-                int propdumpnum = ExtraUtils.DumpPropsofString(loadedPrefab, "Monorail Pylon"); 
-                Debug.Log("propdumpnum:" + propdumpnum);
-                if (propdumpnum != 0)
-                {
-                    propDumpedMesssage = "\n" + "Pillar Props Dumped: " + propdumpnum;
-                    extraType = "Pillar/Prop";
-                }
                 
                 if (pillarsDumped != 0)
                 {
@@ -82,9 +74,19 @@ namespace RoadDumpTools
         {
             if (pillar != null)
             {
-                DumpUtil.DumpMeshAndTextures(pillar.name, pillar.m_mesh, pillar.m_material);
-                pillarsDumped += 1;
+                if (previouspillarname != pillar.name.ToString())
+                {
+                    DumpUtil.DumpMeshAndTextures(pillar.name, pillar.m_mesh, pillar.m_material);
+                    Debug.Log("unique pillar!");
+                    previouspillarname = pillar.name;
+                    pillarsDumped += 1;
+                }
+                else
+                {
+                    Debug.Log("duplicate pillar!");
+                }
             }
+
         }
 
         //from network skins
