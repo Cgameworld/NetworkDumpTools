@@ -86,16 +86,23 @@ namespace RoadDumpTools
 
                 exportedFilePaths = "";
 
-                for (int i = 0; i < combinedPaths.Length; i++)
+                if (NetDumpPanel.instance.GetDumpMeshOnly)
                 {
-                    if (File.Exists(combinedPaths[i]))
+                    exportedFilePaths = "Mesh Dump Only\n" + meshPath + "\n" + lodMeshPath;
+                    filesExported += 2;
+                }
+                else
+                {
+                    for (int i = 0; i < combinedPaths.Length; i++)
                     {
-                        exportedFilePaths += "\n" + combinedPaths[i];
-                        filesExported += 1;
+                        if (File.Exists(combinedPaths[i]))
+                        {
+                            exportedFilePaths += "\n" + combinedPaths[i];
+                            filesExported += 1;
+                        }
                     }
                 }
 
-                Debug.Log("ENDPOPUP:" + endPopup);
                 if (endPopup == true)
                 {
                     panel.SetMessage("Network Dump Successful", "Network Name: " + networkName + "\n\nDumped Items:\n" + exportedFilePaths, false);

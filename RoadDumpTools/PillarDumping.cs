@@ -77,13 +77,8 @@ namespace RoadDumpTools
                 if (previouspillarname != pillar.name.ToString())
                 {
                     DumpUtil.DumpMeshAndTextures(pillar.name, pillar.m_mesh, pillar.m_material);
-                    Debug.Log("unique pillar!");
                     previouspillarname = pillar.name;
                     pillarsDumped += 1;
-                }
-                else
-                {
-                    Debug.Log("duplicate pillar!");
                 }
             }
 

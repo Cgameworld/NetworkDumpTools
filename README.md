@@ -13,6 +13,7 @@
 	</a>
   
 <br/>
+
 ![Main Panel](/Images/panel_image1.png "Panel")
 
 Files this tool dumps:
@@ -67,6 +68,7 @@ v1.1(WIP)
    >Dump All - dumps all meshes contained in the network across alls elevations\
 -Import Folder Shortcut now works cross platfrom
 -Fixed in-game loading problem
+-Fixed inaccurate output log when exporting meshes only
 
 
 v1.0
