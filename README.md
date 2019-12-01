@@ -1,4 +1,4 @@
-![Main Panel](/Images/panel_image1.png "Panel")
+# Network Dump Tools
 
 <a href="../../releases/latest">
 		<img src="https://img.shields.io/github/release/cgameworld/networkdumptools.svg?style=flat" />
@@ -11,8 +11,9 @@
 <a href="https://steamcommunity.com/sharedfiles/filedetails/?id=1845697704">
 		<img src="https://img.shields.io/badge/download-gray.svg?style=flat&logo=steam" />
 	</a>
-
-This mod allows for the easy dumping of networks inside the Cities: Skylines Road Editor.
+  
+<br/>
+![Main Panel](/Images/panel_image1.png "Panel")
 
 Files this tool dumps:
 
