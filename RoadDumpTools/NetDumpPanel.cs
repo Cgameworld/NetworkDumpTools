@@ -566,7 +566,7 @@ namespace RoadDumpTools
             roadExtrasButtonToggle.backgroundSprite = "PropertyGroupClosed";
             roadExtrasButtonToggle.width = 18f;
             roadExtrasButtonToggle.height = 18f;
-            roadExtrasButtonToggle.relativePosition = new Vector2(45, 247);
+            roadExtrasButtonToggle.relativePosition = new Vector2(77, 247);
             roadExtrasButtonToggleIntial = roadExtrasButtonToggle.relativePosition;
 
             roadExtrasButton.eventClick += (c, p) =>
@@ -654,7 +654,7 @@ namespace RoadDumpTools
             bulkExportButtonToggle.backgroundSprite = "PropertyGroupClosed";
             bulkExportButtonToggle.width = 18f;
             bulkExportButtonToggle.height = 18f;
-            bulkExportButtonToggle.relativePosition = new Vector2(45, 282);
+            bulkExportButtonToggle.relativePosition = new Vector2(66, 282);
             bulkExportButtonToggleIntial = bulkExportButtonToggle.relativePosition;
 
             bulkExportButton.eventClick += (c, p) =>
