@@ -77,7 +77,7 @@ namespace RoadDumpTools.Lib
             }
         }
 
-        private static void DumpMainTex(string assetName, Texture2D mainTex, bool extract = true)
+        public static void DumpMainTex(string assetName, Texture2D mainTex, bool extract = true)
         {
             if (mainTex == null)
             {
@@ -97,7 +97,7 @@ namespace RoadDumpTools.Lib
             }
         }
 
-        private static void DumpACI(string assetName, Texture2D aciMap, bool extract = true)
+        public static void DumpACI(string assetName, Texture2D aciMap, bool extract = true)
         {
             if (aciMap == null)
             {
@@ -167,7 +167,7 @@ namespace RoadDumpTools.Lib
             }
         }
 
-        private static void DumpAPR(string assetName, Texture2D aprMap, bool extract = true)
+        public static void DumpAPR(string assetName, Texture2D aprMap, bool extract = true)
         {
             if (aprMap == null)
             {

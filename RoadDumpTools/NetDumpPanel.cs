@@ -95,6 +95,7 @@ namespace RoadDumpTools
         private UIPanel roadExtrasButtons;
         private int exportRoadExtrasOffset;
         private UIButton dumpLaneArrows;
+        private UIButton m_ContinueButton;
 
         public static NetDumpPanel instance
         {
@@ -793,6 +794,9 @@ namespace RoadDumpTools
                     dumpedFiles += dumpProcess.DumpNetworks()[1] + "\n";
                     lodFilePath = dumpProcess.DumpNetworks()[2];
                     dumpedTotal.text = "Total Dumped Items: (" + dumpedSessionItems.ToString() + ")";
+
+                   //m_ContinueButton = Find<UIButton>("Continue");
+                    //m_ContinueButton.SimulateClick();
                 }
             };
 

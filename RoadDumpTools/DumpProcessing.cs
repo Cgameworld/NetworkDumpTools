@@ -20,6 +20,8 @@ namespace RoadDumpTools
         string filename;
         Material material;
         Material aprmaterial;
+        Material materialLOD;
+        Material aprmaterialLOD;
         Mesh roadMesh;
         Mesh roadMeshLod;
         int meshnum;
@@ -35,6 +37,10 @@ namespace RoadDumpTools
 
         Vector3[] newvertices;
         public string bulkErrorText;
+        string diffuseLODTexturePath;
+        string aLODFilePath;
+        string pLODFilePath;
+        string rLODFilePath;
 
         public string[] DumpNetworks(bool endPopup = true)
         {
@@ -47,10 +53,19 @@ namespace RoadDumpTools
                 target.SetPixels(source.GetPixels());
                 target.anisoLevel = source.anisoLevel; target.filterMode = source.filterMode;
                 target.wrapMode = source.wrapMode; target.Apply();
-                UnityEngine.Object.FindObjectOfType<NetProperties>().m_downwardDiffuse = target;
 
                 bool flippingTextures = NetDumpPanel.instance.GetIfFlippedTextures;
                 Texture2D aprsource = aprmaterial.GetTexture("_APRMap") as Texture2D;
+
+                //LOD
+                var sourceLOD = materialLOD.GetTexture("_MainTex") as Texture2D;
+                var targetLOD = new Texture2D(sourceLOD.width, sourceLOD.height, TextureFormat.RGBAFloat, true);
+                targetLOD.SetPixels(sourceLOD.GetPixels());
+                targetLOD.anisoLevel = sourceLOD.anisoLevel; targetLOD.filterMode = sourceLOD.filterMode;
+                targetLOD.wrapMode = sourceLOD.wrapMode; targetLOD.Apply();
+                Texture2D aprLODsource = aprmaterialLOD.GetTexture("_APRMap") as Texture2D;
+                Debug.Log("diffusetextpath:" + diffuseLODTexturePath);
+               
 
                 if (NetDumpPanel.instance.GetDumpMeshOnly && NetDumpPanel.instance.GetDumpDiffuseOnly)
                 {
@@ -69,12 +84,16 @@ namespace RoadDumpTools
                 }
                 else
                 {
-                    DumpTexture2D(FlipTexture(target, false, flippingTextures), diffuseTexturePath);
-                    DumpAPR(filename, FlipTexture(aprsource, false, flippingTextures), aFilePath, pFilePath, rFilePath, true);
+                    DumpTexture2D(FlipTexture(target, false, false), diffuseTexturePath);
                     //dump meshes
                     DumpMeshToOBJ(roadMesh, meshPath, loadedPrefab);
                     DumpMeshToOBJ(roadMeshLod, lodMeshPath, loadedPrefab);
-                    DumpAPR(filename, FlipTexture(aprsource, false, flippingTextures), aFilePath, pFilePath, rFilePath, true);
+                    DumpAPR(filename, FlipTexture(aprsource, false, false), aFilePath, pFilePath, rFilePath, true);
+
+                    //lod need to be flipped for main edit image only to apply to all
+                    DumpTexture2D(FlipTexture(targetLOD, false, true), diffuseLODTexturePath);
+                    DumpAPR(filename, FlipTexture(aprLODsource, false, true), aLODFilePath, pLODFilePath, rLODFilePath, true);
+
                 }
                 //for workshop roads display disclaimer!
                 // display message
@@ -124,7 +143,7 @@ namespace RoadDumpTools
                 }
             }
 
-            string[] returnArray = { filesExported.ToString(), exportedFilePaths, diffuseTexturePath.Substring(0, diffuseTexturePath.LastIndexOf("_"))};
+            string[] returnArray = { filesExported.ToString(), exportedFilePaths, diffuseTexturePath.Substring(0, diffuseTexturePath.LastIndexOf("_")) };
             return returnArray;
         }
 
@@ -182,7 +201,7 @@ namespace RoadDumpTools
                         throw new Exception("Elevated Elevation Does Not Exist");
                     }
                     if (!NetDumpPanel.instance.GetRemoveSuffix)
-                    filename += " Elevated";
+                        filename += " Elevated";
                     break;
                 case 2:
                     Console.WriteLine("Bridge");
@@ -192,7 +211,7 @@ namespace RoadDumpTools
                         throw new Exception("Bridge Elevation Does Not Exist");
                     }
                     if (!NetDumpPanel.instance.GetRemoveSuffix)
-                    filename += " Bridge";
+                        filename += " Bridge";
                     break;
                 case 3:
                     loadedPrefab = AssetEditorRoadUtils.TryGetSlope(loadedPrefab);
@@ -201,7 +220,7 @@ namespace RoadDumpTools
                         throw new Exception("Slope Elevation Does Not Exist");
                     }
                     if (!NetDumpPanel.instance.GetRemoveSuffix)
-                    filename += " Slope";
+                        filename += " Slope";
                     break;
                 case 4:
                     loadedPrefab = AssetEditorRoadUtils.TryGetTunnel(loadedPrefab);
@@ -210,7 +229,7 @@ namespace RoadDumpTools
                         throw new Exception("Tunnel Elevation Does Not Exist");
                     }
                     if (!NetDumpPanel.instance.GetRemoveSuffix)
-                    filename += " Tunnel";
+                        filename += " Tunnel";
                     break;
                 default:
                     throw new System.ArgumentOutOfRangeException("No Elevations Found");
@@ -226,54 +245,71 @@ namespace RoadDumpTools
             aFilePath = Path.Combine(importFolder, filename);
             pFilePath = Path.Combine(importFolder, filename);
             rFilePath = Path.Combine(importFolder, filename);
-         
+
+            diffuseLODTexturePath = Path.Combine(importFolder, filename);
+            aLODFilePath = Path.Combine(importFolder, filename);
+            pLODFilePath = Path.Combine(importFolder, filename);
+            rLODFilePath = Path.Combine(importFolder, filename);
+
             if (NetDumpPanel.instance.NetworkType == "Segment")
             {
                 material = loadedPrefab.m_segments[meshnum].m_segmentMaterial;
-                diffuseTexturePath += "_d.png";
-                meshPath += ".obj";
-                lodMeshPath += "_lod.obj";
-                aFilePath += "_a.png";
-                pFilePath += "_p.png";
-                rFilePath += "_r.png";
+                FillFilePath();
                 roadMesh = loadedPrefab.m_segments[meshnum].m_mesh;
                 roadMeshLod = loadedPrefab.m_segments[meshnum].m_lodMesh;
                 aprmaterial = loadedPrefab.m_segments[meshnum].m_segmentMaterial;
 
+                //LOD
+                materialLOD = loadedPrefab.m_segments[meshnum].m_lodMaterial;
+                aprmaterialLOD = materialLOD;
             }
             else if (NetDumpPanel.instance.NetworkType == "Node")
             {
                 material = loadedPrefab.m_nodes[meshnum].m_nodeMaterial;
                 if (NetDumpPanel.instance.GetRemoveSuffix)
                 {
-                    diffuseTexturePath += "_d.png";
-                    meshPath += ".obj";
-                    lodMeshPath += "_lod.obj";
-                    aFilePath += "_a.png";
-                    pFilePath += "_p.png";
-                    rFilePath += "_r.png";
+                    FillFilePath();
                 }
                 else
                 {
-                    diffuseTexturePath += "_node_d.png";
-                    meshPath += "_node.obj";
-                    lodMeshPath += "_node_lod.obj";
-                    aFilePath += "_node_a.png";
-                    pFilePath += "_node_p.png";
-                    rFilePath += "_node_r.png";
+                    FillFilePath("node");
                 }
 
                 roadMesh = loadedPrefab.m_nodes[meshnum].m_mesh;
                 roadMeshLod = loadedPrefab.m_nodes[meshnum].m_lodMesh;
                 aprmaterial = loadedPrefab.m_nodes[meshnum].m_nodeMaterial;
+
+                //LOD
+                materialLOD = loadedPrefab.m_nodes[meshnum].m_lodMaterial;
+                aprmaterialLOD = materialLOD;
             }
             else
             {
                 throw new System.ArgumentException("Invalid network selection type");
             }
 
-
         }
+        private void FillFilePath(string a = null)
+        {
+            string adder = "";
+            if (a == "node")
+            {
+                adder = a;
+            }
+            diffuseTexturePath += adder + "_d.png";
+            diffuseLODTexturePath += adder + "_LOD_d.png";
+            meshPath += adder + ".obj";
+            //lodMeshPath += adder + "_lod.obj";
+            lodMeshPath += adder + "_LOD.obj";
+            aFilePath += adder + "_a.png";
+            pFilePath += adder + "_p.png";
+            rFilePath += adder + "_r.png";
+
+            aLODFilePath += adder + "_LOD_a.png";
+            pLODFilePath += adder + "_LOD_p.png";
+            rLODFilePath += adder + "_LOD_r.png";
+        }
+
         public Vector3[] VerticesFromMesh()
         {
             string networkName_init = sim.m_editPrefabInfo.name;
@@ -333,10 +369,13 @@ namespace RoadDumpTools
                 aprMap.ExtractChannels(a1, p1, r1, null, true, true, true, true, true, false, false);
 
                 //checks to see if the textures are the default color
+
+                /* disabled for auto lod texture
                 if (IsAlphaDefault(a1.ColorsToTexture(aprMap.width, aprMap.height)) == false)
                 {
                     TextureUtil.DumpTextureToPNG(a1.ColorsToTexture(aprMap.width, aprMap.height), ap);
                 }
+                
 
                 if (IsPavementOrRoadDefault(p1.ColorsToTexture(aprMap.width, aprMap.height)) == false)
                 {
@@ -346,7 +385,11 @@ namespace RoadDumpTools
                 {
                     TextureUtil.DumpTextureToPNG(r1.ColorsToTexture(aprMap.width, aprMap.height), rp);
                 }
+                */
 
+                TextureUtil.DumpTextureToPNG(a1.ColorsToTexture(aprMap.width, aprMap.height), ap);
+                TextureUtil.DumpTextureToPNG(p1.ColorsToTexture(aprMap.width, aprMap.height), pp);
+                TextureUtil.DumpTextureToPNG(r1.ColorsToTexture(aprMap.width, aprMap.height), rp);
             }
             else
             {
@@ -416,7 +459,7 @@ namespace RoadDumpTools
                 File.Delete(fileName);
             }
 
-           // Debug.Log("dumpobj" + filename);
+            // Debug.Log("dumpobj" + filename);
             try
             {
                 // copy the relevant data to the temporary mesh
@@ -433,21 +476,21 @@ namespace RoadDumpTools
                     name = mesh.name //name = mesh.name.Split('_')[0] //removes extra _0 at end of displayed name
                 };
                 meshToDump.RecalculateBounds();
-                
+
                 if (NetDumpPanel.instance.enableMeshResize.isChecked)
                 {
                     newvertices = meshToDump.vertices; //get vertices for other method
                     float[] enteredVals = NetDumpPanel.instance.enteredMeshPoints();
                     float[] newVertsX = new float[newvertices.Length];
                     float[] newVertsY = new float[newvertices.Length];
-                    for (int a = 0; a<newvertices.Length; a++)
+                    for (int a = 0; a < newvertices.Length; a++)
                     {
                         newVertsX[a] = newvertices[a].x;
                         for (int b = 0; b < enteredVals.Length; b = b + 2)
                         {
                             if (Mathf.Approximately(newVertsX[a], enteredVals[b]))
                             {
-                                newvertices[a].x = enteredVals[b+1];
+                                newvertices[a].x = enteredVals[b + 1];
                             }
                         }
                     }
