@@ -757,7 +757,7 @@ namespace RoadDumpTools
             dumpNet.tooltip = "Dumps the network";
 
             lodGen = UIUtils.CreateButton(bottomButtons);
-            lodGen.text = "Make _lod.png Files";
+            lodGen.text = "rebuild LOD?";
             lodGen.textScale = 1f;
             lodGen.relativePosition = new Vector2(40, 40);
             lodGen.width = 200;
@@ -767,9 +767,10 @@ namespace RoadDumpTools
             {
                 if (isVisible)
                 {
-                    LodImageGenerator lodgen = new LodImageGenerator();
+                    //LodImageGenerator lodgen = new LodImageGenerator();
                     //string filepath = "C:\\Users\\Cam\\AppData\\Local\\Colossal Order\\Cities_Skylines\\Addons\\Import\\test11_d.png";
-                    lodgen.GenerateLodImages(lodFilePath);
+                    //lodgen.GenerateLodImages(lodFilePath);
+                    NetManager.instance.RebuildLods();
                 }
             };
 
