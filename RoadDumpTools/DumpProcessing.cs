@@ -106,9 +106,7 @@ namespace RoadDumpTools
                     {
                         throw new NotImplementedException("NetInfo XML Export Error!");
                     }
-
                     writer.Close();
-
                     Debug.Log("success!!!");
                 }
                 //for workshop roads display disclaimer!
