@@ -74,6 +74,12 @@
     <Compile Include="NetDumpTools.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="lib\TextureUtil.cs" />
+    <Compile Include="RoadImporterXML\CSNetInfo.cs" />
+    <Compile Include="RoadImporterXML\IAssetInfo.cs" />
+    <Compile Include="RoadImporterXML\NetModelInfo.cs" />
+    <Compile Include="RoadImporterXML\RIUtils.cs" />
+    <Compile Include="RoadImporterXML\RoadAssetInfo.cs" />
+    <Compile Include="RoadImporterXML\TrainTrackAssetInfo.cs" />
     <Compile Include="ThreadingExt.cs" />
     <Compile Include="lib\UITitleBar.cs" />
     <Compile Include="lib\UIUtils.cs" />

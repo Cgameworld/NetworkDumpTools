@@ -14,6 +14,7 @@ namespace RoadDumpTools
 {
     public class NetDumpPanel : UIPanel
     {
+        private string[] dumpedSession;
         public int dumpedSessionItems = 0;
         public string dumpedFiles = null;
 
@@ -95,6 +96,7 @@ namespace RoadDumpTools
         private UIPanel roadExtrasButtons;
         private int exportRoadExtrasOffset;
         private UIButton dumpLaneArrows;
+        private UICheckBox exportRoadXML;
 
         public static NetDumpPanel instance
         {
@@ -235,27 +237,36 @@ namespace RoadDumpTools
             flippedTextures.isVisible = false;
             ///when dropdown selected to others uncheck this one?
 
+
+            exportRoadXML = UIUtils.CreateCheckBox(mainScroll);
+            exportRoadXML.text = "Export NetInfo XML";
+            exportRoadXML.isChecked = false;
+            exportRoadXML.relativePosition = new Vector2(50, 300);
+            exportRoadXML.tooltip = "Exports an XML file containing configurable properties of the network\nEnable if using the RoadImporter mod";
+            exportRoadXML.isVisible = false;
+
+
             UILabel customFilePrefixLabel = mainScroll.AddUIComponent<UILabel>();
             customFilePrefixLabel.text = "Custom File Prefix:";
             customFilePrefixLabel.textAlignment = UIHorizontalAlignment.Center;
             customFilePrefixLabel.autoSize = false;
             customFilePrefixLabel.width = 225f;
             customFilePrefixLabel.height = 20f;
-            customFilePrefixLabel.relativePosition = new Vector2(30, 300);
+            customFilePrefixLabel.relativePosition = new Vector2(30, 330);
             customFilePrefixLabel.isVisible = false;
 
             customFilePrefix = UIUtils.CreateTextField(mainScroll);
             customFilePrefix.width = 225f;
             customFilePrefix.height = 28f;
             customFilePrefix.padding = new RectOffset(6, 6, 6, 6);
-            customFilePrefix.relativePosition = new Vector3(30, 320);
+            customFilePrefix.relativePosition = new Vector3(30, 350);
             customFilePrefix.tooltip = "Enter a custom file prefix here for the dumped files\nAsset name is the file name if left blank";
             customFilePrefix.isVisible = false;
 
             removeSuffix = UIUtils.CreateCheckBox(mainScroll);
             removeSuffix.text = "Remove Added Suffixes";
             removeSuffix.isChecked = false;
-            removeSuffix.relativePosition = new Vector2(30, 360);
+            removeSuffix.relativePosition = new Vector2(30, 390);
             removeSuffix.tooltip = "Removes the added descriptors at the end of dumped file names";
             removeSuffix.isVisible = false;
 
@@ -275,10 +286,11 @@ namespace RoadDumpTools
                         customFilePrefixLabel.isVisible = false;
                         customFilePrefix.isVisible = false;
                         removeSuffix.isVisible = false;
+                        exportRoadXML.isVisible = false;
                     }
                     else
                     {
-                        exportCustOffset = 140;
+                        exportCustOffset = 160;
                         advancedOptionsButtonToggle.backgroundSprite = "PropertyGroupOpen";
                         dumpMeshOnly.isVisible = true;
                         dumpDiffuseOnly.isVisible = true;
@@ -286,9 +298,10 @@ namespace RoadDumpTools
                         customFilePrefixLabel.isVisible = true;
                         customFilePrefix.isVisible = true;
                         removeSuffix.isVisible = true;
+                        exportRoadXML.isVisible = true;
                     }
-                    //mainScroll.height = INITIAL_HEIGHT + exportCustOffset + exportMeshOffset + exportBulkButtonOffset;
-                    RefreshFooterItems();
+
+                   RefreshFooterItems();
 
                 }
             };
@@ -789,10 +802,14 @@ namespace RoadDumpTools
                 if (isVisible)
                 {
                     DumpProcessing dumpProcess = new DumpProcessing();
-                    dumpedSessionItems = Int32.Parse(dumpProcess.DumpNetworks()[0]) + dumpedSessionItems;
-                    dumpedFiles += dumpProcess.DumpNetworks()[1] + "\n";
-                    lodFilePath = dumpProcess.DumpNetworks()[2];
+
+                    dumpedSession = dumpProcess.DumpNetworks();
+                    dumpedSessionItems = int.Parse(dumpedSession[0]) + dumpedSessionItems;
+                    dumpedFiles += dumpedSession[1] + "\n";
+                    lodFilePath = dumpedSession[2];
                     dumpedTotal.text = "Total Dumped Items: (" + dumpedSessionItems.ToString() + ")";
+
+
                 }
             };
 
