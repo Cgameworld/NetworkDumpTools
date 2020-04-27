@@ -76,13 +76,20 @@ namespace RoadDumpTools
                     DumpAPR(filename, FlipTexture(aprsource, false, flippingTextures), aFilePath, pFilePath, rFilePath, true);
                 }
                 //for workshop roads display disclaimer!
-                // display message
                 //also add log for apr textures!
+                if (!NetDumpPanel.instance.roadexportnames.Contains(filename))
+                {
+                    NetDumpPanel.instance.roadexportnames.Add(filename);
+                }
+                else
+                {
+                    NetDumpPanel.instance.roadexportnames.Add(filename + "_node");
+                }
+                //make sure to clear for each button?
 
                 ExceptionPanel panel = UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel");
 
                 string[] combinedPaths = { diffuseTexturePath, meshPath, lodMeshPath, aFilePath, pFilePath, rFilePath };
-
                 exportedFilePaths = "";
 
                 if (NetDumpPanel.instance.GetDumpMeshOnly)

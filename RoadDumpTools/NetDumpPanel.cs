@@ -98,6 +98,9 @@ namespace RoadDumpTools
         private UIButton dumpLaneArrows;
         public UICheckBox exportRoadXML;
 
+
+        public List<string> roadexportnames = new List<string>();
+
         public static NetDumpPanel instance
         {
             get

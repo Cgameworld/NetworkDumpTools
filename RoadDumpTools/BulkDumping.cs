@@ -27,6 +27,9 @@ namespace RoadDumpTools
 
         public void DumpAllMeshes()
         {
+            NetDumpPanel.instance.roadexportnames.Clear();
+            NetDumpPanel.instance.roadexportnames.TrimExcess();
+
             netEleItems = NetDumpPanel.instance.netEle.items.Length;
             for (int i = 0; i < netEleItems; i++)
             {
@@ -40,6 +43,12 @@ namespace RoadDumpTools
                 Debug.Log("exportxml checked");
                 ExportNetInfoXML();
                 bulkDumpedSessionItems++;
+            }
+
+            Debug.Log("netmesh names");
+            foreach (var a in NetDumpPanel.instance.roadexportnames)
+            {
+                Debug.Log(a);
             }
 
             SuccessModal(networkName_init);
