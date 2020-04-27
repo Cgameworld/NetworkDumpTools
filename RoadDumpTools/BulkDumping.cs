@@ -1,8 +1,10 @@
 ﻿using ColossalFramework;
 using ColossalFramework.IO;
 using ColossalFramework.UI;
+using RoadImporterXML;
 using System;
 using System.IO;
+using System.Xml.Serialization;
 using UnityEngine;
 
 namespace RoadDumpTools
@@ -32,7 +34,16 @@ namespace RoadDumpTools
                 DumpAllWithinElevation(true);
             }
             bulkDumpType = "Dumped All";
+
+            if (NetDumpPanel.instance.exportRoadXML.isChecked)
+            {
+                Debug.Log("exportxml checked");
+                ExportNetInfoXML();
+                bulkDumpedSessionItems++;
+            }
+
             SuccessModal(networkName_init);
+
         }
         public void DumpAllWithinElevation(bool isNested)
         {
@@ -75,5 +86,38 @@ namespace RoadDumpTools
             ExceptionPanel panel = UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel");
             panel.SetMessage("Bulk Network Dump Successful", "Network Name: " + networkName_init + "\nNumber of Files Dumped: " + bulkDumpedSessionItems + "\nExported To: " + importFolder +"\n", false);
         }
+
+        private void ExportNetInfoXML()
+        {
+            Debug.Log("roadimporter xml begin");
+
+            TextWriter writer = new StreamWriter(Path.Combine(Path.Combine(DataLocation.addonsPath, "Import"), $"{loadedPrefab.name}.xml"));
+
+            Debug.Log(loadedPrefab.GetType());
+
+            if (loadedPrefab.m_netAI.GetType() == typeof(RoadAI))
+            {
+                RoadAssetInfo roadAsset = new RoadAssetInfo();
+                roadAsset.ReadFromGame(loadedPrefab);
+
+                XmlSerializer ser = new XmlSerializer(typeof(RoadImporterXML.RoadAssetInfo));
+                ser.Serialize(writer, roadAsset);
+            }
+            else if (loadedPrefab.m_netAI.GetType() == typeof(TrainTrackAI))
+            {
+                TrainTrackAssetInfo trainAsset = new TrainTrackAssetInfo();
+                trainAsset.ReadFromGame(loadedPrefab);
+
+                XmlSerializer ser = new XmlSerializer(typeof(RoadImporterXML.TrainTrackAssetInfo));
+                ser.Serialize(writer, trainAsset);
+            }
+            else
+            {
+                throw new NotImplementedException("NetInfo XML Export Error!");
+            }
+            writer.Close();
+            Debug.Log("success!!!");
+        }
+
     }
 }

@@ -96,7 +96,7 @@ namespace RoadDumpTools
         private UIPanel roadExtrasButtons;
         private int exportRoadExtrasOffset;
         private UIButton dumpLaneArrows;
-        private UICheckBox exportRoadXML;
+        public UICheckBox exportRoadXML;
 
         public static NetDumpPanel instance
         {

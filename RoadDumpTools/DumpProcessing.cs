@@ -5,10 +5,7 @@ using ObjUnity3D;
 using ColossalFramework;
 using UnityEngine;
 using ColossalFramework.UI;
-using System.Linq;
 using RoadDumpTools.Lib;
-using System.Xml.Serialization;
-using RoadImporterXML;
 
 namespace RoadDumpTools
 {
@@ -77,37 +74,6 @@ namespace RoadDumpTools
                     DumpMeshToOBJ(roadMesh, meshPath, loadedPrefab);
                     DumpMeshToOBJ(roadMeshLod, lodMeshPath, loadedPrefab);
                     DumpAPR(filename, FlipTexture(aprsource, false, flippingTextures), aFilePath, pFilePath, rFilePath, true);
-                    //ExportNetInfoXML()
-
-
-                    Debug.Log("roadimporter xml begin");
-
-                    TextWriter writer = new StreamWriter(Path.Combine(Path.Combine(DataLocation.addonsPath, "Import"), $"{loadedPrefab.name}.xml"));
-
-                    Debug.Log(loadedPrefab.GetType());
-
-                    if (loadedPrefab.m_netAI.GetType() == typeof(RoadAI))
-                    {
-                        RoadAssetInfo roadAsset = new RoadAssetInfo();
-                        roadAsset.ReadFromGame(loadedPrefab);
-
-                        XmlSerializer ser = new XmlSerializer(typeof(RoadImporterXML.RoadAssetInfo));
-                        ser.Serialize(writer, roadAsset);
-                    }
-                    else if (loadedPrefab.m_netAI.GetType() == typeof(TrainTrackAI))
-                    {
-                        TrainTrackAssetInfo trainAsset = new TrainTrackAssetInfo();
-                        trainAsset.ReadFromGame(loadedPrefab);
-
-                        XmlSerializer ser = new XmlSerializer(typeof(RoadImporterXML.TrainTrackAssetInfo));
-                        ser.Serialize(writer, trainAsset);
-                    }
-                    else
-                    {
-                        throw new NotImplementedException("NetInfo XML Export Error!");
-                    }
-                    writer.Close();
-                    Debug.Log("success!!!");
                 }
                 //for workshop roads display disclaimer!
                 // display message
@@ -160,7 +126,7 @@ namespace RoadDumpTools
             string[] returnArray = { filesExported.ToString(), exportedFilePaths, diffuseTexturePath.Substring(0, diffuseTexturePath.LastIndexOf("_"))};
             return returnArray;
         }
-
+     
         public void FindMesh(string networkName_init)
         {
             if (networkName_init.Contains("_Data"))
