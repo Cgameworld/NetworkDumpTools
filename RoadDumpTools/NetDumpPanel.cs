@@ -100,6 +100,7 @@ namespace RoadDumpTools
 
 
         public List<string> roadexportnames = new List<string>();
+        private UIButton te1;
 
         public static NetDumpPanel instance
         {
@@ -245,7 +246,7 @@ namespace RoadDumpTools
             exportRoadXML.text = "Export NetInfo XML";
             exportRoadXML.isChecked = false;
             exportRoadXML.relativePosition = new Vector2(50, 300);
-            exportRoadXML.tooltip = "Exports an XML file containing configurable properties of the network\nEnable if using the RoadImporter mod";
+            exportRoadXML.tooltip = "Exports an XML file containing configurable properties of the network\nnOnly works with the \"Export All\" option. Enable if using the RoadImporter mod";
             exportRoadXML.isVisible = false;
 
 

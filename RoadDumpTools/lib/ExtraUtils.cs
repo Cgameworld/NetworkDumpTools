@@ -1,4 +1,5 @@
-﻿using ColossalFramework.UI;
+﻿using ColossalFramework;
+using ColossalFramework.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,23 @@ namespace RoadDumpTools.Lib
             ExceptionPanel panel = UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel");
             panel.SetMessage(header, message, false);
             panel.GetComponentInChildren<UISprite>().spriteName = "IconError";
+        }
+
+        public static string FormatNetworkName()
+        {
+            var networkName_init = Singleton<ToolController>.instance.m_editPrefabInfo.name;
+
+            string networkName;
+            if (networkName_init.Contains("_Data"))
+            {
+                networkName = networkName_init.Substring(0, networkName_init.Length - 6).Replace("/", string.Empty);
+            }
+            else
+            {
+                networkName = networkName_init.Substring(0, networkName_init.Length - 1);
+            }
+
+            return networkName;
         }
 
         public static int DumpPropsofString(NetInfo loadedPrefab, string findString)

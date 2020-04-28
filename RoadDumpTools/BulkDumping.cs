@@ -1,6 +1,7 @@
 ﻿using ColossalFramework;
 using ColossalFramework.IO;
 using ColossalFramework.UI;
+using RoadDumpTools.Lib;
 using RoadImporterXML;
 using System;
 using System.IO;
@@ -38,6 +39,7 @@ namespace RoadDumpTools
             }
             bulkDumpType = "Dumped All";
 
+
             if (NetDumpPanel.instance.exportRoadXML.isChecked)
             {
                 Debug.Log("exportxml checked");
@@ -45,15 +47,10 @@ namespace RoadDumpTools
                 bulkDumpedSessionItems++;
             }
 
-            Debug.Log("netmesh names");
-            foreach (var a in NetDumpPanel.instance.roadexportnames)
-            {
-                Debug.Log(a);
-            }
-
             SuccessModal(networkName_init);
 
         }
+
         public void DumpAllWithinElevation(bool isNested)
         {
             NetDumpPanel.instance.net_type.selectedIndex = 0;
@@ -96,11 +93,11 @@ namespace RoadDumpTools
             panel.SetMessage("Bulk Network Dump Successful", "Network Name: " + networkName_init + "\nNumber of Files Dumped: " + bulkDumpedSessionItems + "\nExported To: " + importFolder +"\n", false);
         }
 
-        private void ExportNetInfoXML()
+        public void ExportNetInfoXML()
         {
             Debug.Log("roadimporter xml begin");
 
-            TextWriter writer = new StreamWriter(Path.Combine(Path.Combine(DataLocation.addonsPath, "Import"), $"{loadedPrefab.name}.xml"));
+            TextWriter writer = new StreamWriter(Path.Combine(Path.Combine(DataLocation.addonsPath, "Import"), $"{ExtraUtils.FormatNetworkName() + "_data"}.xml"));
 
             Debug.Log(loadedPrefab.GetType());
 
