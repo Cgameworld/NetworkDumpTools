@@ -130,7 +130,16 @@ namespace RoadDumpTools
                 }
             }
 
-            string[] returnArray = { filesExported.ToString(), exportedFilePaths, diffuseTexturePath.Substring(0, diffuseTexturePath.LastIndexOf("_"))};
+            var lodFilepathPart = diffuseTexturePath.Substring(0, diffuseTexturePath.LastIndexOf("_"));
+            string[] returnArray = { filesExported.ToString(), exportedFilePaths, lodFilepathPart};
+
+
+            if (NetDumpPanel.instance.autoExportLodImages.isChecked) {
+                Debug.Log("Dump with LOD pngs Checked!");
+                LodImageGenerator lodgen = new LodImageGenerator();
+                lodgen.GenerateLodImages(lodFilepathPart);
+            }
+
             return returnArray;
         }
      

@@ -98,8 +98,10 @@ namespace RoadDumpTools
         private UIButton dumpLaneArrows;
         public UICheckBox exportRoadXML;
         public UICheckBox skiptextureExport;
+        public UICheckBox autoExportLodImages;
 
         public List<string> roadexportnames = new List<string>();
+        
 
         public static NetDumpPanel instance
         {
@@ -241,24 +243,33 @@ namespace RoadDumpTools
             ///when dropdown selected to others uncheck this one?
 
 
-            skiptextureExport = UIUtils.CreateCheckBox(mainScroll);
-            skiptextureExport.text = "Skip Default Textures";
-            skiptextureExport.isChecked = true;
-            skiptextureExport.relativePosition = new Vector2(50, 300);
-            skiptextureExport.tooltip = "Skips exporting texture files that are the same as the default texture, enabled on default";
-            skiptextureExport.isVisible = false;
-
             exportRoadXML = UIUtils.CreateCheckBox(mainScroll);
             exportRoadXML.text = "Export NetInfo XML";
             exportRoadXML.isChecked = false;
-            exportRoadXML.relativePosition = new Vector2(50, 330);
+            exportRoadXML.relativePosition = new Vector2(50, 300);
             exportRoadXML.tooltip = "Exports an XML file containing configurable properties of the network\nOnly works with the \"Export All\" option. Enable if using the RoadImporter mod";
             exportRoadXML.isVisible = false;
 
             exportRoadXML.eventCheckChanged += (c, p) =>
             {
                 skiptextureExport.isChecked = false;
+                autoExportLodImages.isChecked = true;
             };
+
+
+            skiptextureExport = UIUtils.CreateCheckBox(mainScroll);
+            skiptextureExport.text = "Skip Default Textures";
+            skiptextureExport.isChecked = true;
+            skiptextureExport.relativePosition = new Vector2(50, 330);
+            skiptextureExport.tooltip = "Skips exporting texture files that are the same as the default texture, enabled on default";
+            skiptextureExport.isVisible = false;
+
+            autoExportLodImages = UIUtils.CreateCheckBox(mainScroll);
+            autoExportLodImages.text = "Dump with LOD PNGs";
+            autoExportLodImages.isChecked = false;
+            autoExportLodImages.relativePosition = new Vector2(50, 360);
+            autoExportLodImages.tooltip = "Dumps meshes and generate lod pngs at the same time";
+            autoExportLodImages.isVisible = false;
 
             UILabel customFilePrefixLabel = mainScroll.AddUIComponent<UILabel>();
             customFilePrefixLabel.text = "Custom File Prefix:";
@@ -266,21 +277,21 @@ namespace RoadDumpTools
             customFilePrefixLabel.autoSize = false;
             customFilePrefixLabel.width = 225f;
             customFilePrefixLabel.height = 20f;
-            customFilePrefixLabel.relativePosition = new Vector2(30, 360);
+            customFilePrefixLabel.relativePosition = new Vector2(30, 390);
             customFilePrefixLabel.isVisible = false;
 
             customFilePrefix = UIUtils.CreateTextField(mainScroll);
             customFilePrefix.width = 225f;
             customFilePrefix.height = 28f;
             customFilePrefix.padding = new RectOffset(6, 6, 6, 6);
-            customFilePrefix.relativePosition = new Vector3(30, 380);
+            customFilePrefix.relativePosition = new Vector3(30, 410);
             customFilePrefix.tooltip = "Enter a custom file prefix here for the dumped files\nAsset name is the file name if left blank";
             customFilePrefix.isVisible = false;
 
             removeSuffix = UIUtils.CreateCheckBox(mainScroll);
             removeSuffix.text = "Remove Added Suffixes";
             removeSuffix.isChecked = false;
-            removeSuffix.relativePosition = new Vector2(30, 420);
+            removeSuffix.relativePosition = new Vector2(30, 450);
             removeSuffix.tooltip = "Removes the added descriptors at the end of dumped file names";
             removeSuffix.isVisible = false;
 
@@ -302,10 +313,11 @@ namespace RoadDumpTools
                         removeSuffix.isVisible = false;
                         exportRoadXML.isVisible = false;
                         skiptextureExport.isVisible = false;
+                        autoExportLodImages.isVisible = false;
                     }
                     else
                     {
-                        exportCustOffset = 190;
+                        exportCustOffset = 220;
                         advancedOptionsButtonToggle.backgroundSprite = "PropertyGroupOpen";
                         dumpMeshOnly.isVisible = true;
                         dumpDiffuseOnly.isVisible = true;
@@ -315,6 +327,7 @@ namespace RoadDumpTools
                         removeSuffix.isVisible = true;
                         exportRoadXML.isVisible = true;
                         skiptextureExport.isVisible = true;
+                        autoExportLodImages.isVisible = true;
                     }
 
                    RefreshFooterItems();
@@ -796,7 +809,6 @@ namespace RoadDumpTools
                 if (isVisible)
                 {
                     LodImageGenerator lodgen = new LodImageGenerator();
-                    //string filepath = "C:\\Users\\Cam\\AppData\\Local\\Colossal Order\\Cities_Skylines\\Addons\\Import\\test11_d.png";
                     lodgen.GenerateLodImages(lodFilePath);
                 }
             };
