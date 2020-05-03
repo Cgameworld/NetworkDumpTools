@@ -20,16 +20,26 @@ namespace RoadDumpTools.Lib
 
         public static string FormatNetworkName()
         {
-            var networkName_init = Singleton<ToolController>.instance.m_editPrefabInfo.name;
-
             string networkName;
-            if (networkName_init.Contains("_Data"))
+
+            if (NetDumpPanel.instance.GetCustomFilePrefix() == "")
             {
-                networkName = networkName_init.Substring(0, networkName_init.Length - 6).Replace("/", string.Empty);
+
+                var networkName_init = Singleton<ToolController>.instance.m_editPrefabInfo.name;
+
+                
+                if (networkName_init.Contains("_Data"))
+                {
+                    networkName = networkName_init.Substring(0, networkName_init.Length - 6).Replace("/", string.Empty);
+                }
+                else
+                {
+                    networkName = networkName_init.Substring(0, networkName_init.Length - 1);
+                }
             }
             else
             {
-                networkName = networkName_init.Substring(0, networkName_init.Length - 1);
+               networkName = NetDumpPanel.instance.GetCustomFilePrefix();
             }
 
             return networkName;
