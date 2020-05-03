@@ -97,10 +97,9 @@ namespace RoadDumpTools
         private int exportRoadExtrasOffset;
         private UIButton dumpLaneArrows;
         public UICheckBox exportRoadXML;
-
+        public UICheckBox skiptextureExport;
 
         public List<string> roadexportnames = new List<string>();
-        private UIButton te1;
 
         public static NetDumpPanel instance
         {
@@ -137,9 +136,9 @@ namespace RoadDumpTools
 
             mainPanel = AddUIComponent<UIPanel>();
             mainPanel.relativePosition = new Vector2(0, 55);
-            mainPanel.size = new Vector2(300, MAX_HEIGHT-20);
+            mainPanel.size = new Vector2(300, MAX_HEIGHT - 20);
             mainScroll = UIUtils.CreateScrollBox(mainPanel, m_atlas);
-            mainScroll.size = new Vector2(285, MAX_HEIGHT-20);
+            mainScroll.size = new Vector2(285, MAX_HEIGHT - 20);
 
 
             UILabel netEle_label = mainScroll.AddUIComponent<UILabel>();
@@ -172,7 +171,7 @@ namespace RoadDumpTools
                 }
             };
 
-           UILabel net_type_label = mainScroll.AddUIComponent<UILabel>();
+            UILabel net_type_label = mainScroll.AddUIComponent<UILabel>();
             net_type_label.text = "Mesh Type:";
             net_type_label.autoSize = false;
             net_type_label.width = 120f;
@@ -242,13 +241,24 @@ namespace RoadDumpTools
             ///when dropdown selected to others uncheck this one?
 
 
+            skiptextureExport = UIUtils.CreateCheckBox(mainScroll);
+            skiptextureExport.text = "Skip Default Textures";
+            skiptextureExport.isChecked = true;
+            skiptextureExport.relativePosition = new Vector2(50, 300);
+            skiptextureExport.tooltip = "Skips exporting texture files that are the same as the default texture, enabled on default";
+            skiptextureExport.isVisible = false;
+
             exportRoadXML = UIUtils.CreateCheckBox(mainScroll);
             exportRoadXML.text = "Export NetInfo XML";
             exportRoadXML.isChecked = false;
-            exportRoadXML.relativePosition = new Vector2(50, 300);
+            exportRoadXML.relativePosition = new Vector2(50, 330);
             exportRoadXML.tooltip = "Exports an XML file containing configurable properties of the network\nOnly works with the \"Export All\" option. Enable if using the RoadImporter mod";
             exportRoadXML.isVisible = false;
 
+            exportRoadXML.eventCheckChanged += (c, p) =>
+            {
+                skiptextureExport.isChecked = false;
+            };
 
             UILabel customFilePrefixLabel = mainScroll.AddUIComponent<UILabel>();
             customFilePrefixLabel.text = "Custom File Prefix:";
@@ -256,21 +266,21 @@ namespace RoadDumpTools
             customFilePrefixLabel.autoSize = false;
             customFilePrefixLabel.width = 225f;
             customFilePrefixLabel.height = 20f;
-            customFilePrefixLabel.relativePosition = new Vector2(30, 330);
+            customFilePrefixLabel.relativePosition = new Vector2(30, 360);
             customFilePrefixLabel.isVisible = false;
 
             customFilePrefix = UIUtils.CreateTextField(mainScroll);
             customFilePrefix.width = 225f;
             customFilePrefix.height = 28f;
             customFilePrefix.padding = new RectOffset(6, 6, 6, 6);
-            customFilePrefix.relativePosition = new Vector3(30, 350);
+            customFilePrefix.relativePosition = new Vector3(30, 380);
             customFilePrefix.tooltip = "Enter a custom file prefix here for the dumped files\nAsset name is the file name if left blank";
             customFilePrefix.isVisible = false;
 
             removeSuffix = UIUtils.CreateCheckBox(mainScroll);
             removeSuffix.text = "Remove Added Suffixes";
             removeSuffix.isChecked = false;
-            removeSuffix.relativePosition = new Vector2(30, 390);
+            removeSuffix.relativePosition = new Vector2(30, 420);
             removeSuffix.tooltip = "Removes the added descriptors at the end of dumped file names";
             removeSuffix.isVisible = false;
 
@@ -291,10 +301,11 @@ namespace RoadDumpTools
                         customFilePrefix.isVisible = false;
                         removeSuffix.isVisible = false;
                         exportRoadXML.isVisible = false;
+                        skiptextureExport.isVisible = false;
                     }
                     else
                     {
-                        exportCustOffset = 160;
+                        exportCustOffset = 190;
                         advancedOptionsButtonToggle.backgroundSprite = "PropertyGroupOpen";
                         dumpMeshOnly.isVisible = true;
                         dumpDiffuseOnly.isVisible = true;
@@ -303,6 +314,7 @@ namespace RoadDumpTools
                         customFilePrefix.isVisible = true;
                         removeSuffix.isVisible = true;
                         exportRoadXML.isVisible = true;
+                        skiptextureExport.isVisible = true;
                     }
 
                    RefreshFooterItems();

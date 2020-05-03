@@ -338,18 +338,27 @@ namespace RoadDumpTools
                 var r1 = new Color32[length].Invert();
                 aprMap.ExtractChannels(a1, p1, r1, null, true, true, true, true, true, false, false);
 
-                //checks to see if the textures are the default color
-                if (IsAlphaDefault(a1.ColorsToTexture(aprMap.width, aprMap.height)) == false)
+                if (NetDumpPanel.instance.skiptextureExport.isChecked)
+                {
+                    //checks to see if the textures are the default color
+                    if (IsAlphaDefault(a1.ColorsToTexture(aprMap.width, aprMap.height)) == false)
+                    {
+                        TextureUtil.DumpTextureToPNG(a1.ColorsToTexture(aprMap.width, aprMap.height), ap);
+                    }
+
+                    if (IsPavementOrRoadDefault(p1.ColorsToTexture(aprMap.width, aprMap.height)) == false)
+                    {
+                        TextureUtil.DumpTextureToPNG(p1.ColorsToTexture(aprMap.width, aprMap.height), pp);
+                    }
+                    if (IsPavementOrRoadDefault(r1.ColorsToTexture(aprMap.width, aprMap.height)) == false)
+                    {
+                        TextureUtil.DumpTextureToPNG(r1.ColorsToTexture(aprMap.width, aprMap.height), rp);
+                    }
+                }
+                else
                 {
                     TextureUtil.DumpTextureToPNG(a1.ColorsToTexture(aprMap.width, aprMap.height), ap);
-                }
-
-                if (IsPavementOrRoadDefault(p1.ColorsToTexture(aprMap.width, aprMap.height)) == false)
-                {
                     TextureUtil.DumpTextureToPNG(p1.ColorsToTexture(aprMap.width, aprMap.height), pp);
-                }
-                if (IsPavementOrRoadDefault(r1.ColorsToTexture(aprMap.width, aprMap.height)) == false)
-                {
                     TextureUtil.DumpTextureToPNG(r1.ColorsToTexture(aprMap.width, aprMap.height), rp);
                 }
 
