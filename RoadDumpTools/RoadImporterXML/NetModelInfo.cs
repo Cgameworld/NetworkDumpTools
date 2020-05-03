@@ -27,6 +27,7 @@ namespace RoadImporterXML
         {
             this.mode = _mode;
             if (gameNet == null) return;
+
             nodeMeshes = new CSMesh[gameNet.m_nodes.Length];
             segmentMeshes = new CSMesh[gameNet.m_segments.Length];
 
@@ -47,6 +48,7 @@ namespace RoadImporterXML
 
             for (int i = 0; i < nodeMeshes.Length; i++)
             {
+
                 nodeMeshes[i] = new CSMesh();
                 nodeMeshes[i].index = i;
                 if (i != 0)
@@ -95,6 +97,26 @@ namespace RoadImporterXML
                 for (int d = 0; d < 3; d++)
                 {
                     segmentMeshes[i].color[d] = gameNet.m_segments[i].m_material.color[d];
+                }
+            }
+
+
+            //hack for dumped slope and tunnel meshes - removes first entry in list
+            Debug.Log("_mode: " + _mode);
+            if (_mode == " Slope" || _mode == " Tunnel")
+            {
+                CSMesh[] tempnodeMeshes = nodeMeshes;
+                CSMesh[] tempsegmentMeshes = segmentMeshes;
+
+                nodeMeshes = new CSMesh[gameNet.m_nodes.Length - 1];
+                for(int i = 0; i< nodeMeshes.Length; i++)
+                {
+                    nodeMeshes[i] = tempnodeMeshes[i + 1];
+                }
+                segmentMeshes = new CSMesh[gameNet.m_segments.Length - 1];
+                for (int i = 0; i < segmentMeshes.Length; i++)
+                {
+                    segmentMeshes[i] = tempsegmentMeshes[i + 1];
                 }
             }
         }

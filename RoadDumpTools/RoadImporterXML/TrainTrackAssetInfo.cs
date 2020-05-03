@@ -1,5 +1,6 @@
 ﻿namespace RoadImporterXML
 {
+    //code from RoadImporter: https://github.com/citiesskylines-csur/RoadImporter
     public class TrainTrackAssetInfo : IAssetInfo
     {
         public class TrainTrackAIProperties
