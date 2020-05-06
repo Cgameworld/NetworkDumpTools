@@ -63,6 +63,7 @@ namespace RoadImporterXML
                 }
                 Debug.Log("nodemesh1");
                 nodeMeshes[i].name = nodeMeshes[i].name + "_node";
+                nodeMeshes[i].texture = nodeMeshes[i].texture + "_node";
 
                 nodeMeshes[i].shader = gameNet.m_nodes[i].m_material.shader.name;
 

@@ -253,7 +253,6 @@ namespace RoadDumpTools
             exportRoadXML.eventCheckChanged += (c, p) =>
             {
                 skiptextureExport.isChecked = false;
-                autoExportLodImages.isChecked = true;
             };
 
 
