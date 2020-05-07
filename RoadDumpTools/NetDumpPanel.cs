@@ -43,7 +43,7 @@ namespace RoadDumpTools
         private UIButton meshResizeButton;
         private UILabel meshResizeButtonToggle;
 
-        private static NetDumpPanel _instance;
+        public static NetDumpPanel _instance;
 
 
         public int hackOffset = 55; //hack for first collapsable menu to work with main scrolling window
@@ -585,6 +585,12 @@ namespace RoadDumpTools
                         gridButtons.isVisible = true;
 
 
+                    }
+
+                    if (PointListView.instance == null)
+                    {
+                        Debug.Log("nulldected!");
+                        PointListView.instance.Show();
                     }
                    // mainScroll.height = INITIAL_HEIGHT + exportCustOffset + exportMeshOffset + exportBulkButtonOffset;
                     RefreshFooterItems();

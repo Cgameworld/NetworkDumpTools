@@ -1,5 +1,7 @@
-﻿using ColossalFramework.UI;
+﻿using ColossalFramework;
+using ColossalFramework.UI;
 using ICities;
+using System.Reflection;
 using UnityEngine;
 
 namespace RoadDumpTools
@@ -22,6 +24,11 @@ namespace RoadDumpTools
                 {
                     if (info.GetType().ToString() == "NetInfo")
                     {
+                        var texQual = typeof(OptionsGraphicsPanel).GetField("m_TexturesQuality", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(Singleton<OptionsGraphicsPanel>.instance) as SavedInt;
+                        if (texQual.value != 2)
+                        {
+                            Lib.ExtraUtils.ShowAlertWindow("Network Dump Tools", "Warning: \"Texture Quality\" in the vanilla options is not set to high, change to dump textures at full resolution");
+                        }
                         NetDumpPanel.instance.Show();
                     }
                     else

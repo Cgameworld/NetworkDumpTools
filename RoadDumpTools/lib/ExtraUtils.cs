@@ -18,6 +18,12 @@ namespace RoadDumpTools.Lib
             panel.GetComponentInChildren<UISprite>().spriteName = "IconError";
         }
 
+        public static void ShowAlertWindow(string header, string message)
+        {
+            ExceptionPanel panel = UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel");
+            panel.SetMessage(header, message, false);
+        }
+
         public static string FormatNetworkName()
         {
             string networkName;
