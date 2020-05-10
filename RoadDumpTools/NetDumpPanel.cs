@@ -334,9 +334,6 @@ namespace RoadDumpTools
                 }
             };
 
-
-
-
             meshResizeButton = UIUtils.CreateButtonSpriteImage(mainScroll, m_atlas);
             meshResizeButton.normalBgSprite = "SubBarButtonBase";
             meshResizeButton.hoveredBgSprite = "SubBarButtonBaseHovered";
@@ -348,7 +345,6 @@ namespace RoadDumpTools
             meshResizeButton.height = 25;
             meshResizeButton.width = 240;
             meshResizeButton.tooltip = "Customize the size of the exported mesh";
-
 
             meshResizeButtonToggle = UIUtils.CreateLabelSpriteImage(mainScroll, m_atlas);
             meshResizeButtonToggle.backgroundSprite = "PropertyGroupClosed";
@@ -381,8 +377,6 @@ namespace RoadDumpTools
                 PointListView.instance.GetMeshPoints();
                 openMeshPoints.text = "Refresh Mesh Points";
             };
-
-
 
             cellpanel = mainScroll.AddUIComponent<UIPanel>();
             cellpanel.relativePosition = new Vector2(17, 315);
