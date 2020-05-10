@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
 using ColossalFramework.UI;
-using UIUtils = RoadDumpTools.UIUtils;
 
-namespace MoreShortcuts.GUI
+namespace RoadDumpTools.Lib
 {
     public class UITitleBar : UIPanel
     {

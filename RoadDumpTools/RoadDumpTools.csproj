@@ -93,7 +93,7 @@
     <EmbeddedResource Include="Icons\OptionsCellDisabled.png" />
     <EmbeddedResource Include="Icons\Refresh.png" />
     <EmbeddedResource Include="Icons\Remove.png" />
-    <EmbeddedResource Include="lib\ObjUnity3D.dll" />
+    <None Include="lib\ObjUnity3D.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
