@@ -108,10 +108,28 @@ namespace RoadDumpTools
         public void GetMeshPoints()
         {
             var prefab = PrefabCollection<NetInfo>.FindLoaded(Singleton<ToolController>.instance.m_editPrefabInfo.name);
-            var meshnum = int.Parse(NetDumpPanel.instance.MeshNumber)-1;
+
+            int netElevationIndex = NetDumpPanel.instance.GetNetEleIndex;
+            switch (netElevationIndex)
+            {
+                case 1:
+                    prefab = AssetEditorRoadUtils.TryGetElevated(prefab);
+                    break;
+                case 2:
+                    prefab = AssetEditorRoadUtils.TryGetBridge(prefab);
+                    break;
+                case 3:
+                    prefab = AssetEditorRoadUtils.TryGetSlope(prefab);
+                    break;
+                case 4:
+                    prefab = AssetEditorRoadUtils.TryGetTunnel(prefab);
+                    break;
+            }
+            var meshnum = int.Parse(NetDumpPanel.instance.MeshNumber) - 1;
+
             Vector3[] meshVertices = prefab.m_segments[meshnum].m_mesh.vertices;
 
-            Debug.Log("coordBoxCount: " + coordBox.Count);
+           // Debug.Log("coordBoxCount: " + coordBox.Count);
 
 
             for (int i = 0; i < coordBox.Count; i++)
@@ -121,9 +139,8 @@ namespace RoadDumpTools
            coordBox.Clear();
 
 
-            Debug.Log("grab new points?");
+           // Debug.Log("grab new points?");
 
-            //List<List<float>> xyvertices = new List<List<float>>();
             List<KeyValuePair<float,float>> xylist = new List<KeyValuePair<float, float>>();
 
             for (int a = 0; a < meshVertices.Length; a++)
@@ -135,20 +152,12 @@ namespace RoadDumpTools
                     xylist.Add(element);
                 }
             }
-            Debug.Log("works?");
 
-            //xyvertices.Sort((sa1, sa2) => sa1[0].CompareTo(sa2[0]));  //sort by x
-            //xyvertices.Sort((sa1, sa2) => sa1[1].CompareTo(sa2[1]));  //sort by y
-            //xyvertices.Sort((sa1, sa2) => sa1[0].CompareTo(sa2[0]));  //sort by x
-            //Debug.Log("1works?");
-            //ebug.Log(xyvertices.Count + "xyvertices.Count");
-            //
-            foreach (var item in xylist)
-            {
-                Debug.Log("x: " + item.Key + "|  y: " + item.Value);
-            }
+            xylist = xylist.OrderBy(item => item.Key).ToList();
+            xylist = xylist.OrderBy(item => item.Value).ToList();
+            xylist = xylist.OrderBy(item => item.Key).ToList();
 
-            //generate grid needed?
+            //generate grid needed
             Debug.Log("xylistcount: " + xylist.Count);
             GenerateGrid(xylist.Count*2);
 
@@ -160,24 +169,6 @@ namespace RoadDumpTools
                 Debug.Log("aworks? cell" + cell);
                 cell = cell + 2;
             }
-
-            /*
-            int cell = 0;
-            for (int i = 0; i < xyvertices.Count; i++)
-            {
-                Debug.Log("bworks? cell" + cell);
-                if (i >= xyvertices.Count - 1 || !xyvertices[i][0].Equals(xyvertices[i + 1][0]) || !xyvertices[i][1].Equals(xyvertices[i + 1][1]))
-                {
-                    coordBox[cell].text = Math.Round(xyvertices[i][0], 1).ToString();
-                    coordBox[cell + 1].text = Math.Round(xyvertices[i][1], 1).ToString();
-                }
-                Debug.Log("aworks? cell" + cell);
-                cell = cell + 2;
-            }
-            Debug.Log("5works?");
-
-            */
-            //textboxNum = cell;
         }
 
 
