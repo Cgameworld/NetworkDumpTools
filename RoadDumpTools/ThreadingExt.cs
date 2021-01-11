@@ -8,12 +8,13 @@ namespace RoadDumpTools
 {
     public class ThreadingExt : LoadingExtensionBase
     {
-
+        public static bool inAssetEditor = false;
         public override void OnLevelLoaded(LoadMode mode)
         {
             //only start loading in asset editor
             if (mode == LoadMode.LoadAsset || mode == LoadMode.NewAsset)
             {
+                inAssetEditor = true;
                 UIView v = UIView.GetAView();
                 UIComponent uic = v.AddUIComponent(typeof(NetDumpPanel));
 
@@ -39,7 +40,10 @@ namespace RoadDumpTools
                 };
 
             }
-
+else
+            {
+                inAssetEditor = false;
+            }
         }
 
     }
