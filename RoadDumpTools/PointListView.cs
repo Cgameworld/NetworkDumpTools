@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using Debug = UnityEngine.Debug;
 using System.Linq;
 using RoadDumpTools.Lib;
+using ColossalFramework;
 
 namespace RoadDumpTools
 {
@@ -21,7 +22,6 @@ namespace RoadDumpTools
         private static PointListView _instance;
 
         private UITitleBar m_title;
-        private int textboxNum = 2;
         private List<UITextField> coordBox;
         private UIScrollablePanel gridscroll;
 
@@ -73,14 +73,14 @@ namespace RoadDumpTools
             titleLabel.isVisible = true; //[textboxNum]
 
             coordBox = new List<UITextField>();
-            GetMeshPoints(true);
-            GenerateGrid();
+            //GenerateGrid();
+            GetMeshPoints();
 
 
             //GetMeshPoints();
         }
 
-        public void GenerateGrid()
+        public void GenerateGrid(int textboxNum)
         {
             int row = 0;
             for (int i = 0; i < textboxNum; i++)
@@ -105,29 +105,27 @@ namespace RoadDumpTools
 
             }
         }
-        public void GetMeshPoints(bool getLengthOnly = false)
+        public void GetMeshPoints()
         {
+            var prefab = PrefabCollection<NetInfo>.FindLoaded(Singleton<ToolController>.instance.m_editPrefabInfo.name);
+            var meshnum = int.Parse(NetDumpPanel.instance.MeshNumber)-1;
+            Vector3[] meshVertices = prefab.m_segments[meshnum].m_mesh.vertices;
 
-            if (!getLengthOnly)
+            Debug.Log("coordBoxCount: " + coordBox.Count);
+
+
+            for (int i = 0; i < coordBox.Count; i++)
             {
-                Debug.Log("coordBoxCount: " + coordBox.Count);
-                if (coordBox.Count != 0)
-                {
-                    for (int i = 0; i < coordBox.Count; i++)
-                    {
-                        DestroyImmediate(coordBox[i].gameObject);
-                    }
-                    coordBox.Clear();
-                    GetMeshPoints(true);
-                    Debug.Log("textboxNum:  " + textboxNum);
-                    GenerateGrid();
-                }
+                    DestroyImmediate(coordBox[i].gameObject);
             }
+           coordBox.Clear();
 
-            DumpProcessing dumpProcess = new DumpProcessing();
-            Vector3[] meshVertices = dumpProcess.VerticesFromMesh();
+
+            Debug.Log("grab new points?");
 
             List<List<float>> xyvertices = new List<List<float>>();
+
+            List<KeyValuePair<string, string>> list = new List<KeyValuePair<string, string>>();
             int newlist = 0;
             float tempX = -99;
             float tempY = -99;
@@ -146,34 +144,42 @@ namespace RoadDumpTools
                     newlist++;
                 }
             }
+            Debug.Log("works?");
             xyvertices.Sort((sa1, sa2) => sa1[0].CompareTo(sa2[0]));  //sort by x
             xyvertices.Sort((sa1, sa2) => sa1[1].CompareTo(sa2[1]));  //sort by y
             xyvertices.Sort((sa1, sa2) => sa1[0].CompareTo(sa2[0]));  //sort by x
+            Debug.Log("1works?");
+            Debug.Log(xyvertices.Count + "xyvertices.Count");
+
+            foreach (var item in xyvertices)
+            {
+                Debug.Log("xyvert" + item);
+            }
+
+                //generate grid needed?
+                GenerateGrid(xyvertices.Count*2);
 
             int cell = 0;
             for (int i = 0; i < xyvertices.Count; i++)
             {
-
-
+                Debug.Log("bworks? cell" + cell);
                 if (i >= xyvertices.Count - 1 || !xyvertices[i][0].Equals(xyvertices[i + 1][0]) || !xyvertices[i][1].Equals(xyvertices[i + 1][1]))
                 {
-                    //unsorts self?
-                    if (!getLengthOnly)
-                    {
-                        coordBox[cell].text = Math.Round(xyvertices[i][0], 1).ToString();
-                        coordBox[cell + 1].text = Math.Round(xyvertices[i][1], 1).ToString();
-                    }
-                    cell = cell + 2;
-
+                    coordBox[cell].text = Math.Round(xyvertices[i][0], 1).ToString();
+                    coordBox[cell + 1].text = Math.Round(xyvertices[i][1], 1).ToString();
                 }
-
+                Debug.Log("aworks? cell" + cell);
+                cell = cell + 2;
             }
+            Debug.Log("5works?");
 
-            textboxNum = cell;
+
+            //textboxNum = cell;
         }
 
 
-            private void LoadResources() { 
+        private void LoadResources()
+        {
 
             string[] spriteNames = new string[]
             {
