@@ -15,7 +15,7 @@ namespace RoadDumpTools
     public class PointListView : UIPanel
     {
 
-        public const int INITIAL_HEIGHT = 590;
+        public const int INITIAL_HEIGHT = 620;
 
         private UITextureAtlas m_atlas;
 
@@ -24,6 +24,9 @@ namespace RoadDumpTools
         private UITitleBar m_title;
         private List<UITextField> coordBox;
         private UIScrollablePanel gridscroll;
+        private UIButton sortDownButton;
+        private UIButton filterButton;
+        private bool sortDownButtonDefault;
 
         public static PointListView instance
         {
@@ -57,10 +60,60 @@ namespace RoadDumpTools
             m_title.title = "Mesh Points";
 
             UIPanel panel = AddUIComponent<UIPanel>();
-            panel.relativePosition = new Vector2(20, 55);
+            panel.relativePosition = new Vector2(20, 85);
             panel.size = new Vector2(145, 530);
             gridscroll = UIUtils.CreateScrollBox(panel, m_atlas);
             gridscroll.size = new Vector2(130, 510);
+
+            UIPanel topButtons = panel.AddUIComponent<UIPanel>();
+            topButtons.clipChildren = false;
+            topButtons.relativePosition = new Vector2(25, -37);
+            topButtons.size = new Vector2(10, 10);
+
+            sortDownButton = UIUtils.CreateButtonSpriteImage(topButtons, m_atlas);
+            sortDownButton.normalBgSprite = "ButtonMenu";
+            sortDownButton.hoveredBgSprite = "ButtonMenuHovered";
+            sortDownButton.pressedBgSprite = "ButtonMenuPressed";
+            sortDownButton.disabledBgSprite = "ButtonMenuDisabled";
+            sortDownButton.normalFgSprite = "SortDown";
+            sortDownButton.relativePosition = new Vector2(0, 0);
+            sortDownButton.height = 25;
+            sortDownButton.width = 31;
+            sortDownButton.tooltip = "Sort by X in Descending Order";
+            sortDownButtonDefault = true;
+            sortDownButton.eventClick += (c, p) =>
+            {
+                if (sortDownButtonDefault)
+                {
+                    sortDownButton.normalFgSprite = "SortUp";
+                    sortDownButton.tooltip = "Sort by X in Ascending Order";
+                    sortDownButtonDefault = false;
+                }
+                else
+                {
+                    sortDownButton.normalFgSprite = "SortDown";
+                    sortDownButton.tooltip = "Sort by X in Descending Order";
+                    sortDownButtonDefault = true;
+                }
+                GetMeshPoints();
+                Debug.Log("button pressed");
+            };
+
+            filterButton = UIUtils.CreateButtonSpriteImage(topButtons, m_atlas);
+            filterButton.normalBgSprite = "ButtonMenu";
+            filterButton.hoveredBgSprite = "ButtonMenuHovered";
+            filterButton.pressedBgSprite = "ButtonMenuPressed";
+            filterButton.disabledBgSprite = "ButtonMenuDisabled";
+            filterButton.normalFgSprite = "Filter";
+            filterButton.relativePosition = new Vector2(40, 0);
+            filterButton.height = 25;
+            filterButton.width = 31;
+            filterButton.tooltip = "Filter out duplicate position values and hide height values";
+
+            filterButton.eventClick += (c, p) =>
+            {
+                Debug.Log("button pressed");
+            };
 
             UILabel titleLabel = gridscroll.AddUIComponent<UILabel>();
             titleLabel.text = "   Pos    Height";
@@ -69,7 +122,7 @@ namespace RoadDumpTools
             titleLabel.autoSize = false;
             titleLabel.width = 120f;
             titleLabel.height = 30f;
-            titleLabel.relativePosition = new Vector2(0, 0);
+            titleLabel.relativePosition = new Vector2(-5, 0);
             titleLabel.isVisible = true; //[textboxNum]
 
             coordBox = new List<UITextField>();
@@ -153,9 +206,20 @@ namespace RoadDumpTools
                 }
             }
 
-            xylist = xylist.OrderBy(item => item.Key).ToList();
-            xylist = xylist.OrderBy(item => item.Value).ToList();
-            xylist = xylist.OrderBy(item => item.Key).ToList();
+            if (sortDownButtonDefault)
+            {
+                xylist = xylist.OrderBy(item => item.Key).ToList();
+                xylist = xylist.OrderBy(item => item.Value).ToList();
+                xylist = xylist.OrderBy(item => item.Key).ToList();
+            }
+            else
+            {
+                xylist = xylist.OrderByDescending(item => item.Key).ToList();
+                xylist = xylist.OrderByDescending(item => item.Value).ToList();
+                xylist = xylist.OrderByDescending(item => item.Key).ToList();
+            }
+
+
 
             //generate grid needed
             Debug.Log("xylistcount: " + xylist.Count);
@@ -179,6 +243,9 @@ namespace RoadDumpTools
             {
                 "Folder",
                 "Log",
+                "Filter",
+                "SortUp",
+                "SortDown",
                 "OptionsCell",
                 "OptionsCellDisabled"
             };

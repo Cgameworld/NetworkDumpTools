@@ -85,8 +85,12 @@
     <Compile Include="lib\UIUtils.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Icons\Pixel.png" />
+    <EmbeddedResource Include="Icons\SortDown.png" />
+    <EmbeddedResource Include="Icons\SortUp.png" />
     <EmbeddedResource Include="Icons\Folder.png" />
     <EmbeddedResource Include="Icons\Add.png" />
+    <EmbeddedResource Include="Icons\Filter.png" />
     <Content Include="Icons\license.txt" />
     <EmbeddedResource Include="Icons\Log.png" />
     <EmbeddedResource Include="Icons\OptionsCell.png" />
