@@ -123,42 +123,45 @@ namespace RoadDumpTools
 
             Debug.Log("grab new points?");
 
-            List<List<float>> xyvertices = new List<List<float>>();
+            //List<List<float>> xyvertices = new List<List<float>>();
+            List<KeyValuePair<float,float>> xylist = new List<KeyValuePair<float, float>>();
 
-            List<KeyValuePair<string, string>> list = new List<KeyValuePair<string, string>>();
-            int newlist = 0;
-            float tempX = -99;
-            float tempY = -99;
             for (int a = 0; a < meshVertices.Length; a++)
             {
                 Console.WriteLine("loop" + a);
                 if (Mathf.Approximately(meshVertices[a].z, 32f))
                 {
-
-                    tempX = meshVertices[a].x;
-                    tempY = meshVertices[a].y;
-                    xyvertices.Add(new List<float>());
-                    xyvertices[newlist].Add(meshVertices[a].x);
-                    xyvertices[newlist].Add(meshVertices[a].y);
-                    Debug.Log("z=32: " + meshVertices[a]);
-                    newlist++;
+                    var element = new KeyValuePair<float, float>(meshVertices[a].x, meshVertices[a].y);
+                    xylist.Add(element);
                 }
             }
             Debug.Log("works?");
-            xyvertices.Sort((sa1, sa2) => sa1[0].CompareTo(sa2[0]));  //sort by x
-            xyvertices.Sort((sa1, sa2) => sa1[1].CompareTo(sa2[1]));  //sort by y
-            xyvertices.Sort((sa1, sa2) => sa1[0].CompareTo(sa2[0]));  //sort by x
-            Debug.Log("1works?");
-            Debug.Log(xyvertices.Count + "xyvertices.Count");
 
-            foreach (var item in xyvertices)
+            //xyvertices.Sort((sa1, sa2) => sa1[0].CompareTo(sa2[0]));  //sort by x
+            //xyvertices.Sort((sa1, sa2) => sa1[1].CompareTo(sa2[1]));  //sort by y
+            //xyvertices.Sort((sa1, sa2) => sa1[0].CompareTo(sa2[0]));  //sort by x
+            //Debug.Log("1works?");
+            //ebug.Log(xyvertices.Count + "xyvertices.Count");
+            //
+            foreach (var item in xylist)
             {
-                Debug.Log("xyvert" + item);
+                Debug.Log("x: " + item.Key + "|  y: " + item.Value);
             }
 
-                //generate grid needed?
-                GenerateGrid(xyvertices.Count*2);
+            //generate grid needed?
+            Debug.Log("xylistcount: " + xylist.Count);
+            GenerateGrid(xylist.Count*2);
 
+            int cell = 0;
+            foreach (var item in xylist)
+            {
+                coordBox[cell].text = Math.Round(item.Key,1).ToString();
+                coordBox[cell+1].text = Math.Round(item.Value, 1).ToString();
+                Debug.Log("aworks? cell" + cell);
+                cell = cell + 2;
+            }
+
+            /*
             int cell = 0;
             for (int i = 0; i < xyvertices.Count; i++)
             {
@@ -173,7 +176,7 @@ namespace RoadDumpTools
             }
             Debug.Log("5works?");
 
-
+            */
             //textboxNum = cell;
         }
 
