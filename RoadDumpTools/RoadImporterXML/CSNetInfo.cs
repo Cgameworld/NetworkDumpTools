@@ -228,13 +228,13 @@ namespace RoadImporterXML
             public Direction m_direction = Direction.Forward;
             public LaneType m_laneType;
             public VehicleType m_vehicleType;
-            public VehicleType m_stopType;
-            public Prop[] m_laneProps;
+            public VehicleType m_stopType;           
             public bool m_allowConnect = true;
             public bool m_useTerrainHeight;
             public bool m_centerPlatform;
             public bool m_elevated;
             public Direction m_finalDirection;
+            public Prop[] m_laneProps;
         }
 
 
