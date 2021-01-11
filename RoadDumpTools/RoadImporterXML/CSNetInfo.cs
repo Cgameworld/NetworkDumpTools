@@ -207,13 +207,13 @@ namespace RoadImporterXML
             public ColorMode m_colorMode;
             public string m_prop;
             public string m_tree;
-            public float[] m_position;
             public float m_angle;
             public float m_segmentOffset;
             public float m_repeatDistance;
             public float m_minLength;
             public float m_cornerAngle;
             public int m_probability = 100;
+            public float[] m_position;
         }
 
 
@@ -295,9 +295,9 @@ namespace RoadImporterXML
         public bool m_overlayVisible = true;
         public ConnectGroup m_connectGroup;
         public Vehicle.Flags m_setVehicleFlags;
+        public string m_UICategory;
         public Lane[] m_lanes;
         public Segment[] m_segments;
         public Node[] m_nodes;
-        public string m_UICategory;
     }
 }
