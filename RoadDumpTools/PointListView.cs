@@ -27,6 +27,7 @@ namespace RoadDumpTools
         private UIButton sortDownButton;
         private UIButton filterButton;
         private bool sortDownButtonDefault;
+        private bool filterButtonDefault;
 
         public static PointListView instance
         {
@@ -108,7 +109,8 @@ namespace RoadDumpTools
             filterButton.relativePosition = new Vector2(40, 0);
             filterButton.height = 25;
             filterButton.width = 31;
-            filterButton.tooltip = "Filter out duplicate position values and hide height values";
+            filterButton.tooltip = "Filter out duplicate position values and hide height values (Coming Soon)";
+            filterButtonDefault = true;
 
             filterButton.eventClick += (c, p) =>
             {
@@ -128,8 +130,6 @@ namespace RoadDumpTools
             coordBox = new List<UITextField>();
             //GenerateGrid();
             GetMeshPoints();
-
-
             //GetMeshPoints();
         }
 
@@ -218,8 +218,6 @@ namespace RoadDumpTools
                 xylist = xylist.OrderByDescending(item => item.Value).ToList();
                 xylist = xylist.OrderByDescending(item => item.Key).ToList();
             }
-
-
 
             //generate grid needed
             Debug.Log("xylistcount: " + xylist.Count);
