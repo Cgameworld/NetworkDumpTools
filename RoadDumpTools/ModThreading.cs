@@ -15,7 +15,6 @@ namespace RoadDumpTools
 
         public override void OnUpdate(float realTimeDelta, float simulationTimeDelta)
         {
-
             if (ThreadingExt.inAssetEditor)
             {
                 if ((Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) && Input.GetKey(KeyCode.Comma))

@@ -145,20 +145,24 @@ namespace RoadDumpTools
      
         public void FindMesh(string networkName_init)
         {
-            if (networkName_init.Contains("_Data"))
-            {
-                networkName = networkName_init.Substring(0, networkName_init.Length - 1);
-            }
-            else { networkName = networkName_init; }
+            networkName = networkName_init;
 
             if (NetDumpPanel.instance.GetCustomFilePrefix() == "")
             {
                 Debug.Log("no custom prefix");
-                if (networkName_init.Contains("_Data"))
+
+                if (networkName_init.Contains("TempInstance"))
                 {
-                    filename = networkName.Substring(0, networkName.Length - 5).Replace("/", string.Empty);
+                    filename = networkName.Substring(14, networkName.Length - 14);
+                    if (networkName_init.Contains("_Data"))
+                    {
+                        filename = filename.Substring(0, filename.Length - 5).Replace("/", string.Empty);
+                    }
                 }
-                else { filename = networkName.Substring(0, networkName.Length - 1); }
+                else
+                {
+                    filename = networkName;
+                }
             }
             else
             {
@@ -231,7 +235,7 @@ namespace RoadDumpTools
                     throw new System.ArgumentOutOfRangeException("No Elevations Found");
 
             }
-
+            Debug.Log("loadedprefab name?" + loadedPrefab.name);
             Debug.Log("Prefab: " + loadedPrefab);
 
 
