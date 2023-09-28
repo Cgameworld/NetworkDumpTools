@@ -109,11 +109,22 @@ namespace RoadDumpTools
             filterButton.relativePosition = new Vector2(40, 0);
             filterButton.height = 25;
             filterButton.width = 31;
-            filterButton.tooltip = "Filter out duplicate position values and hide height values (Coming Soon)";
+            filterButton.tooltip = "Show duplicate position values";
             filterButtonDefault = true;
 
             filterButton.eventClick += (c, p) =>
             {
+                if (filterButtonDefault)
+                {
+                    filterButton.tooltip = "Hide duplicate position values";
+                    filterButtonDefault = false;
+                }
+                else
+                {
+                    filterButton.tooltip = "Show duplicate position values";
+                    filterButtonDefault = true;
+                }
+                GetMeshPoints();
                 Debug.Log("button pressed");
             };
 
@@ -206,6 +217,12 @@ namespace RoadDumpTools
                 }
             }
 
+            if (filterButtonDefault)
+            {
+                List<KeyValuePair<float, float>> xylistUnique = RemoveDuplicates(xylist);
+                xylist = xylistUnique;
+            }
+
             if (sortDownButtonDefault)
             {
                 xylist = xylist.OrderBy(item => item.Key).ToList();
@@ -228,11 +245,25 @@ namespace RoadDumpTools
             {
                 coordBox[cell].text = Math.Round(item.Key,1).ToString();
                 coordBox[cell+1].text = Math.Round(item.Value, 1).ToString();
-                Debug.Log("aworks? cell" + cell);
+                //Debug.Log("aworks? cell" + cell);
                 cell = cell + 2;
             }
         }
 
+        private static List<KeyValuePair<float, float>> RemoveDuplicates(List<KeyValuePair<float, float>> keyValuePairs)
+        {
+            HashSet<KeyValuePair<float, float>> uniquePairs = new HashSet<KeyValuePair<float, float>>();
+
+            foreach (KeyValuePair<float, float> pair in keyValuePairs)
+            {
+                if (!uniquePairs.Contains(pair))
+                {
+                    uniquePairs.Add(pair);
+                }
+            }
+
+            return new List<KeyValuePair<float, float>>(uniquePairs);
+        }
 
         private void LoadResources()
         {
