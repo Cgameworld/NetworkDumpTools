@@ -68,7 +68,7 @@ namespace RoadDumpTools
 
             UIPanel topButtons = panel.AddUIComponent<UIPanel>();
             topButtons.clipChildren = false;
-            topButtons.relativePosition = new Vector2(25, -37);
+            topButtons.relativePosition = new Vector2(30, -37);
             topButtons.size = new Vector2(10, 10);
 
             sortDownButton = UIUtils.CreateButtonSpriteImage(topButtons, m_atlas);
