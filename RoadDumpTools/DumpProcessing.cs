@@ -34,6 +34,7 @@ namespace RoadDumpTools
 
         Vector3[] newvertices;
         public string bulkErrorText;
+        private bool noTexture= false;
 
         public string[] DumpNetworks(bool endPopup = true)
         {
@@ -41,31 +42,35 @@ namespace RoadDumpTools
             {
                 string networkName_init = sim.m_editPrefabInfo.name;
                 FindMesh(networkName_init);
-                var source = material.GetTexture("_MainTex") as Texture2D;
-                var target = new Texture2D(source.width, source.height, TextureFormat.RGBAFloat, true);
-                target.SetPixels(source.GetPixels());
-                target.anisoLevel = source.anisoLevel; target.filterMode = source.filterMode;
-                target.wrapMode = source.wrapMode; target.Apply();
-                UnityEngine.Object.FindObjectOfType<NetProperties>().m_downwardDiffuse = target;
+                Texture2D source = material.GetTexture("_MainTex") as Texture2D;
+                Texture2D target = new Texture2D(0, 0, TextureFormat.RGBAFloat, true);
+
+                if (source != null)
+                {
+                    target = new Texture2D(source.width, source.height, TextureFormat.RGBAFloat, true);
+                    target.SetPixels(source.GetPixels());
+                    target.anisoLevel = source.anisoLevel; target.filterMode = source.filterMode;
+                    target.wrapMode = source.wrapMode; target.Apply();
+                    UnityEngine.Object.FindObjectOfType<NetProperties>().m_downwardDiffuse = target;
+                }
+                else
+                {
+                    noTexture = true;
+                }
 
                 bool flippingTextures = NetDumpPanel.instance.GetIfFlippedTextures;
                 Texture2D aprsource = aprmaterial.GetTexture("_APRMap") as Texture2D;
 
-                if (NetDumpPanel.instance.GetDumpMeshOnly && NetDumpPanel.instance.GetDumpDiffuseOnly)
-                {
-                    DumpTexture2D(FlipTexture(target, false, flippingTextures), diffuseTexturePath);
-                    DumpMeshToOBJ(roadMesh, meshPath, loadedPrefab);
-                    DumpMeshToOBJ(roadMeshLod, lodMeshPath, loadedPrefab);
-                }
-                else if (NetDumpPanel.instance.GetDumpDiffuseOnly)
-                {
-                    DumpTexture2D(FlipTexture(target, false, flippingTextures), diffuseTexturePath);
-                }
-                else if (NetDumpPanel.instance.GetDumpMeshOnly)
+                if (NetDumpPanel.instance.GetDumpMeshOnly || noTexture)
                 {
                     DumpMeshToOBJ(roadMesh, meshPath, loadedPrefab);
                     DumpMeshToOBJ(roadMeshLod, lodMeshPath, loadedPrefab);
                 }
+                if (NetDumpPanel.instance.GetDumpDiffuseOnly)
+                {
+                    DumpTexture2D(FlipTexture(target, false, flippingTextures), diffuseTexturePath);
+                }
+
                 else
                 {
                     DumpTexture2D(FlipTexture(target, false, flippingTextures), diffuseTexturePath);
