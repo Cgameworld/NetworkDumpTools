@@ -28,6 +28,8 @@ namespace RoadDumpTools
         private UIButton filterButton;
         private bool sortDownButtonDefault;
         private bool filterButtonDefault;
+        private UIButton crossSectionViewButton;
+        private bool crossSectionViewButtonDefault;
 
         public static PointListView instance
         {
@@ -77,7 +79,7 @@ namespace RoadDumpTools
             sortDownButton.pressedBgSprite = "ButtonMenuPressed";
             sortDownButton.disabledBgSprite = "ButtonMenuDisabled";
             sortDownButton.normalFgSprite = "SortDown";
-            sortDownButton.relativePosition = new Vector2(0, 0);
+            sortDownButton.relativePosition = new Vector2(-20, 0);
             sortDownButton.height = 25;
             sortDownButton.width = 31;
             sortDownButton.tooltip = "Sort by X in Descending Order";
@@ -106,7 +108,7 @@ namespace RoadDumpTools
             filterButton.pressedBgSprite = "ButtonMenuPressed";
             filterButton.disabledBgSprite = "ButtonMenuDisabled";
             filterButton.normalFgSprite = "Filter";
-            filterButton.relativePosition = new Vector2(40, 0);
+            filterButton.relativePosition = new Vector2(20, 0);
             filterButton.height = 25;
             filterButton.width = 31;
             filterButton.tooltip = "Show duplicate position values";
@@ -128,6 +130,24 @@ namespace RoadDumpTools
                 Debug.Log("button pressed");
             };
 
+            crossSectionViewButton = UIUtils.CreateButtonSpriteImage(topButtons, m_atlas);
+            crossSectionViewButton.normalBgSprite = "ButtonMenu";
+            crossSectionViewButton.hoveredBgSprite = "ButtonMenuHovered";
+            crossSectionViewButton.pressedBgSprite = "ButtonMenuPressed";
+            crossSectionViewButton.disabledBgSprite = "ButtonMenuDisabled";
+            crossSectionViewButton.normalFgSprite = "Log";
+            crossSectionViewButton.relativePosition = new Vector2(60, 0);
+            crossSectionViewButton.height = 25;
+            crossSectionViewButton.width = 31;
+            crossSectionViewButton.tooltip = "Show duplicate position values";
+            crossSectionViewButtonDefault = true;
+
+            crossSectionViewButton.eventClick += (c, p) =>
+            {
+                CrossSectionViewWindow.instance.Show();
+                Debug.Log("button pressed");
+            };
+
             UILabel titleLabel = gridscroll.AddUIComponent<UILabel>();
             titleLabel.text = "   Pos    Height";
             titleLabel.tooltip = "Position from center of mesh | Height from ground level\n(default height for road surface is -0.3m)";
@@ -142,6 +162,13 @@ namespace RoadDumpTools
             //GenerateGrid();
             GetMeshPoints();
             //GetMeshPoints();
+
+            if (CrossSectionViewWindow.instance == null)
+            {
+                Debug.Log("nulldected crosssection view!");
+                CrossSectionViewWindow.instance.Show();
+            }
+
         }
 
         public void GenerateGrid(int textboxNum)

@@ -57,10 +57,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BulkDumping.cs" />
+    <Compile Include="CrossSectionViewWindow.cs" />
     <Compile Include="lib\DumpUtil.cs" />
     <Compile Include="lib\ExtraUtils.cs" />
     <Compile Include="lib\FileUtil.cs" />
     <Compile Include="lib\PillarType.cs" />
+    <Compile Include="lib\PreviewRenderer\PreviewPanel.cs" />
+    <Compile Include="lib\PreviewRenderer\PreviewRenderer.cs" />
     <Compile Include="PropDumping.cs" />
     <Compile Include="PillarDumping.cs" />
     <Compile Include="DumpProcessing.cs" />
