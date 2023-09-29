@@ -240,9 +240,7 @@ namespace RoadDumpTools
                     throw new System.ArgumentOutOfRangeException("No Elevations Found");
 
             }
-            Debug.Log("loadedprefab name?" + loadedPrefab.name);
             Debug.Log("Prefab: " + loadedPrefab);
-
 
             diffuseTexturePath = Path.Combine(importFolder, filename);
             meshPath = Path.Combine(importFolder, filename);
