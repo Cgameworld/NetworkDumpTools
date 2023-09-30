@@ -55,22 +55,27 @@ namespace RoadDumpTools
                 }
                 else
                 {
+                    Debug.Log("no Texture!");
                     noTexture = true;
                 }
-
                 bool flippingTextures = NetDumpPanel.instance.GetIfFlippedTextures;
                 Texture2D aprsource = aprmaterial.GetTexture("_APRMap") as Texture2D;
-
-                if (NetDumpPanel.instance.GetDumpMeshOnly || noTexture)
+                
+                if ((NetDumpPanel.instance.GetDumpMeshOnly || noTexture) && !NetDumpPanel.instance.GetDumpDiffuseOnly)
                 {
                     DumpMeshToOBJ(roadMesh, meshPath, loadedPrefab);
                     DumpMeshToOBJ(roadMeshLod, lodMeshPath, loadedPrefab);
                 }
-                if (NetDumpPanel.instance.GetDumpDiffuseOnly)
+                else if (NetDumpPanel.instance.GetDumpMeshOnly && NetDumpPanel.instance.GetDumpDiffuseOnly)
+                {
+                    DumpTexture2D(FlipTexture(target, false, flippingTextures), diffuseTexturePath);
+                    DumpMeshToOBJ(roadMesh, meshPath, loadedPrefab);
+                    DumpMeshToOBJ(roadMeshLod, lodMeshPath, loadedPrefab);
+                }
+                else if (NetDumpPanel.instance.GetDumpDiffuseOnly)
                 {
                     DumpTexture2D(FlipTexture(target, false, flippingTextures), diffuseTexturePath);
                 }
-
                 else
                 {
                     DumpTexture2D(FlipTexture(target, false, flippingTextures), diffuseTexturePath);
